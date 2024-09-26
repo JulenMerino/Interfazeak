@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Kiroldegiko_kuota.MainPage">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <ScrollView Grid.Row="0">
+            <StackLayout>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Row="0" Grid.Column="0" Text="Kategoria" FontSize="Large" FontAttributes="Bold" Margin="30,0,0,0"/>
+                    <Label Grid.Row="0" Grid.Column="1" Text="Mota" FontSize="Large" FontAttributes="Bold"/>
+                    <Label Grid.Row="0" Grid.Column="2" Text="Iraupena" FontSize="Large" FontAttributes="Bold"/>
+
+                    <VerticalStackLayout Grid.Row="1" Grid.Column="0" Margin="40,20,0,0">
+                        <RadioButton x:Name="rbUmea" Content="Umea" GroupName="KategoriaAukeratu"/>
+                        <RadioButton x:Name="rbFamilia" Content="Familia" GroupName="KategoriaAukeratu"/>
+                        <RadioButton x:Name="rbJubilatua" Content="Jubilatua" GroupName="KategoriaAukeratu"/>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Row="1" Grid.Column="1" Margin="10,20,0,0">
+                        <HorizontalStackLayout>
+                            <CheckBox x:Name="chDesgaitasuna"/>
+                            <Label x:Name="lblDesgaitasuna" Text="Desgaitasuna" VerticalOptions="Center"/>
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout>
+                            <CheckBox x:Name="chFamiliaUgaria"/>
+                            <Label x:Name="lblFamailiaUgaira" Text="Familia ugaria" VerticalOptions="Center"/>
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+
+                    <Picker Grid.Row="1" Grid.Column="2" x:Name="optionPicker" HeightRequest="50" Margin="0,0,150,100" SelectedIndexChanged="OnPickerSelectedIndexChanged">
+                        <Picker.Items>
+                            <x:String>Urtekoa</x:String>
+                            <x:String>Hilabetekoa</x:String>
+                            <x:String>Bi astekoa</x:String>
+                            <x:String>Astekoa</x:String>
+                            <x:String>Egunekoa</x:String>
+                        </Picker.Items>
+                    </Picker>
+                    <Label Grid.Row="2" Grid.Column="2" x:Name="lblPrezioa" FontSize="Large" FontAttributes="Bold"/>
+                </Grid>
+            </StackLayout>
+        </ScrollView>
+
+        <HorizontalStackLayout Grid.Row="2" HorizontalOptions="Start" Margin="30,10,0,20">
+            <Button x:Name="btnKalkulatu" Text="Kalkulatu" BackgroundColor="Green" WidthRequest="100" Clicked="Kalkulatu"/>
+            <Button x:Name="btnGarbitu" Text="Garbitu" BackgroundColor="Red" WidthRequest="80" Margin="15,0,0,0" Clicked="garbitu"/>
+            <Button x:Name="btnIrten" Text="Irten" BackgroundColor="Black" WidthRequest="65" Margin="15,0,0,0" Clicked="irten"/>
+        </HorizontalStackLayout>
+    </Grid>
+</ContentPage>

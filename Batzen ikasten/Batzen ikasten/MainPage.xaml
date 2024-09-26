@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Batzen_ikasten.MainPage">
+
+    <ScrollView>
+        <VerticalStackLayout
+        Padding="30,0"
+        Spacing="25">
+            <HorizontalStackLayout>
+                <Label Text="Lehen batugaia" WidthRequest="200" VerticalOptions="Center"/>
+
+                <Entry x:Name="EtyLehenBatugaia" WidthRequest="300" VerticalOptions="Center" FlowDirection="RightToLeft"/>
+
+                <Button x:Name="BtnBalioBerriak" Text="Balio berriak sortu" Clicked="balioBerriak" HorizontalOptions="Fill" Margin="50,0,0,0" VerticalOptions="Center"/>
+
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout>
+                <Label Text="Bigarren batugaia" WidthRequest="200" VerticalOptions="Center"/>
+
+                <Entry x:Name="EtyBigarrenBatugaia" WidthRequest="300" VerticalOptions="Center" FlowDirection="RightToLeft"/>
+
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout>
+                <Label Text="Sartu zuk uste duzuna" WidthRequest="200" VerticalOptions="Center"/>
+
+                <Entry x:Name="EtySartutakoa" WidthRequest="300" VerticalOptions="Center" />
+
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout>
+                <Entry x:Name="EtyEmaitza" WidthRequest="300" VerticalOptions="Center" Margin="200,0,0,0" />
+
+                <Button x:Name="btnBalioztatu" Text="Emaitza balioztatu" Clicked="egiaztatu" HorizontalOptions="End"  Margin="50,0,0,0" VerticalOptions="End"/>
+
+            </HorizontalStackLayout>
+            <Button x:Name="BtnIrten" Text="Irten" Clicked="Irten" HorizontalOptions="End"  Margin="50,0,0,0" VerticalOptions="End"/>
+        </VerticalStackLayout>
+
+
+    </ScrollView>
+
+</ContentPage>

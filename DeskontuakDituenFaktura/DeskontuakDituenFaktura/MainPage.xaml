@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="DeskontuakDituenFaktura.MainPage">
+
+    <Grid VerticalOptions="FillAndExpand">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="175"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <Label Grid.Row="0" Grid.Column="0" VerticalTextAlignment="Center" HorizontalTextAlignment="End" Text="Kantitatea"/>
+        <Label Grid.Row="1" Grid.Column="0" VerticalTextAlignment="Center" HorizontalTextAlignment="End" Text="Prezioa"/>
+        <Label Grid.Row="2" Grid.Column="0" VerticalTextAlignment="Center" HorizontalTextAlignment="End" Text="Denera"/>
+        <Label Grid.Row="3" Grid.Column="0" VerticalTextAlignment="Center" HorizontalTextAlignment="End" Text="Deskontua%"/>
+        <Label Grid.Row="4" Grid.Column="0" VerticalTextAlignment="Center" HorizontalTextAlignment="End" Text="BEZ%"/>
+        <Label Grid.Row="5" Grid.Column="0" VerticalTextAlignment="Center" HorizontalTextAlignment="End" Text="Ordaintzekoa denera" Margin="0,40,0,0"/>
+        <Label Grid.Row="3" Grid.Column="2" VerticalTextAlignment="Center" HorizontalTextAlignment="End" Text="Deskontua denera"/>
+        <Label Grid.Row="4" Grid.Column="2" VerticalTextAlignment="Center" HorizontalTextAlignment="End" Text="BEZ denera"/>
+
+        <Entry Grid.Row="0" Grid.Column="1" WidthRequest="150" x:Name="etyKantitatea" Margin="20,0,0,0"/>
+        <Entry Grid.Row="1" Grid.Column="1" WidthRequest="150" x:Name="etyPrezioa" Margin="20,10,0,0"/>
+        <Entry Grid.Row="2" Grid.Column="1" WidthRequest="150" x:Name="etyDenera" Margin="20,10,0,0" BackgroundColor="#007C7F" TextColor="White"/>
+        <Entry Grid.Row="3" Grid.Column="1" WidthRequest="150" x:Name="etyDeskontua" Margin="20,10,0,0"/>
+        <Entry Grid.Row="4" Grid.Column="1" WidthRequest="150" x:Name="etyBEZ" Margin="20,10,0,0"/>
+        <Entry Grid.Row="5" Grid.Column="1" WidthRequest="150" x:Name="etyGuztira" Margin="20,40,0,0" BackgroundColor="#007C7F" TextColor="White"/>
+        <Entry Grid.Row="3" Grid.Column="3" WidthRequest="150" x:Name="etyDeskontuaGuztia" Margin="20,10,0,0" BackgroundColor="#007C7F" TextColor="White"/>
+        <Entry Grid.Row="4" Grid.Column="3" WidthRequest="150" x:Name="etyBEZGuztia" Margin="20,10,0,0" BackgroundColor="#007C7F" TextColor="White"/>
+
+        <StackLayout Grid.Row="6" Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalOptions="End" VerticalOptions="End" Margin="0,0,20,10">
+            <Button Text="Kalkulatu" Margin="5" BackgroundColor="Green" Clicked="OnKalkulatuClicked"/>
+            <Button Text="Irten" Margin="5" BackgroundColor="Black" Clicked="irten"/>
+        </StackLayout>
+    </Grid>
+
+</ContentPage>

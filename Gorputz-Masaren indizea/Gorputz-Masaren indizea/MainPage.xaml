@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Gorputz_Masaren_indizea.MainPage">
+
+    <ScrollView>
+        <VerticalStackLayout
+            Padding="30,0"
+            Spacing="25">
+            <HorizontalStackLayout>
+                <Label
+                    Text="Altuera" WidthRequest="200" VerticalOptions="Center">
+                    
+                    
+                </Label>
+
+                <Entry x:Name="EtyAltuera" WidthRequest="300" VerticalOptions="Center" FlowDirection="RightToLeft">
+
+                </Entry>
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout>
+                <Label
+                    Text="Pisua" WidthRequest="200" VerticalOptions="Center">
+
+                </Label>
+
+                <Entry x:Name="EtyPisua" WidthRequest="300" VerticalOptions="Center" FlowDirection="RightToLeft">
+
+                </Entry>
+            </HorizontalStackLayout>
+            <HorizontalStackLayout>
+                <Label Text="GMK" WidthRequest="200" VerticalOptions="Center"/>
+
+
+
+                <Entry x:Name="GMKEntry" WidthRequest="300" VerticalOptions="Center" />
+
+
+
+                <Button x:Name="BtnKalkulatu" Text="Kalkulatu" Clicked="Kalkulatu" HorizontalOptions="Fill" Margin="50,0,0,0" VerticalOptions="Center"/>
+            </HorizontalStackLayout>
+
+            <Image Source="dotnet_bot.png" HeightRequest="185" Aspect="AspectFit" SemanticProperties.Description="dot net bot in a race car number eight" />
+
+            <Button x:Name="BtnIrten" Text="Irten" Clicked="Irten" HorizontalOptions="End"  Margin="50,0,0,0" VerticalOptions="End"/>
+        </VerticalStackLayout>
+
+
+    </ScrollView>
+
+</ContentPage>
