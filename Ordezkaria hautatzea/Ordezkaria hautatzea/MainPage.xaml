@@ -22,31 +22,29 @@
             </HorizontalStackLayout>
         </VerticalStackLayout>
 
-        <!-- Primer Grid Vertical -->
+       
         <VerticalStackLayout Grid.Column="0" Grid.Row="1" Padding="10">
-            <!-- Label Ikasleak justo encima del ListView -->
+            
             <Label Text="Ikasleak" FontSize="Medium" HorizontalOptions="Start" Margin="30,0,0,0"/>
 
             <ListView x:Name="lvIkasleak" BackgroundColor="Green" HeightRequest="300" Margin="30,0,30,0"/>
 
-            <!-- Botón Kendu denak debajo del ListView -->
+            
             <Button x:Name="btnEzabtu" Text="Kendu denak" Margin="0,20,0,0"/>
         </VerticalStackLayout>
 
-        <!-- Segundo Grid Vertical -->
+
         <VerticalStackLayout Grid.Column="1" Grid.Row="1" Padding="10">
             <Button Text="Ausaz" Clicked="ausaz"  Margin="30,10,30,0" />
             <Button Text="Izendatu" Clicked="izendatu"  Margin="30,10,30,0"/>
             <Button Text="Kendu" Clicked="kendu"  Margin="30,10,30,0"/>
             <Button Text="Hustu" Clicked="hustu"  Margin="30,10,30,0"/>
         </VerticalStackLayout>
-
-        <!-- Tercer Grid Vertical -->
+        
         <VerticalStackLayout Grid.Column="2" Grid.Row="1" Padding="10">
             <Label Text="Ordezko" FontSize="Medium" HorizontalOptions="Start"  Margin="30,0,0,0"/>
             <ListView x:Name="lvOrdezkariak" BackgroundColor="Green" HeightRequest="300" Margin="30,0,30,0"/>
 
-            <!-- Contenedor para botones de movimiento -->
             <HorizontalStackLayout Margin="30,10,30,0">
                 <Button Text="↑" Clicked="SelectUp" WidthRequest="50" Margin="0,0,5,0"/>
                 <Button Text="↓" Clicked="SelectDown" WidthRequest="50" />
