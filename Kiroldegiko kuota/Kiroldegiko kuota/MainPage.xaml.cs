@@ -21,7 +21,7 @@
             //Checkboxa sakatuta dagoen konprobatu
             if (checkBox.IsChecked)
             {
-                // Ikusi zein dagoen auekratuta
+                // Ikusi zein dagoen aukeratuta
                 if (checkBox == chDesgaitasuna)
                 {
                     chDesgaitasuna.IsChecked = false; // Beste aukera desmarkatu
