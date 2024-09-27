@@ -17,7 +17,7 @@
                 { Button20, Button21, Button22 }
             };
 
-            // Inicializar la tabla y los marcadores al abrir la aplicación
+            
             ResetBoard();
         }
 
@@ -124,7 +124,7 @@
             lblTxanda.Text = "Txanda: X";
         }
 
-        // Muestra el alert final con opciones
+        // Buekatzerakoan abisua ematen du bi aukerekin
         private async void ShowEndGameAlert(string message)
         {
             var result = await DisplayAlert("Joko amaitu da", message + "\nBeste partida bat jokatu nahi duzu?", "Bai", "Ez");
@@ -134,7 +134,7 @@
             }
             else
             {
-                // Cierra la aplicación (o puedes llevar al usuario a una pantalla de inicio si lo prefieres)
+                // Aplikazioa itxi
                 System.Diagnostics.Process.GetCurrentProcess().CloseMainWindow();
             }
         }
