@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35222.181
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zenbaki zozketa", "Zenbaki zozketa\Zenbaki zozketa.csproj", "{D7A59944-3D77-40B6-A51F-A328E9BC4059}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D7A59944-3D77-40B6-A51F-A328E9BC4059}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7A59944-3D77-40B6-A51F-A328E9BC4059}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7A59944-3D77-40B6-A51F-A328E9BC4059}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{D7A59944-3D77-40B6-A51F-A328E9BC4059}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7A59944-3D77-40B6-A51F-A328E9BC4059}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7A59944-3D77-40B6-A51F-A328E9BC4059}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9C27A9BC-8971-4C62-8DD5-427D0B3F99F3}
+	EndGlobalSection
+EndGlobal

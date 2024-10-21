@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Txandaka_ausaz_sortzeko_aplikazioa.MainPage">
+
+    <StackLayout Padding="20" Spacing="20">
+        <Label Text="Ikasle Aukeratzailea" 
+               FontSize="24"
+               HorizontalOptions="Center" />
+
+
+        <Button Text="Kargatu Ikasleak"
+                Clicked="KargatuBotoia_Clicked" />
+
+
+        <Button Text="Atera Ikasle Bat"
+                Clicked="AteraBotoia_Clicked" />
+
+
+        <Button Text="Gorde Izenak"
+                Clicked="GordeBotoia_Clicked" />
+
+
+        <Label x:Name="AteratakoIzena"
+               FontSize="18"
+               HorizontalOptions="Center" />
+
+        <ScrollView>
+            <Label x:Name="AteratakoakLista"
+                   FontSize="16" 
+                   HorizontalOptions="Center" />
+        </ScrollView>
+    </StackLayout>
+
+</ContentPage>

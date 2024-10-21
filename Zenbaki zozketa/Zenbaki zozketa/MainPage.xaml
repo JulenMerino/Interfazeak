@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Zenbaki_zozketa.MainPage">
+
+    <VerticalStackLayout Padding="20" Spacing="20">
+
+        <!-- 49 CheckBox-en panel bat koadernoan -->
+        <Grid x:Name="PnlCheckBox" ColumnSpacing="10" RowSpacing="10">
+            <!-- CheckBox-ak dinamikoki sortuko dira atzealdeko kodean -->
+        </Grid>
+
+        <!-- Hautatutako zenbakiak erakusten dituen TextBox-a -->
+        <HorizontalStackLayout>
+            <Label Text="Hautatutako zenbakiak: " VerticalOptions="Center"/>
+            <Entry x:Name="EtyZenbakiak" IsReadOnly="True" WidthRequest="200"/>
+        </HorizontalStackLayout>
+
+        <!-- Irabazle zenbakiak erakusten dituen TextBox-a -->
+        <HorizontalStackLayout>
+            <Label Text="Irabazle zenbakiak: " VerticalOptions="Center"/>
+            <HorizontalStackLayout x:Name="EtyIrabazitakoZenbakiak" Spacing="5" HorizontalOptions="StartAndExpand">
+                <!-- Hemen irabazle zenbakiak erakusteko Entry dinamikoak gehituko dira -->
+            </HorizontalStackLayout>
+        </HorizontalStackLayout>
+
+        <!-- Asmatutako kopurua erakusten duen TextBox-a -->
+        <HorizontalStackLayout>
+            <Label Text="Asmatutako kopurua: " VerticalOptions="Center"/>
+            <Entry x:Name="Asmatuak" IsReadOnly="True" WidthRequest="200"/>
+        </HorizontalStackLayout>
+
+        <!-- Ekintza botoiak -->
+        <HorizontalStackLayout Spacing="10">
+            <Button x:Name="BtnZozketa" Text="Zozketa"  IsEnabled="False" Clicked="Zozketa"/>
+            <Button x:Name="BtnBerria"  Text="Berria"   IsEnabled="False" Clicked="Berria"/>
+            <Button Text="Irten" Clicked="Irten"/>
+        </HorizontalStackLayout>
+
+    </VerticalStackLayout>
+</ContentPage>

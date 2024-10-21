@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Landetxearen_erreserba.MainPage">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300" />
+            <ColumnDefinition Width="300" />
+            <ColumnDefinition Width="200" />
+        </Grid.ColumnDefinitions>
+
+        <StackLayout Grid.Column="0">
+            <CarouselView Grid.Column="0" HeightRequest="300" IndicatorView="indicator" ItemsSource="{Binding Images}" Loop="False" WidthRequest="200">
+                <CarouselView.ItemTemplate>
+                    <DataTemplate>
+                        <StackLayout Spacing="0" VerticalOptions="Center">
+                            <Image Aspect="AspectFill" HeightRequest="200" Source="{Binding}" WidthRequest="200" />
+                        </StackLayout>
+                    </DataTemplate>
+                </CarouselView.ItemTemplate>
+            </CarouselView>
+
+            <IndicatorView x:Name="indicator" Grid.Column="0" Margin="0,-20,0,150" HorizontalOptions="Center" IndicatorColor="Gray" IndicatorSize="10" IndicatorsShape="Circle" SelectedIndicatorColor="White" VerticalOptions="End" />
+        </StackLayout>
+
+        <StackLayout Grid.Column="1">
+
+            <Label Text="Servicios adicionales:" FontAttributes="Bold" />
+            <VerticalStackLayout>
+                <StackLayout Orientation="Horizontal">
+                    <CheckBox x:Name="ChAireportu" CheckedChanged="OnCheckBoxCheckedChanged"/>
+                    <Label Text="Aireportura trasladoa" VerticalOptions="Center" />
+                </StackLayout>
+                <StackLayout Orientation="Horizontal">
+                    <CheckBox x:Name="ChBisita" CheckedChanged="OnCheckBoxCheckedChanged"/>
+                    <Label Text="Bisita gidatu paketea" VerticalOptions="Center" />
+                </StackLayout>
+                <StackLayout Orientation="Horizontal">
+                    <CheckBox x:Name="ChUme" CheckedChanged="OnCheckBoxCheckedChanged"/>
+                    <Label Text="Ume zaintza (eguneko)" VerticalOptions="Center" />
+                </StackLayout>
+            </VerticalStackLayout>
+
+            <HorizontalStackLayout Margin="0,0,0,10">
+                <Label Text="Egonaldiaren prezioa:" VerticalOptions="Center"/>
+                <Entry x:Name="EtyEstantzia" Text="300" IsEnabled="False" WidthRequest="100" VerticalOptions="Center" />
+                <Label Text="€" VerticalOptions="Center"/>
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout Margin="0,0,0,10">
+                <Label Text="Gehigarriaren prezioa:" VerticalOptions="Center"/>
+                <Entry x:Name="EtyGehigarri" Text="{Binding ExtraPrice}" IsEnabled="False" WidthRequest="100" VerticalOptions="Center"/>
+                <Label Text="€" VerticalOptions="Center"/>
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout Margin="0,0,0,10">
+                <Label Text="Guztizkoa:" VerticalOptions="Center" />
+                <Entry x:Name="EtyGuztira" Text="{Binding TotalPrice}" IsEnabled="False" WidthRequest="100" VerticalOptions="Center"/>
+                <Label Text="€" VerticalOptions="Center"/>
+            </HorizontalStackLayout>
+
+        </StackLayout>
+
+        <StackLayout Grid.Column="2">
+            <Label Text="Selecciona la fecha de reserva:" />
+            <DatePicker x:Name="BookingDatePicker" Date="{Binding CurrentDate}" Format="dd/mm/yyyy"/>
+            <Button x:Name="BookingButton" Text="Erreserba egin" Clicked="BookingButton_Clicked" />
+
+            <Label Text="Semanas Disponibles:" />
+            <ListView x:Name="AvailableWeeksList" ItemsSource="{Binding ReservedWeeks}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextCell Text="{Binding}" />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Erosketa_orgatxoa.MainPage">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Imágenes de frutas con eventos de arrastre -->
+        <VerticalStackLayout Grid.Column="0" Grid.Row="0" Margin="20,50,0,0">
+            <HorizontalStackLayout>
+                <Image Source="sandia.png" HeightRequest="100" Margin="10">
+                    <Image.GestureRecognizers>
+                        <DragGestureRecognizer DragStarting="Hartu" />
+                    </Image.GestureRecognizers>
+                </Image>
+                <Image Source="manzana.png" HeightRequest="100" Margin="10">
+                    <Image.GestureRecognizers>
+                        <DragGestureRecognizer DragStarting="Hartu" />
+                    </Image.GestureRecognizers>
+                </Image>
+            </HorizontalStackLayout>
+            <HorizontalStackLayout>
+                <Image Source="pera.png" HeightRequest="100" Margin="10">
+                    <Image.GestureRecognizers>
+                        <DragGestureRecognizer DragStarting="Hartu" />
+                    </Image.GestureRecognizers>
+                </Image>
+                <Image Source="naranja.png" HeightRequest="100" Margin="10">
+                    <Image.GestureRecognizers>
+                        <DragGestureRecognizer DragStarting="Hartu" />
+                    </Image.GestureRecognizers>
+                </Image>
+            </HorizontalStackLayout>
+            <HorizontalStackLayout>
+                <Image Source="pina.png" HeightRequest="100" Margin="10">
+                    <Image.GestureRecognizers>
+                        <DragGestureRecognizer DragStarting="Hartu" />
+                    </Image.GestureRecognizers>
+                </Image>
+                <Image Source="melon.png" HeightRequest="100" Margin="10">
+                    <Image.GestureRecognizers>
+                        <DragGestureRecognizer DragStarting="Hartu" />
+                    </Image.GestureRecognizers>
+                </Image>
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+
+        <!-- Carrito con evento de drop -->
+        <Image Source="carrito.png" Grid.Column="1" Grid.Row="0" WidthRequest="200" Margin="150,0,150,0">
+            <Image.GestureRecognizers>
+                <DropGestureRecognizer Drop="Erosi" />
+            </Image.GestureRecognizers>
+        </Image>
+
+        <!-- Lista de frutas en el carrito -->
+        <VerticalStackLayout Grid.Column="2" Grid.Row="0">
+            <ListView x:Name="lvFruituak" HeightRequest="250" Margin="100,100,0,0">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextCell Text="{Binding Izena}" Detail="{Binding Kantitatea, StringFormat='Kopurua: {0}'}" />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <Button Text="itzuli" WidthRequest="100" HorizontalOptions="Start" Margin="100,0,0,0" Clicked="Itzuli"/>
+        </VerticalStackLayout>
+
+        <!-- Botones adicionales -->
+        <Button Grid.Column="0" Grid.Row="1" HorizontalOptions="Start" VerticalOptions="End" Margin="20" Text="Desegin" 
+                Clicked="Desegin"/>
+        
+        <Button Grid.Column="3" Grid.Row="1" HorizontalOptions="End" VerticalOptions="End" Margin="20" Text="Irten" 
+                Clicked="Irten"/>
+
+
+    </Grid>
+</ContentPage>
