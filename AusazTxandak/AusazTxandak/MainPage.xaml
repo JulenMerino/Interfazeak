@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AusazTxandak.MainPage">
+
+    <VerticalStackLayout Padding="10">
+        <Label Text="Izenen Zerrenda" FontSize="24" HorizontalOptions="Center"/>
+
+        <Button Text="Izenak Kargatu" Clicked="OnLoadNamesClicked" HorizontalOptions="Center" Margin="20"/>
+
+        <ListView ItemsSource="{Binding Izenak}" BackgroundColor="#ECECEC" HorizontalOptions="CenterAndExpand" WidthRequest="200"/>
+
+        <Label x:Name="NombresLabel" FontSize="16"  HorizontalOptions="Center"/>
+
+        <Label Text="Fitxategiaren Izen berria:" FontSize="16" HorizontalOptions="Center" Margin="10"/>
+        <Entry x:Name="FItxategiIzenentry" HorizontalOptions="Center" WidthRequest="180"/>
+
+        <Label Text="Ruta osoa:" FontSize="16" HorizontalOptions="Center" Margin="10"/>
+        <Entry x:Name="RutaFitxategiEntry" HorizontalOptions="Center" WidthRequest="200"/>
+
+        <Button Text="Izenak gorde" Clicked="OnSaveNamesClicked" HorizontalOptions="Center" Margin="10"/>
+    </VerticalStackLayout>
+
+</ContentPage>

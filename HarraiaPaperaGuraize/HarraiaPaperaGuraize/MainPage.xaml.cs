@@ -2,93 +2,105 @@
 {
     public partial class MainPage : ContentPage
     {
-        private readonly string[] _opciones = { "piedra", "papel", "tijeras" };
-        private readonly Random _random = new();
-        private int playerScore = 0;
-        private int computerScore = 0;
+        private readonly string[] _aukera = { "piedra", "papel", "tijeras" }; // Jokoaren aukera posibleak
+        private readonly Random _random = new(); // Random objektua
+        private int jokalariPuntuak = 0; // Jokalariaren puntuazioa
+        private int makinaPuntuak = 0; // Makina puntuazioa
 
         public MainPage()
         {
-            InitializeComponent();
-            ResetScores();
+            InitializeComponent(); // Osagaiak hasieratu
+            ResetPuntuak(); // Puntuazioak berrezarri
         }
 
-        private void ResetScores()
+        private void ResetPuntuak()
         {
-            NirePuntuak.Text = "0";  // Puntos del jugador
-            MakinarenPuntuak.Text = "0"; // Puntos de la máquina
+            NirePuntuak.Text = "0"; // Jokalariaren puntuak
+            MakinarenPuntuak.Text = "0"; // Makina puntuak
         }
 
-        private void OnPlayerChoiceTapped(object sender, EventArgs e)
+        private void JokalariakAukeratutakoan(object sender, EventArgs e)
         {
-            var playerChoice = ((Image)sender).Source.ToString()
+            // Jokalariaren hautaketa irudiaren izena lortu
+            var jokalariAukera = ((Image)sender).Source.ToString()
                 .Replace("piedra.png", "piedra")
                 .Replace("papel.png", "papel")
                 .Replace("tijeras.png", "tijeras");
 
-            var machineChoice = GetMachineChoice();
-            MakinarenAukera.Source = machineChoice + ".png";
+            var makinaAukera = LortuMakinaAukera(); // Makina aukeraketa
+            MakinarenAukera.Source = makinaAukera + ".png"; // Makina aukeratutako irudia ezarri
 
-            var result = GetGameResult(playerChoice, machineChoice);
-            UpdateScores(playerChoice, machineChoice);
+            var emaitza = LortuJokoEmaitza(jokalariAukera, makinaAukera); // Emaitza lortu
+            EguneratuPuntuak(jokalariAukera, makinaAukera); // Puntuak eguneratu
+            IrabazleaAldizkatuta(); // Irabazlea egiaztatu
         }
 
-        private string GetMachineChoice()
+        private string LortuMakinaAukera()
         {
-            int index = _random.Next(_opciones.Length);
-            return _opciones[index];
+            int index = _random.Next(_aukera.Length); // Aukera aleatorio bat lortu
+            return _aukera[index];
         }
 
-        private string GetGameResult(string player, string machine)
+        private string LortuJokoEmaitza(string jokalari, string makina)
         {
-            if (player == machine)
-                return "draw"; // Empate
+            if (jokalari == makina)
+                return "berdinketa"; // Berdinketa
 
-            return (player, machine) switch
+            return (jokalari, makina) switch
             {
-                ("piedra", "tijeras") => "player", // Jugador gana
-                ("piedra", "papel") => "machine",  // Máquina gana
-                ("papel", "piedra") => "player",    // Jugador gana
-                ("papel", "tijeras") => "machine",  // Máquina gana
-                ("tijeras", "papel") => "player",   // Jugador gana
-                ("tijeras", "piedra") => "machine", // Máquina gana
-                _ => "draw" // Para todos los empates
+                ("piedra", "tijeras") => "jokalaria", // Jokalaria irabazten du
+                ("piedra", "papel") => "makina",  // Makina irabazten du
+                ("papel", "piedra") => "jokalaria", // Jokalaria irabazten du
+                ("papel", "tijeras") => "makina", // Makina irabazten du
+                ("tijeras", "papel") => "jokalaria", // Jokalaria irabazten du
+                ("tijeras", "piedra") => "makina", // Makina irabazten du
+                _ => "berdinketa" // Berdinketa kasu guztiak
             };
         }
 
-        private void UpdateScores(string playerChoice, string computerChoice)
+        private void EguneratuPuntuak(string jokalariAukera, string makinaAukera)
         {
-            if (playerChoice.Contains("piedra") && computerChoice.Contains("tijera") ||
-                playerChoice.Contains("papel") && computerChoice.Contains("piedra") ||
-                playerChoice.Contains("tijera") && computerChoice.Contains("papel"))
+            // Jokalariak irabazten badu puntuazioa handitu
+            if (jokalariAukera.Contains("piedra") && makinaAukera.Contains("tijeras") ||
+                jokalariAukera.Contains("papel") && makinaAukera.Contains("piedra") ||
+                jokalariAukera.Contains("tijeras") && makinaAukera.Contains("papel"))
             {
-                playerScore++;
+                jokalariPuntuak++;
             }
-            else if (computerChoice.Contains("piedra") && playerChoice.Contains("tijera") ||
-                     computerChoice.Contains("papel") && playerChoice.Contains("piedra") ||
-                     computerChoice.Contains("tijera") && playerChoice.Contains("papel"))
+            // Makina irabazten badu puntuazioa handitu
+            else if (makinaAukera.Contains("piedra") && jokalariAukera.Contains("tijeras") ||
+                     makinaAukera.Contains("papel") && jokalariAukera.Contains("piedra") ||
+                     makinaAukera.Contains("tijeras") && jokalariAukera.Contains("papel"))
             {
-                computerScore++;
+                makinaPuntuak++;
             }
 
-            NirePuntuak.Text = playerScore.ToString();
-            MakinarenPuntuak.Text = computerScore.ToString();
+            // Puntuak eguneratu UI-an
+            NirePuntuak.Text = jokalariPuntuak.ToString();
+            MakinarenPuntuak.Text = makinaPuntuak.ToString();
         }
 
-        private void CheckWinner()
+        private void IrabazleaAldizkatuta()
         {
-            // Comprobar si el jugador ha ganado
+            // Jokalariak irabazi duen egiaztatu
             if (int.Parse(NirePuntuak.Text) >= 10)
             {
-                DisplayAlert("¡Ganador!", "El jugador ha ganado el juego.", "OK");
-                ResetScores(); // Reiniciar puntuaciones después de mostrar el mensaje
+                DisplayAlert("Irabazlea!", "Jokalaria irabazi du.", "OK");
+                ResetPuntuak(); // Mezua erakutsi ondoren puntuazioak berrezarri
+                return;
             }
-            // Comprobar si la máquina ha ganado
+            // Makina irabazi duen egiaztatu
             else if (int.Parse(MakinarenPuntuak.Text) >= 10)
             {
-                DisplayAlert("¡Ganador!", "La máquina ha ganado el juego.", "OK");
-                ResetScores(); // Reiniciar puntuaciones después de mostrar el mensaje
+                DisplayAlert("Irabazlea!", "Makina irabazi du.", "OK");
+                ResetPuntuak(); // Mezua erakutsi ondoren puntuazioak berrezarri
+                return;
             }
+        }
+
+        private void Irten(object sender, EventArgs e)
+        {
+            Application.Current.Quit();
         }
     }
 }
