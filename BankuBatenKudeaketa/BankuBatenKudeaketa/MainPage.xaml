@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BankuBatenKudeaketa.MainPage">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <VerticalStackLayout Grid.Column="0" Spacing="20" Margin="30" WidthRequest="300">
+            <Label x:Name="LblBezeroa" Text="Bezeroa"/>
+            <Picker x:Name="PkNAN"/>
+            <Label x:Name="LblDepositua" Text="Depositua"/>
+            <ListView x:Name="LvDeskribapenaDepositua"/>
+            <Button x:Name="BtnAldatuDepositua" Text="Aldatu depositua"/>
+            <Button x:Name="BtnInprimatu" Text="Inprimatu"/>
+        </VerticalStackLayout>
+
+        <VerticalStackLayout Grid.Column="1" Spacing="20" Margin="30" WidthRequest="300">
+            <Label x:Name="LblIzena" Text="Izena"/>
+            <Entry x:Name="EtyIzenaAbizena"/>
+            <Label x:Name="LblMailegua" Text="Mailegua"/>
+            <ListView x:Name="LvDeskribapenaMailegua"/>
+            <Button x:Name="BtnMaileguaEzeztatu" Text="Mailegua ezeztau"/>
+            <Button x:Name="BtnIrten" Text="Irten" WidthRequest="100" HorizontalOptions="Start"/>
+        </VerticalStackLayout>
+    </Grid>
+
+</ContentPage>
