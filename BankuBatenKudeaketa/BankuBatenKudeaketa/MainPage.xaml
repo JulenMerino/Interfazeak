@@ -1,31 +1,79 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="BankuBatenKudeaketa.MainPage">
+             x:Class="BankuBatenKudeaketa.MainPage"
+             xmlns:tabView="clr-namespace:Syncfusion.Maui.TabView;assembly=Syncfusion.Maui.TabView">
 
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+    <ContentPage.Content>
+        <tabView:SfTabView x:Name="Bezeroak" >
+            <tabView:SfTabView.Items>
+                <tabView:SfTabItem Header="Bezeroa" BackgroundColor="Black" TextColor="White">
+                    <tabView:SfTabItem.Content>
+                        <VerticalStackLayout Padding="20">
+                            
+                            <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
+                                <Button ImageSource="ezkerra.png" x:Name="btnAurrekoa" WidthRequest="70" BackgroundColor="White"/>
+                                <Entry x:Name="etyBezeroa"/>
+                                <Label x:Name="lblBezeroKopuraua" Text=" de 5" VerticalOptions="Center"/>
+                                <Button ImageSource="eskubi.png" x:Name="btnHurrengoa" WidthRequest="70" BackgroundColor="White"/>
+                                <Button ImageSource="gehitu.png" x:Name="btnGehitu" WidthRequest="70" BackgroundColor="White"/>
+                                <Button ImageSource="ezabatu.png" x:Name="btnEzabatu" WidthRequest="70" BackgroundColor="White"/>
+                                <Button ImageSource="gorde.png" x:Name="btnGorde" WidthRequest="70" BackgroundColor="White"/>
+                            </HorizontalStackLayout>
 
-        <VerticalStackLayout Grid.Column="0" Spacing="20" Margin="30" WidthRequest="300">
-            <Label x:Name="LblBezeroa" Text="Bezeroa"/>
-            <Picker x:Name="PkNAN"/>
-            <Label x:Name="LblDepositua" Text="Depositua"/>
-            <ListView x:Name="LvDeskribapenaDepositua"/>
-            <Button x:Name="BtnAldatuDepositua" Text="Aldatu depositua"/>
-            <Button x:Name="BtnInprimatu" Text="Inprimatu"/>
-        </VerticalStackLayout>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
 
-        <VerticalStackLayout Grid.Column="1" Spacing="20" Margin="30" WidthRequest="300">
-            <Label x:Name="LblIzena" Text="Izena"/>
-            <Entry x:Name="EtyIzenaAbizena"/>
-            <Label x:Name="LblMailegua" Text="Mailegua"/>
-            <ListView x:Name="LvDeskribapenaMailegua"/>
-            <Button x:Name="BtnMaileguaEzeztatu" Text="Mailegua ezeztau"/>
-            <Button x:Name="BtnIrten" Text="Irten" WidthRequest="100" HorizontalOptions="Start"/>
-        </VerticalStackLayout>
-    </Grid>
+                                <VerticalStackLayout  Grid.Column="0" Margin="20">
+                                    <Label x:Name="lblNAN" Text="NAN:" Margin="0,10,40,35" HorizontalOptions="End"/>
+                                    <Label x:Name="lblIzena" Text="Izena:" Margin="0,0,40,10" HorizontalOptions="End"/>
+                                </VerticalStackLayout>
+                                
+                                <VerticalStackLayout  Grid.Column="1" Margin="10">
+                                    <Entry x:Name="etyNAN" Margin="-55,10,0,10" HorizontalOptions="Start" WidthRequest="200"/>
+                                    <Entry x:Name="etyIzena" Margin="-55,0,0,0" HorizontalOptions="Start" WidthRequest="200"/>
+                                </VerticalStackLayout>
+                            </Grid>
+                                
+                            
+                        </VerticalStackLayout>
+                    </tabView:SfTabItem.Content>
+                </tabView:SfTabItem>
+
+                <tabView:SfTabItem Header="Kontu kudeaketa" BackgroundColor="Black" TextColor="White">
+                    <tabView:SfTabItem.Content>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <VerticalStackLayout Grid.Column="0" Spacing="20" Margin="30" WidthRequest="300">
+                                <Label x:Name="LblBezeroa" Text="Bezeroa"/>
+                                <Picker x:Name="PkNAN"/>
+                                <Label x:Name="LblDepositua" Text="Depositua"/>
+                                <ListView x:Name="LvDeskribapenaDepositua"/>
+                                <Button x:Name="BtnAldatuDepositua" Text="Aldatu depositua"/>
+                                <Button x:Name="BtnInprimatu" Text="Inprimatu"/>
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Column="1" Spacing="20" Margin="30" WidthRequest="300">
+                                <Label x:Name="LblIzena" Text="Izena"/>
+                                <Entry x:Name="EtyIzenaAbizena"/>
+                                <Label x:Name="LblMailegua" Text="Mailegua"/>
+                                <ListView x:Name="LvDeskribapenaMailegua"/>
+                                <Button x:Name="BtnMaileguaEzeztatu" Text="Mailegua ezeztau"/>
+                                <Button x:Name="BtnIrten" Text="Irten" WidthRequest="100" HorizontalOptions="Start" Clicked="BtnIrten_Clicked"/>
+                            </VerticalStackLayout>
+                        </Grid>
+                    </tabView:SfTabItem.Content>
+                </tabView:SfTabItem>
+            </tabView:SfTabView.Items>
+        </tabView:SfTabView>
+    </ContentPage.Content>
+
 
 </ContentPage>
