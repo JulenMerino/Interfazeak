@@ -12,13 +12,13 @@
                         <VerticalStackLayout Padding="20">
                             
                             <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
-                                <Button ImageSource="ezkerra.png" x:Name="btnAurrekoa" WidthRequest="70" BackgroundColor="White"/>
-                                <Entry x:Name="etyBezeroa"/>
-                                <Label x:Name="lblBezeroKopuraua" Text=" de 5" VerticalOptions="Center"/>
-                                <Button ImageSource="eskubi.png" x:Name="btnHurrengoa" WidthRequest="70" BackgroundColor="White"/>
-                                <Button ImageSource="gehitu.png" x:Name="btnGehitu" WidthRequest="70" BackgroundColor="White"/>
-                                <Button ImageSource="ezabatu.png" x:Name="btnEzabatu" WidthRequest="70" BackgroundColor="White"/>
-                                <Button ImageSource="gorde.png" x:Name="btnGorde" WidthRequest="70" BackgroundColor="White"/>
+                                <Button ImageSource="ezkerra.png" x:Name="btnAurrekoa" WidthRequest="70" BackgroundColor="White" Clicked="BtnAurrekoa_Clicked"/>
+                                <Entry x:Name="etyBezeroa" Text="1" />
+                                <Label x:Name="lblBezeroKopuraua"  VerticalOptions="Center"/>
+                                <Button ImageSource="eskubi.png" x:Name="btnHurrengoa" WidthRequest="70" BackgroundColor="White" Clicked="BtnHurrengoa_Clicked"/>
+                                <Button ImageSource="gehitu.png" x:Name="btnGehitu" WidthRequest="70" BackgroundColor="White" Clicked="BtnGehitu_Clicked"/>
+                                <Button ImageSource="ezabatu.png" x:Name="btnEzabatu" WidthRequest="70" BackgroundColor="White" Clicked="BtnKendu_Clicked"/>
+                                <Button ImageSource="gorde.png" x:Name="btnGorde" WidthRequest="70" BackgroundColor="White" Clicked="BtnGorde_Clicked"/>
                             </HorizontalStackLayout>
 
                             <Grid>
@@ -53,10 +53,10 @@
 
                             <VerticalStackLayout Grid.Column="0" Spacing="20" Margin="30" WidthRequest="300">
                                 <Label x:Name="LblBezeroa" Text="Bezeroa"/>
-                                <Picker x:Name="PkNAN"/>
+                                <Picker x:Name="PkNAN" SelectedIndexChanged="PkNAN_SelectedIndexChanged"/>
                                 <Label x:Name="LblDepositua" Text="Depositua"/>
-                                <ListView x:Name="LvDeskribapenaDepositua"/>
-                                <Button x:Name="BtnAldatuDepositua" Text="Aldatu depositua"/>
+                                <ListView x:Name="LvDeskribapenaDepositua" ItemTapped="LvDeskribapenaDepositua_ItemTapped"/>
+                                <Button x:Name="BtnAldatuDepositua" Text="Aldatu depositua" IsEnabled="False"/>
                                 <Button x:Name="BtnInprimatu" Text="Inprimatu"/>
                             </VerticalStackLayout>
 
@@ -64,8 +64,8 @@
                                 <Label x:Name="LblIzena" Text="Izena"/>
                                 <Entry x:Name="EtyIzenaAbizena"/>
                                 <Label x:Name="LblMailegua" Text="Mailegua"/>
-                                <ListView x:Name="LvDeskribapenaMailegua"/>
-                                <Button x:Name="BtnMaileguaEzeztatu" Text="Mailegua ezeztau"/>
+                                <ListView x:Name="LvDeskribapenaMailegua" ItemTapped="LvDeskribapenaMailegua_ItemTapped"/>
+                                <Button x:Name="BtnMaileguaEzeztatu" Text="Mailegua ezeztau" IsEnabled="False"/>
                                 <Button x:Name="BtnIrten" Text="Irten" WidthRequest="100" HorizontalOptions="Start" Clicked="BtnIrten_Clicked"/>
                             </VerticalStackLayout>
                         </Grid>
