@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BankuBatenKudeaketa.Gordailua">
+
+    <StackLayout Padding="20">
+        <HorizontalStackLayout HorizontalOptions="CenterAndExpand" Margin="0,20,0,10">
+            <Label Text="Descripción:" Margin="0,10,10,0"/>
+            <Entry x:Name="etyDeskribapena" IsReadOnly="True" WidthRequest="200"/>
+        </HorizontalStackLayout>
+
+
+        <HorizontalStackLayout HorizontalOptions="CenterAndExpand" Margin="10">
+            <Label Text="Saldo:" Margin="0,10,10,0"/>
+            <Entry x:Name="etySaldo" Keyboard="Numeric" WidthRequest="200"/>
+        </HorizontalStackLayout>
+
+        <!-- Botones de acción -->
+        <HorizontalStackLayout HorizontalOptions="CenterAndExpand" Spacing="10">
+            <Button Text="Modificar" Clicked="Modificar_Clicked"/>
+            <Button Text="Eliminar" Clicked="Eliminar_Clicked" />
+            <Button Text="Cerrar" Clicked="Cerrar_Clicked" />
+        </HorizontalStackLayout>
+    </StackLayout>
+</ContentPage>

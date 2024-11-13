@@ -290,7 +290,141 @@ namespace BankuBatenKudeaketa
             return prestamoList;  // Retornar la lista de cuentas
         }
 
+        public async Task<decimal?> ObtenerSaldoPorDescripcionAsync(string descripcion)
+        {
+            string query = "SELECT Saldo FROM gordailuak WHERE Deskripzioa = @descripcion;";
 
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                MySqlCommand command = new MySqlCommand(query, connection);
+                command.Parameters.AddWithValue("@descripcion", descripcion);
+
+                try
+                {
+                    await connection.OpenAsync();
+                    var result = await command.ExecuteScalarAsync();
+
+                    // Convertir el resultado a decimal o null si no se encuentra
+                    return result != null ? Convert.ToDecimal(result) : (decimal?)null;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error al obtener el importe: " + ex.Message);
+                    return null;
+                }
+            }
+        }
+
+        public async Task<bool> EliminarMaileguaPorDescripcionAsync(string descripcion)
+        {
+            try
+            {
+                using (var connection = new MySqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+                    string query = "DELETE FROM Maileguak WHERE Deskripzioa = @descripcion";
+
+                    using (var command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@descripcion", descripcion);
+
+                        int rowsAffected = await command.ExecuteNonQueryAsync();
+                        return rowsAffected > 0; // Si se eliminó al menos una fila, devolvemos true
+                    }
+                }
+            }
+            catch (MySqlException ex)
+            {
+                // Manejo de errores de MySQL
+                Console.WriteLine("Error de MySQL: " + ex.Message);
+                return false;
+            }
+        }
+
+
+        public async Task<List<string>> ObtenerListaMaileguakAsync()
+        {
+            List<string> listaMaileguak = new List<string>();
+            string query = "SELECT Deskripzioa FROM maileguak;";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                MySqlCommand command = new MySqlCommand(query, connection);
+
+                try
+                {
+                    await connection.OpenAsync();
+                    using (MySqlDataReader reader = (MySqlDataReader)await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            listaMaileguak.Add(reader.GetString(0)); // Suponiendo que la columna Deskribapena es la primera
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error al obtener los datos: " + ex.Message);
+                }
+            }
+
+            return listaMaileguak;
+        }
+
+
+
+
+
+
+
+
+
+        public async Task<bool> ModificarImportePorDescripcionAsync(string descripcion, decimal nuevoImporte)
+        {
+            string query = "UPDATE deposituak SET Importe = @importe WHERE Deskribapena = @descripcion;";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                MySqlCommand command = new MySqlCommand(query, connection);
+                command.Parameters.AddWithValue("@importe", nuevoImporte);
+                command.Parameters.AddWithValue("@descripcion", descripcion);
+
+                try
+                {
+                    await connection.OpenAsync();
+                    int rowsAffected = await command.ExecuteNonQueryAsync();
+                    return rowsAffected > 0;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error al modificar el importe: " + ex.Message);
+                    return false;
+                }
+            }
+        }
+
+        public async Task<bool> EliminarDepositoPorDescripcionAsync(string descripcion)
+        {
+            string query = "DELETE FROM deposituak WHERE Deskribapena = @descripcion;";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                MySqlCommand command = new MySqlCommand(query, connection);
+                command.Parameters.AddWithValue("@descripcion", descripcion);
+
+                try
+                {
+                    await connection.OpenAsync();
+                    int rowsAffected = await command.ExecuteNonQueryAsync();
+                    return rowsAffected > 0;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error al eliminar el depósito: " + ex.Message);
+                    return false;
+                }
+            }
+        }
 
     }
 }

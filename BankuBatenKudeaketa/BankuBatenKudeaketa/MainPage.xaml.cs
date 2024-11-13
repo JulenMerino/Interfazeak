@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Microsoft.Maui.Controls;
 
@@ -306,6 +307,71 @@ namespace BankuBatenKudeaketa
                 BtnMaileguaEzeztatu.IsEnabled = false;
             }
         }
+
+        private async void BtnAldatuDepositua_Clicked(object sender, EventArgs e)
+        {
+            if (LvDeskribapenaDepositua.SelectedItem != null)
+            {
+                string descripcionSeleccionada = LvDeskribapenaDepositua.SelectedItem.ToString();
+                decimal? importe = await datuBasea.ObtenerSaldoPorDescripcionAsync(descripcionSeleccionada);
+
+                if (importe.HasValue)
+                {
+                    await Navigation.PushAsync(new Gordailua(descripcionSeleccionada, importe.Value));
+                }
+                else
+                {
+                    await DisplayAlert("Error", "No se pudo obtener el importe del depósito.", "OK");
+                }
+            }
+            else
+            {
+                await DisplayAlert("Atención", "Por favor, selecciona una cuenta de la lista.", "OK");
+            }
+        }
+
+        private async void BtnMaileguaEzeztatu_Clicked(object sender, EventArgs e)
+        {
+            // Verificar si se ha seleccionado algo en el Picker
+            if (LvDeskribapenaMailegua.SelectedItem != null)
+            {
+                // Obtener la descripción seleccionada del Picker
+                string descripcionSeleccionada = LvDeskribapenaMailegua.SelectedItem.ToString();
+                string nanSeleccionada= PkNAN.SelectedItem.ToString();
+
+                // Confirmación de eliminación
+                bool confirmacion = await DisplayAlert("Confirmación", "¿Estás seguro de que deseas eliminar este préstamo?", "Sí", "No");
+
+                if (confirmacion)
+                {
+                    // Llamada al método de eliminación en la base de datos
+                    bool exito = await datuBasea.EliminarMaileguaPorDescripcionAsync(descripcionSeleccionada);
+
+                    if (exito)
+                    {
+                        CargarListaMaileguak(nanSeleccionada);
+
+                        await DisplayAlert("Éxito", "El préstamo ha sido eliminado.", "OK");
+                    }
+                    else
+                    {
+                        await DisplayAlert("Error", "No se pudo eliminar el préstamo de la base de datos.", "OK");
+                    }
+                }
+            }
+            else
+            {
+                await DisplayAlert("Atención", "Por favor, selecciona un préstamo del Picker para eliminar.", "OK");
+            }
+        }
+
+        private async Task CargarListaMaileguak(string pkNan)
+        {
+            var listaMaileguak = await datuBasea.ObtenerPrestamoPorNANAsync(pkNan);
+            LvDeskribapenaMailegua.ItemsSource = listaMaileguak;
+        }
+
+
 
 
         private void BtnIrten_Clicked(object sender, EventArgs e)

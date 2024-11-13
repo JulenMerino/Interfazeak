@@ -73,4 +73,10 @@
 		<PackageReference Include="Syncfusion.Maui.TabView" Version="27.1.58" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <MauiXaml Update="Gordailua.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	</ItemGroup>
+
 </Project>
