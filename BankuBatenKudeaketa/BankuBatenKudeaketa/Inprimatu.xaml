@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BankuBatenKudeaketa.Inprimatu">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <HorizontalStackLayout Grid.Column="1" Grid.Row="0" HorizontalOptions="CenterAndExpand" VerticalOptions="End">
+            <Label x:Name="lblNAN" Text="NAN:" Margin="20" FontSize="Header"/>
+            <Label x:Name="lblIzena" Text="Izena:" Margin="20" FontSize="Header"/>
+        </HorizontalStackLayout>
+
+        <VerticalStackLayout Grid.Column="0" Grid.Row="1" HorizontalOptions="CenterAndExpand">
+            <Label x:Name="lblGordailua" Text="Gordailua" FontSize="Title" Margin="20"/>
+            <Label x:Name="lblGordailuDeskribapena" Text="Kaixo" FontSize="Subtitle" Margin="0,0,0,10"/>
+            <Label x:Name="lblGordailuSaldo" Text="Kaixo" FontSize="Subtitle" Margin="0,0,0,10"/>
+        </VerticalStackLayout>
+
+        <VerticalStackLayout Grid.Column="2" Grid.Row="1" HorizontalOptions="CenterAndExpand">
+            <Label x:Name="lblMailegua" Text="Mailegua" FontSize="Title" Margin="20"/>
+            <Label x:Name="lblMaileguDeskribapena" Text="Kaixo" FontSize="Subtitle" Margin="0,0,0,10"/>
+            <Label x:Name="lblMaileguKantitatea" Text="Kaixo" FontSize="Subtitle" Margin="0,0,0,10"/>
+            <Label x:Name="lblMaileguEpea" Text="Kaixo" FontSize="Subtitle" Margin="0,0,0,10"/>
+            <Label x:Name="lblMaileguHasiera" Text="Kaixo" FontSize="Subtitle" Margin="0,0,0,10"/>
+        </VerticalStackLayout>
+
+    </Grid>
+</ContentPage>

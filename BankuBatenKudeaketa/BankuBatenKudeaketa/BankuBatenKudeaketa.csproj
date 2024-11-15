@@ -74,7 +74,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Inprimatu.xaml.cs">
+	    <DependentUpon>Inprimatu.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
 	  <MauiXaml Update="Gordailua.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Inprimatu.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

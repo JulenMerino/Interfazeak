@@ -290,13 +290,14 @@ namespace BankuBatenKudeaketa
             return prestamoList;  // Retornar la lista de cuentas
         }
 
-        public async Task<decimal?> ObtenerSaldoPorDescripcionAsync(string descripcion)
+        public async Task<decimal?> ObtenerSaldoPorDescripcionAsync(string nan, string descripcion)
         {
-            string query = "SELECT Saldo FROM gordailuak WHERE Deskripzioa = @descripcion;";
+            string query = "SELECT Saldo FROM gordailuak WHERE Bezeroak_NAN = @PkNan AND  Deskripzioa = @descripcion;";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 MySqlCommand command = new MySqlCommand(query, connection);
+                command.Parameters.AddWithValue("@PkNan", nan);
                 command.Parameters.AddWithValue("@descripcion", descripcion);
 
                 try
@@ -314,6 +315,7 @@ namespace BankuBatenKudeaketa
                 }
             }
         }
+
 
         public async Task<bool> EliminarMaileguaPorDescripcionAsync(string descripcion)
         {
@@ -425,6 +427,48 @@ namespace BankuBatenKudeaketa
                 }
             }
         }
+
+        public async Task<(string Descripcion, decimal Importe, int Plazo, DateTime Fecha)> ObtenerPrestamoPorNanYDescripcionAsync(string pkNan, string descripcion)
+        {
+            string query = @"SELECT Deskripzioa, Kantitatea, EpeHilabete, HasieraData FROM Maileguak WHERE Bezeroak_NAN = @PkNan AND Deskripzioa = @Descripcion";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                MySqlCommand command = new MySqlCommand(query, connection);
+                command.Parameters.AddWithValue("@PkNan", pkNan);
+                command.Parameters.AddWithValue("@Descripcion", descripcion);
+
+                try
+                {
+                    await connection.OpenAsync();
+                    using (MySqlDataReader reader = (MySqlDataReader)await command.ExecuteReaderAsync())
+                    {
+                        if (await reader.ReadAsync())
+                        {
+                            // Verificar si los valores no son DBNull antes de asignarlos
+                            string descripcionResult = reader["Deskripzioa"] != DBNull.Value ? reader["Deskripzioa"].ToString() : null;
+                            decimal importeResult = reader["Kantitatea"] != DBNull.Value ? reader.GetDecimal("Kantitatea") : 0.0m;
+                            int plazoResult = reader["EpeHilabete"] != DBNull.Value ? reader.GetInt32("EpeHilabete") : 0;
+                            DateTime fechaResult = reader["HasieraData"] != DBNull.Value ? reader.GetDateTime("HasieraData") : DateTime.MinValue;
+
+                            return (descripcionResult, importeResult, plazoResult, fechaResult);
+                        }
+                        else
+                        {
+                            return (null, 0, 0, DateTime.MinValue); // No se encontró un préstamo
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error al obtener el préstamo: " + ex.Message);
+                    return (null, 0, 0, DateTime.MinValue);
+                }
+            }
+        }
+
+
+
 
     }
 }

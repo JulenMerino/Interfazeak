@@ -57,7 +57,7 @@
                                 <Label x:Name="LblDepositua" Text="Depositua"/>
                                 <ListView x:Name="LvDeskribapenaDepositua" ItemTapped="LvDeskribapenaDepositua_ItemTapped"/>
                                 <Button x:Name="BtnAldatuDepositua" Text="Aldatu depositua" IsEnabled="False" Clicked="BtnAldatuDepositua_Clicked"/>
-                                <Button x:Name="BtnInprimatu" Text="Inprimatu"/>
+                                <Button x:Name="BtnInprimatu" Text="Inprimatu" Clicked="BtnInprimatu_Clicked"/>
                             </VerticalStackLayout>
 
                             <VerticalStackLayout Grid.Column="1" Spacing="20" Margin="30" WidthRequest="300">

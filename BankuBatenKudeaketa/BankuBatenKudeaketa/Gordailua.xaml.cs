@@ -5,7 +5,7 @@ public partial class Gordailua : ContentPage
     private string descripcion;
     private DatuBaseaMetodoak datuBasea;
 
-    public Gordailua(string descripcion, decimal importe)
+    public Gordailua( string descripcion, decimal importe)
     {
         InitializeComponent();
         datuBasea = new DatuBaseaMetodoak();

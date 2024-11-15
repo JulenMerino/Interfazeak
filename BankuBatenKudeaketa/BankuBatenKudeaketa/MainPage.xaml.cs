@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Microsoft.Maui.Controls;
+using static BankuBatenKudeaketa.DatuBaseaMetodoak;
 
 namespace BankuBatenKudeaketa
 {
@@ -312,8 +313,9 @@ namespace BankuBatenKudeaketa
         {
             if (LvDeskribapenaDepositua.SelectedItem != null)
             {
+                string NanSeleccionado = PkNAN.SelectedItem.ToString();
                 string descripcionSeleccionada = LvDeskribapenaDepositua.SelectedItem.ToString();
-                decimal? importe = await datuBasea.ObtenerSaldoPorDescripcionAsync(descripcionSeleccionada);
+                decimal? importe = await datuBasea.ObtenerSaldoPorDescripcionAsync(NanSeleccionado, descripcionSeleccionada);
 
                 if (importe.HasValue)
                 {
@@ -365,11 +367,74 @@ namespace BankuBatenKudeaketa
             }
         }
 
+        private async void BtnInprimatu_Clicked(object sender, EventArgs e)
+        {
+            if (PkNAN.SelectedItem != null)
+            {
+                string NanSeleccionado = PkNAN.SelectedItem.ToString();
+                string MaileguDeskribapena = LvDeskribapenaMailegua.SelectedItem?.ToString() ?? string.Empty;
+
+                // Si no se selecciona un depósito, asignar "No disponible"
+                string GordailuDeskribapena = LvDeskribapenaDepositua.SelectedItem?.ToString() ?? "No disponible";
+
+                string IzenaAbizenaSeleccionado = EtyIzenaAbizena.Text; // Obtener el nombre completo
+
+                try
+                {
+                    // Llamar al método para obtener el préstamo de manera asincrónica
+                    var prestamo = await datuBasea.ObtenerPrestamoPorNanYDescripcionAsync(NanSeleccionado, MaileguDeskribapena);
+
+                    // Llamar al método para obtener el saldo de manera asincrónica
+                    decimal? saldo = await datuBasea.ObtenerSaldoPorDescripcionAsync(NanSeleccionado, GordailuDeskribapena);
+
+                    // Asignar valores a las variables de préstamo, utilizando valores predeterminados si no hay datos
+                    string descripcionPrestamo = prestamo.Descripcion ?? "No disponible";
+                    decimal importePrestamo = prestamo.Importe;  // El valor ya no necesita el operador ? porque es un valor directo
+                    int plazoPrestamo = prestamo.Plazo;  // Lo mismo aquí
+                    DateTime fechaPrestamo = prestamo.Fecha == DateTime.MinValue ? DateTime.MinValue : prestamo.Fecha;
+
+                    // Asignar saldo por defecto si es nulo
+                    decimal saldoFinal = saldo ?? 0.0m;
+
+                    // Siempre navegar a la página Inprimatu, pasando los valores predeterminados si no hay préstamo o saldo
+                    await Navigation.PushAsync(new Inprimatu(
+                        descripcionPrestamo,
+                        importePrestamo,
+                        plazoPrestamo,
+                        fechaPrestamo,
+                        saldoFinal,
+                        GordailuDeskribapena,
+                        NanSeleccionado,
+                        IzenaAbizenaSeleccionado
+                    ));
+                }
+                catch (Exception ex)
+                {
+                    // Manejo de errores
+                    await DisplayAlert("Error", "Ocurrió un error al procesar los datos: " + ex.Message, "OK");
+                }
+            }
+            else
+            {
+                // Si no se selecciona un usuario, mostrar alerta pero no detener el flujo
+                await DisplayAlert("Atención", "Por favor, selecciona un usuario.", "OK");
+            }
+        }
+
+
+
+
+
+
+
+
         private async Task CargarListaMaileguak(string pkNan)
         {
             var listaMaileguak = await datuBasea.ObtenerPrestamoPorNANAsync(pkNan);
             LvDeskribapenaMailegua.ItemsSource = listaMaileguak;
         }
+
+
 
 
 
