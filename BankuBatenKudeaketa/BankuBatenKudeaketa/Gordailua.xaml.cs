@@ -2,63 +2,73 @@ namespace BankuBatenKudeaketa;
 
 public partial class Gordailua : ContentPage
 {
-    private string descripcion;
+    private string deskripzioa;
     private DatuBaseaMetodoak datuBasea;
 
-    public Gordailua( string descripcion, decimal importe)
+    public Gordailua(string deskripzioa, decimal zenbatekoa)
     {
         InitializeComponent();
         datuBasea = new DatuBaseaMetodoak();
-        this.descripcion = descripcion;
+        this.deskripzioa = deskripzioa;
 
-        // Cargar la descripción y el importe en los Entry
-        etyDeskribapena.Text = descripcion;
-        etySaldo.Text = importe.ToString("F2"); // Formateado a dos decimales
+        // Deskripzioa eta zenbatekoa Entry-etan kargatu
+        etyDeskribapena.Text = deskripzioa;
+        etySaldo.Text = zenbatekoa.ToString("F2"); // Bi hamartarretan formatatuta
     }
 
-    // Modificar el importe en la base de datos
-    private async void Modificar_Clicked(object sender, EventArgs e)
+
+    /// <summary>
+    /// Metodo honek saldoaren aldaketa kudeatzen du botoian klik egitean. Sartutako zenbatekoa baliozko zenbaki bat den egiaztatzen du,
+    /// eta deskripzioaren arabera datu-basean eguneratu egiten du. Operazioaren emaitza kontuan hartuta, arrakasta edo errore mezu bat erakusten du.
+    /// </summary>
+    private async void Aldatu_Clicked(object sender, EventArgs e)
     {
-        if (decimal.TryParse(etySaldo.Text, out decimal nuevoImporte))
+        if (decimal.TryParse(etySaldo.Text, out decimal berriZenbatekoa))
         {
-            bool exito = await datuBasea.ModificarImportePorDescripcionAsync(descripcion, nuevoImporte);
-            if (exito)
+            bool arrakasta = await datuBasea.AldatuZenbatekoaDeskribapenarenAraberaAsync(deskripzioa, berriZenbatekoa);
+            if (arrakasta)
             {
-                await DisplayAlert("Éxito", "El importe ha sido modificado.", "OK");
+                await DisplayAlert("Arrakasta", "Zenbatekoa aldatu da.", "OK");
             }
             else
             {
-                await DisplayAlert("Error", "No se pudo modificar el importe.", "OK");
+                await DisplayAlert("Errore", "Ez da posible zenbatekoa aldatzea.", "OK");
             }
         }
         else
         {
-            await DisplayAlert("Error", "Ingrese un importe válido.", "OK");
+            await DisplayAlert("Errore", "Mesedez, sartu zenbateko baliodun bat.", "OK");
         }
     }
 
-    // Eliminar el registro de la base de datos
-    private async void Eliminar_Clicked(object sender, EventArgs e)
+    /// <summary>
+    /// Metodo honek gordailu bat ezabatzeko prozesua kudeatzen du. Erabiltzaileari baieztapena eskatzen dio lehenik,
+    /// eta baietz esaten badu, datu-basean gordailua ezabatzen du. Prozesuaren emaitza kontuan hartuta, arrakasta edo errore mezu bat erakusten da.
+    /// </summary>
+    private async void Ezabatu_Clicked(object sender, EventArgs e)
     {
-        bool confirmacion = await DisplayAlert("Confirmación", "¿Estás seguro de que deseas eliminar este depósito?", "Sí", "No");
-        if (confirmacion)
+        bool baieztapena = await DisplayAlert("Baieztapena", "Ziur zaude gordailu hau ezabatu nahi duzula?", "Bai", "Ez");
+        if (baieztapena)
         {
-            bool exito = await datuBasea.EliminarDepositoPorDescripcionAsync(descripcion);
-            if (exito)
+            bool arrakasta = await datuBasea.EzabatuGordailuaDeskribapenarenAraberaAsync(deskripzioa);
+            if (arrakasta)
             {
-                await DisplayAlert("Éxito", "El depósito ha sido eliminado.", "OK");
-                await Navigation.PopAsync(); // Cerrar la ventana después de eliminar
+                await DisplayAlert("Arrakasta", "Gordailua ondo ezabatu da.", "OK");
+                await Navigation.PopAsync(); // Leihoa itxi ezabatzean
             }
             else
             {
-                await DisplayAlert("Error", "No se pudo eliminar el depósito.", "OK");
+                await DisplayAlert("Errore", "Ez da posible gordailua ezabatzea.", "OK");
             }
         }
     }
 
-    // Cerrar la ventana
-    private async void Cerrar_Clicked(object sender, EventArgs e)
+    /// <summary>
+    /// Metodo honek orain dagoen leihoa itxiko du, erabiltzaileri aurreko pantailara bueltatzeko aukera emanez.
+    /// </summary>
+    private async void Itxi_Clicked(object sender, EventArgs e)
     {
         await Navigation.PopAsync();
     }
+
 }

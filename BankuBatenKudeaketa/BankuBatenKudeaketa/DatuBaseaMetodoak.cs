@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 
@@ -6,10 +7,17 @@ namespace BankuBatenKudeaketa
 {
     class DatuBaseaMetodoak
     {
+
         private readonly string connectionString = "Server=localhost;Port=3306;Database=bankubatenkudeaketa;User Id=root;Password=mysql;";
 
-        // Método para conectar a la base de datos y confirmar la conexión
-        public async Task<string> ConectarBaseDatosAsync()
+        /// <summary>
+        /// Datu-base lokalarekin konexioa egiteko metodoa.
+        /// </summary>
+        /// <returns>
+        /// Konexioa lortu bada, datu-basearen eta zerbitzariaren izena adierazten duen mezua.
+        /// Errorea gertatuz gero, errorearen mezua itzultzen du.
+        /// </returns>
+        public async Task<string> KonexioaEginDatuBasearekinAsync()
         {
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -28,10 +36,22 @@ namespace BankuBatenKudeaketa
             }
         }
 
-        // Método que devuelve el número de clientes en la tabla 'bezeroak'
+
+
+        // Bezero zatia
+
+
+
+        /// <summary>
+        /// Datu-basean dauden bezeroen kopurua lortzen duen metodoa.
+        /// </summary>
+        /// <returns>
+        /// Bezeroen kopuru osoa zenbakitan itzultzen du. 
+        /// Errorea gertatuz gero, 0 itzuliko du.
+        /// </returns>
         public int LortuBezeroKopurua()
         {
-            int clienteCount = 0;
+            int bezeroKopurua = 0;
             string query = "SELECT COUNT(*) FROM bezeroak;";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
@@ -41,25 +61,36 @@ namespace BankuBatenKudeaketa
                 try
                 {
                     connection.Open();
-                    clienteCount = Convert.ToInt32(command.ExecuteScalar());
+                    bezeroKopurua = Convert.ToInt32(command.ExecuteScalar());
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Error: " + ex.Message);
+                    Console.WriteLine("Errorea: " + ex.Message);
                 }
             }
 
-            return clienteCount;
+            return bezeroKopurua;
         }
 
-        public async Task<(string NAN, string Nombre)> ObtenerClientePorLineaAsync(int linea)
+
+        /// <summary>
+        /// Datu-baseko lerro jakin batean dagoen bezeroaren NAN eta izena lortzen duen metodoa.
+        /// </summary>
+        /// <param name="lerroa">
+        /// Lerro zenbakia (1-indizekoa) bezeroa lortzeko.
+        /// </param>
+        /// <returns>
+        /// NAN eta izena duen tupla bat itzultzen du. 
+        /// Lerro horretan bezeroa aurkitzen ez bada edo errorea gertatzen bada, (null, null) itzultzen du.
+        /// </returns>
+        public async Task<(string NAN, string Izena)> LortuBezeroaLerroarenAraberaAsync(int lerroa)
         {
-            string query = "SELECT NAN, Izena FROM bezeroak LIMIT 1 OFFSET @linea";
+            string query = "SELECT NAN, Izena FROM bezeroak LIMIT 1 OFFSET @lerroa";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 MySqlCommand command = new MySqlCommand(query, connection);
-                command.Parameters.AddWithValue("@linea", linea - 1); // Ajustar para que la línea sea 0-indexada
+                command.Parameters.AddWithValue("@lerroa", lerroa - 1); 
 
                 try
                 {
@@ -69,104 +100,159 @@ namespace BankuBatenKudeaketa
                         if (await reader.ReadAsync())
                         {
                             string nan = reader["NAN"].ToString();
-                            string nombre = reader["Izena"].ToString();
-                            return (nan, nombre);
+                            string izena = reader["Izena"].ToString();
+                            return (nan, izena);
                         }
                         else
                         {
-                            return (null, null);  // Si no se encuentra el cliente en esa línea
+                            return (null, null);  
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Error: " + ex.Message);
+                    Console.WriteLine("Errorea: " + ex.Message);
                     return (null, null);
                 }
             }
         }
 
-        public async Task<bool> InsertarClienteAsync(string nan, string nombre)
+
+        /// <summary>
+        /// Bezero berri bat datu-basean txertatzen duen metodoa.
+        /// </summary>
+        /// <param name="nan">
+        /// Bezeroaren NAN-a (Nortasun Agiri Nazionala).
+        /// </param>
+        /// <param name="izena">
+        /// Bezeroaren izena.
+        /// </param>
+        /// <returns>
+        /// Txertaketa arrakastatsua izan bada, true itzultzen du.
+        /// Errorea gertatu bada, false itzultzen du.
+        /// </returns>
+        public async Task<bool> TxertatuBezeroaAsync(string nan, string izena)
         {
-            string query = "INSERT INTO bezeroak (NAN, Izena) VALUES (@nan, @nombre);";
+            string query = "INSERT INTO bezeroak (NAN, Izena) VALUES (@nan, @izena);";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 MySqlCommand command = new MySqlCommand(query, connection);
                 command.Parameters.AddWithValue("@nan", nan);
-                command.Parameters.AddWithValue("@nombre", nombre);
+                command.Parameters.AddWithValue("@izena", izena);
 
                 try
                 {
                     await connection.OpenAsync();
-                    await command.ExecuteNonQueryAsync();  // Ejecuta el comando INSERT
-                    return true;  // Si todo va bien, devolver verdadero
+                    await command.ExecuteNonQueryAsync();  
+                    return true;  
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Error al insertar cliente: " + ex.Message);
-                    return false;  // Si ocurre algún error, devolver falso
+                    Console.WriteLine("Errorea bezeroa txertatzean: " + ex.Message);
+                    return false;  
                 }
             }
         }
-        // Método para eliminar un cliente de la base de datos
-        public async Task<bool> EliminarClienteAsync(string nan, string nombre)
+
+
+        /// <summary>
+        /// Zehaztutako NAN eta izena duen bezeroa datu-basetik ezabatzen duen metodoa.
+        /// </summary>
+        /// <param name="nan">
+        /// Ezabatu nahi den bezeroaren NAN-a.
+        /// </param>
+        /// <param name="izena">
+        /// Ezabatu nahi den bezeroaren izena.
+        /// </param>
+        /// <returns>
+        /// Bezeroa arrakastaz ezabatu bada, true itzultzen du.
+        /// Errorea gertatu bada edo bezeroa ez bada aurkitu, false itzultzen du.
+        /// </returns>
+        public async Task<bool> EzabatuBezeroaAsync(string nan, string izena)
         {
-            string query = "DELETE FROM bezeroak WHERE NAN = @nan AND Izena = @nombre;";
+            string query = "DELETE FROM bezeroak WHERE NAN = @nan AND Izena = @izena;";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 MySqlCommand command = new MySqlCommand(query, connection);
                 command.Parameters.AddWithValue("@nan", nan);
-                command.Parameters.AddWithValue("@nombre", nombre);
+                command.Parameters.AddWithValue("@izena", izena);
 
                 try
                 {
                     await connection.OpenAsync();
-                    int filasAfectadas = await command.ExecuteNonQueryAsync();  // Ejecuta el comando DELETE
+                    int lerroakKaltetuta = await command.ExecuteNonQueryAsync();  
 
-                    // Si se eliminó al menos una fila, la eliminación fue exitosa
-                    return filasAfectadas > 0;
+                    
+                    return lerroakKaltetuta > 0;
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Error al eliminar cliente: " + ex.Message);
-                    return false;  // Si ocurre algún error, devolver falso
+                    Console.WriteLine("Errorea bezeroa ezabatzean: " + ex.Message);
+                    return false;  
                 }
             }
         }
 
-        public async Task<bool> ActualizarClienteAsync(string nan, string nombre)
+
+        /// <summary>
+        /// Zehaztutako NAN bateko bezeroaren izena eguneratzen duen metodoa.
+        /// </summary>
+        /// <param name="nan">
+        /// Eguneratu nahi den bezeroaren NAN-a.
+        /// </param>
+        /// <param name="izena">
+        /// Bezeroaren eguneratutako izena.
+        /// </param>
+        /// <returns>
+        /// Bezeroa arrakastaz eguneratu bada, true itzultzen du.
+        /// Errorea gertatu bada edo bezeroaren NAN-a ez bada aurkitu, false itzultzen du.
+        /// </returns>
+        public async Task<bool> EguneratuBezeroaAsync(string nan, string izena)
         {
-            string query = "UPDATE bezeroak SET Izena = @nombre WHERE NAN = @nan;";
+            string query = "UPDATE bezeroak SET Izena = @izena WHERE NAN = @nan;";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 MySqlCommand command = new MySqlCommand(query, connection);
                 command.Parameters.AddWithValue("@nan", nan);
-                command.Parameters.AddWithValue("@nombre", nombre);
+                command.Parameters.AddWithValue("@izena", izena);
 
                 try
                 {
                     await connection.OpenAsync();
-                    int filasAfectadas = await command.ExecuteNonQueryAsync();  // Ejecuta el comando UPDATE
+                    int lerroakKaltetuta = await command.ExecuteNonQueryAsync();  
 
-                    // Si se actualizó al menos una fila, la actualización fue exitosa
-                    return filasAfectadas > 0;
+                    
+                    return lerroakKaltetuta > 0;
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Error al actualizar cliente: " + ex.Message);
-                    return false;  // Si ocurre algún error, devolver falso
+                    Console.WriteLine("Errorea bezeroa eguneratzean: " + ex.Message);
+                    return false; 
                 }
             }
         }
 
-        public async Task<List<string>> ObtenerTodosLosNANAsync()
-        {
-            string query = "SELECT NAN FROM bezeroak;";  // Aquí obtenemos solo el NAN
 
-            List<string> nanList = new List<string>();
+
+        // Kontuen kudeaketa zatia
+
+
+
+        /// <summary>
+        /// Datu-baseko bezero guztiak eta haien NANak jasotzen dituen metodoa.
+        /// </summary>
+        /// <returns>
+        /// Bezero guztien NANak dituen zerrenda bat itzultzen du.
+        /// Errorea gertatzen bada, zerrenda hutsa itzultzen du.
+        /// </returns>
+        public async Task<List<string>> LortuNanGuztiakAsync()
+        {
+            string query = "SELECT NAN FROM bezeroak;";  
+
+            List<string> nanZerrenda = new List<string>();
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -174,26 +260,37 @@ namespace BankuBatenKudeaketa
 
                 try
                 {
-                    await connection.OpenAsync();  // Asegurarse de abrir la conexión de forma asincrónica
+                    await connection.OpenAsync();  
                     using (var reader = await command.ExecuteReaderAsync())
                     {
-                        while (await reader.ReadAsync())  // Leer los registros
+                        while (await reader.ReadAsync())  
                         {
-                            string nan = reader["NAN"].ToString();  // Obtener el NAN
-                            nanList.Add(nan);  // Añadir el NAN a la lista
+                            string nan = reader["NAN"].ToString();  
+                            nanZerrenda.Add(nan);  
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Error al obtener los NAN: " + ex.Message);
+                    Console.WriteLine("Errorea NANak lortzean: " + ex.Message);
                 }
             }
 
-            return nanList;  // Retornar la lista de NANs
+            return nanZerrenda;  
         }
 
-        public async Task<(string NAN, string Nombre)> ObtenerClientePorNANAsync(string nan)
+
+        /// <summary>
+        /// Zehaztutako NAN-aren arabera bezeroaren NAN eta izena lortzen dituen metodoa.
+        /// </summary>
+        /// <param name="nan">
+        /// Lortu nahi den bezeroaren NAN-a.
+        /// </param>
+        /// <returns>
+        /// Bezeroaren NAN eta izena dituen tupla bat itzultzen du.
+        /// Bezerorik aurkitzen ez bada edo errore bat gertatzen bada, (null, null) itzultzen du.
+        /// </returns>
+        public async Task<(string NAN, string Izena)> LortuBezeroaNanarenAraberaAsync(string nan)
         {
             string query = "SELECT NAN, Izena FROM bezeroak WHERE NAN = @nan LIMIT 1";
 
@@ -209,28 +306,39 @@ namespace BankuBatenKudeaketa
                     {
                         if (await reader.ReadAsync())
                         {
-                            string nombre = reader["Izena"].ToString();
-                            return (nan, nombre);  // Retorna el NAN y el nombre
+                            string izena = reader["Izena"].ToString();
+                            return (nan, izena);  
                         }
                         else
                         {
-                            return (null, null);  // Si no se encuentra el cliente
+                            return (null, null);  
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Error al obtener cliente por NAN: " + ex.Message);
-                    return (null, null);  // Si ocurre algún error, devuelve null
+                    Console.WriteLine("Errorea NANaren arabera bezeroa lortzean: " + ex.Message);
+                    return (null, null);  
                 }
             }
         }
 
-        public async Task<List<string>> ObtenerCuentasPorNANAsync(string nan)
-        {
-            string query = "SELECT Deskripzioa FROM gordailuak WHERE Bezeroak_NAN = @nan;";  // Ajusta la consulta según la estructura de tu base de datos
 
-            List<string> cuentasList = new List<string>();
+        /// <summary>
+        /// Zehaztutako NAN-aren arabera bezeroari dagozkion kontuen deskripzioak jasotzen dituen metodoa.
+        /// </summary>
+        /// <param name="nan">
+        /// Lortu nahi den bezeroaren NAN-a.
+        /// </param>
+        /// <returns>
+        /// Bezeroaren kontu guztiak dituen deskripzioen zerrenda bat itzultzen du.
+        /// Errorea gertatzen bada, zerrenda hutsa itzultzen du.
+        /// </returns>
+        public async Task<List<string>> LortuKontuakNanarenAraberaAsync(string nan)
+        {
+            string query = "SELECT Deskripzioa FROM gordailuak WHERE Bezeroak_NAN = @nan;";  
+
+            List<string> kontuZerrenda = new List<string>();
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -239,30 +347,40 @@ namespace BankuBatenKudeaketa
 
                 try
                 {
-                    await connection.OpenAsync();  // Asegurarse de abrir la conexión de forma asincrónica
+                    await connection.OpenAsync();  
                     using (var reader = await command.ExecuteReaderAsync())
                     {
-                        while (await reader.ReadAsync())  // Leer los registros
+                        while (await reader.ReadAsync())  
                         {
-                            string descripcionCuenta = reader["Deskripzioa"].ToString();  // Obtener la descripción de la cuenta
-                            cuentasList.Add(descripcionCuenta);  // Añadir la cuenta a la lista
+                            string deskripzioa = reader["Deskripzioa"].ToString();  
+                            kontuZerrenda.Add(deskripzioa);  
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Error al obtener cuentas: " + ex.Message);
+                    Console.WriteLine("Errorea kontuak lortzean: " + ex.Message);
                 }
             }
 
-            return cuentasList;  // Retornar la lista de cuentas
+            return kontuZerrenda;  
         }
 
-        public async Task<List<string>> ObtenerPrestamoPorNANAsync(string nan)
-        {
-            string query = "SELECT Deskripzioa FROM maileguak WHERE Bezeroak_NAN = @nan;";  // Ajusta la consulta según la estructura de tu base de datos
 
-            List<string> prestamoList = new List<string>();
+        /// <summary>
+        /// Bezeroaren NAN-a erabiliz, haren maileguen deskripzioak lortzen dituen metodoa.
+        /// </summary>
+        /// <param name="nan">
+        /// Bezeroaren NAN, maileguak bilatzeko erabiltzen den identifikazioa.
+        /// </param>
+        /// <returns>
+        /// Bezeroaren maileguen deskripzioak dituen zerrenda bat itzultzen du. 
+        /// Maileguak aurkitzen ez badira, zerrenda hutsa itzultzen du.
+        /// </returns>
+        public async Task<List<string>> LortuMaileguakNanarenAraberaAsync(string nan)
+        {
+            string query = "SELECT Deskripzioa FROM maileguak WHERE Bezeroak_NAN = @nan;";  
+            List<string> maileguZerrenda = new List<string>();
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -271,172 +389,201 @@ namespace BankuBatenKudeaketa
 
                 try
                 {
-                    await connection.OpenAsync();  // Asegurarse de abrir la conexión de forma asincrónica
+                    await connection.OpenAsync();  
                     using (var reader = await command.ExecuteReaderAsync())
                     {
-                        while (await reader.ReadAsync())  // Leer los registros
+                        while (await reader.ReadAsync())  
                         {
-                            string descripcionCuenta = reader["Deskripzioa"].ToString();  // Obtener la descripción de la cuenta
-                            prestamoList.Add(descripcionCuenta);  // Añadir la cuenta a la lista
+                            string deskripzioa = reader["Deskripzioa"].ToString();  
+                            maileguZerrenda.Add(deskripzioa);  
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Error al obtener cuentas: " + ex.Message);
+                    Console.WriteLine("Errorea maileguak lortzean: " + ex.Message);
                 }
             }
 
-            return prestamoList;  // Retornar la lista de cuentas
+            return maileguZerrenda;  
         }
 
-        public async Task<decimal?> ObtenerSaldoPorDescripcionAsync(string nan, string descripcion)
+
+        /// <summary>
+        /// Zehaztutako NAN-aren arabera bezeroari dagozkion maileguen deskripzioak jasotzen dituen metodoa.
+        /// </summary>
+        /// <param name="nan">
+        /// Lortu nahi den bezeroaren NAN-a.
+        /// </param>
+        /// <returns>
+        /// Bezeroaren mailegu guztiak dituen deskripzioen zerrenda bat itzultzen du.
+        /// Errorea gertatzen bada, zerrenda hutsa itzultzen du.
+        /// </returns>
+        public async Task<decimal?> LortuSaldoaDeskripzioarenAraberaAsync(string nan, string deskripzioa)
         {
-            string query = "SELECT Saldo FROM gordailuak WHERE Bezeroak_NAN = @PkNan AND  Deskripzioa = @descripcion;";
+            string query = "SELECT Saldo FROM gordailuak WHERE Bezeroak_NAN = @PkNan AND Deskripzioa = @deskripzioa;";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 MySqlCommand command = new MySqlCommand(query, connection);
                 command.Parameters.AddWithValue("@PkNan", nan);
-                command.Parameters.AddWithValue("@descripcion", descripcion);
+                command.Parameters.AddWithValue("@deskripzioa", deskripzioa);
 
                 try
                 {
                     await connection.OpenAsync();
                     var result = await command.ExecuteScalarAsync();
-
-                    // Convertir el resultado a decimal o null si no se encuentra
                     return result != null ? Convert.ToDecimal(result) : (decimal?)null;
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Error al obtener el importe: " + ex.Message);
+                    Console.WriteLine("Errorea saldoa lortzean: " + ex.Message);
                     return null;
                 }
             }
         }
 
 
-        public async Task<bool> EliminarMaileguaPorDescripcionAsync(string descripcion)
+        /// <summary>
+        /// Maileguaren deskripzioaren arabera mailegu bat ezabatzen duen metodoa.
+        /// </summary>
+        /// <param name="deskripzioa">
+        /// Ezabatu nahi den maileguaren deskripzioa.
+        /// </param>
+        /// <returns>
+        /// Deskripzioa duen mailegua ezabatzen den edo ez adierazten duen balio boolearra itzultzen du.
+        /// </returns>
+        public async Task<bool> EzabatuMaileguaDeskripzioarenAraberaAsync(string deskripzioa)
         {
             try
             {
                 using (var connection = new MySqlConnection(connectionString))
                 {
                     await connection.OpenAsync();
-                    string query = "DELETE FROM Maileguak WHERE Deskripzioa = @descripcion";
+                    string query = "DELETE FROM maileguak WHERE Deskripzioa = @deskripzioa";
 
                     using (var command = new MySqlCommand(query, connection))
                     {
-                        command.Parameters.AddWithValue("@descripcion", descripcion);
+                        command.Parameters.AddWithValue("@deskripzioa", deskripzioa);
 
-                        int rowsAffected = await command.ExecuteNonQueryAsync();
-                        return rowsAffected > 0; // Si se eliminó al menos una fila, devolvemos true
+                        int eragindakoErrenkadak = await command.ExecuteNonQueryAsync();
+                        return eragindakoErrenkadak > 0; 
                     }
                 }
             }
             catch (MySqlException ex)
             {
-                // Manejo de errores de MySQL
-                Console.WriteLine("Error de MySQL: " + ex.Message);
+                Console.WriteLine("MySQL errorea: " + ex.Message);
                 return false;
             }
         }
 
 
-        public async Task<List<string>> ObtenerListaMaileguakAsync()
+        
+        // Gordailu zatia
+
+
+
+        /// <summary>
+        /// Deskribapenaren arabera gordailu baten zenbatekoa aldatzen duen metodoa.
+        /// </summary>
+        /// <param name="deskribapena">
+        /// Aldatu nahi den gordailuaren deskripzioa.
+        /// </param>
+        /// <param name="zenbatekoBerria">
+        /// Gordailuaren zenbateko berriaren balioa.
+        /// </param>
+        /// <returns>
+        /// Gordailua egoki eguneratzen bada, `true` itzultzen du. 
+        /// Akatsen bat gertatzen bada, `false` itzultzen du.
+        /// </returns>
+        public async Task<bool> AldatuZenbatekoaDeskribapenarenAraberaAsync(string deskribapena, decimal zenbatekoBerria)
         {
-            List<string> listaMaileguak = new List<string>();
-            string query = "SELECT Deskripzioa FROM maileguak;";
+            string query = "UPDATE gordailuak SET Importe = @importe WHERE Deskribapena = @deskribapena;";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 MySqlCommand command = new MySqlCommand(query, connection);
+                command.Parameters.AddWithValue("@importe", zenbatekoBerria);
+                command.Parameters.AddWithValue("@deskribapena", deskribapena);
 
                 try
                 {
                     await connection.OpenAsync();
-                    using (MySqlDataReader reader = (MySqlDataReader)await command.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            listaMaileguak.Add(reader.GetString(0)); // Suponiendo que la columna Deskribapena es la primera
-                        }
-                    }
+                    int eragindakoErrenkadak = await command.ExecuteNonQueryAsync();
+                    return eragindakoErrenkadak > 0;
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Error al obtener los datos: " + ex.Message);
-                }
-            }
-
-            return listaMaileguak;
-        }
-
-
-
-
-
-
-
-
-
-        public async Task<bool> ModificarImportePorDescripcionAsync(string descripcion, decimal nuevoImporte)
-        {
-            string query = "UPDATE deposituak SET Importe = @importe WHERE Deskribapena = @descripcion;";
-
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
-            {
-                MySqlCommand command = new MySqlCommand(query, connection);
-                command.Parameters.AddWithValue("@importe", nuevoImporte);
-                command.Parameters.AddWithValue("@descripcion", descripcion);
-
-                try
-                {
-                    await connection.OpenAsync();
-                    int rowsAffected = await command.ExecuteNonQueryAsync();
-                    return rowsAffected > 0;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Error al modificar el importe: " + ex.Message);
+                    Console.WriteLine("Errorea zenbatekoa aldatzean: " + ex.Message);
                     return false;
                 }
             }
         }
 
-        public async Task<bool> EliminarDepositoPorDescripcionAsync(string descripcion)
+        /// <summary>
+        /// Deskribapenaren arabera gordailu bat ezabatzen duen metodoa.
+        /// </summary>
+        /// <param name="deskribapena">
+        /// Ezabatu nahi den gordailuaren deskripzioa.
+        /// </param>
+        /// <returns>
+        /// Gordailua egoki ezabatzen bada, `true` itzultzen du. 
+        /// Akatsen bat gertatzen bada, `false` itzultzen du.
+        /// </returns>
+        public async Task<bool> EzabatuGordailuaDeskribapenarenAraberaAsync(string deskribapena)
         {
-            string query = "DELETE FROM deposituak WHERE Deskribapena = @descripcion;";
+            string query = "DELETE FROM gordailuak WHERE Deskribapena = @deskribapena;";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 MySqlCommand command = new MySqlCommand(query, connection);
-                command.Parameters.AddWithValue("@descripcion", descripcion);
+                command.Parameters.AddWithValue("@deskribapena", deskribapena);
 
                 try
                 {
                     await connection.OpenAsync();
-                    int rowsAffected = await command.ExecuteNonQueryAsync();
-                    return rowsAffected > 0;
+                    int eragindakoErrenkadak = await command.ExecuteNonQueryAsync();
+                    return eragindakoErrenkadak > 0;
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Error al eliminar el depósito: " + ex.Message);
+                    Console.WriteLine("Errorea gordailua ezabatzean: " + ex.Message);
                     return false;
                 }
             }
         }
 
-        public async Task<(string Descripcion, decimal Importe, int Plazo, DateTime Fecha)> ObtenerPrestamoPorNanYDescripcionAsync(string pkNan, string descripcion)
+
+
+        // Imprimatu zatia
+
+
+
+        /// <summary>
+        /// Bezeroaren NAN eta deskribapenaren arabera maileguaren datuak lortzen dituen metodoa.
+        /// </summary>
+        /// <param name="pkNan">
+        /// Mailegua duen bezeroaren NAN.
+        /// </param>
+        /// <param name="deskribapena">
+        /// Lortu nahi den maileguaren deskripzioa.
+        /// </param>
+        /// <returns>
+        /// Maileguaren deskribapena, zenbatekoa, epea (hilabeteetan), eta hasiera data itzultzen ditu.
+        /// Mailegua ez badago, `null`, `0`, `0` eta `DateTime.MinValue` itzultzen ditu.
+        /// </returns>
+        public async Task<(string Deskribapena, decimal Zenbatekoa, int Epea, DateTime Data)> LortuMaileguaNanEtaDeskribapenarenAraberaAsync(string pkNan, string deskribapena)
         {
-            string query = @"SELECT Deskripzioa, Kantitatea, EpeHilabete, HasieraData FROM Maileguak WHERE Bezeroak_NAN = @PkNan AND Deskripzioa = @Descripcion";
+            string query = @"SELECT Deskripzioa, Kantitatea, EpeHilabete, HasieraData 
+                     FROM Maileguak 
+                     WHERE Bezeroak_NAN = @PkNan AND Deskripzioa = @Deskribapena";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 MySqlCommand command = new MySqlCommand(query, connection);
                 command.Parameters.AddWithValue("@PkNan", pkNan);
-                command.Parameters.AddWithValue("@Descripcion", descripcion);
+                command.Parameters.AddWithValue("@Deskribapena", deskribapena);
 
                 try
                 {
@@ -445,30 +592,26 @@ namespace BankuBatenKudeaketa
                     {
                         if (await reader.ReadAsync())
                         {
-                            // Verificar si los valores no son DBNull antes de asignarlos
-                            string descripcionResult = reader["Deskripzioa"] != DBNull.Value ? reader["Deskripzioa"].ToString() : null;
-                            decimal importeResult = reader["Kantitatea"] != DBNull.Value ? reader.GetDecimal("Kantitatea") : 0.0m;
-                            int plazoResult = reader["EpeHilabete"] != DBNull.Value ? reader.GetInt32("EpeHilabete") : 0;
-                            DateTime fechaResult = reader["HasieraData"] != DBNull.Value ? reader.GetDateTime("HasieraData") : DateTime.MinValue;
+                            
+                            string deskribapenaEmaitza = reader["Deskripzioa"] != DBNull.Value ? reader["Deskripzioa"].ToString() : null;
+                            decimal zenbatekoaEmaitza = reader["Kantitatea"] != DBNull.Value ? reader.GetDecimal("Kantitatea") : 0.0m;
+                            int epeaEmaitza = reader["EpeHilabete"] != DBNull.Value ? reader.GetInt32("EpeHilabete") : 0;
+                            DateTime dataEmaitza = reader["HasieraData"] != DBNull.Value ? reader.GetDateTime("HasieraData") : DateTime.MinValue;
 
-                            return (descripcionResult, importeResult, plazoResult, fechaResult);
+                            return (deskribapenaEmaitza, zenbatekoaEmaitza, epeaEmaitza, dataEmaitza);
                         }
                         else
                         {
-                            return (null, 0, 0, DateTime.MinValue); // No se encontró un préstamo
+                            return (null, 0, 0, DateTime.MinValue); 
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Error al obtener el préstamo: " + ex.Message);
+                    Console.WriteLine("Errorea mailegua lortzean: " + ex.Message);
                     return (null, 0, 0, DateTime.MinValue);
                 }
             }
         }
-
-
-
-
     }
 }

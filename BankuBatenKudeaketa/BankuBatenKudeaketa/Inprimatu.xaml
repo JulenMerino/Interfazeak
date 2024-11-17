@@ -4,8 +4,9 @@
              x:Class="BankuBatenKudeaketa.Inprimatu">
 
     <Grid>
+        <!-- Grid-a bi lerro eta hiru zutabe ditu -->
         <Grid.RowDefinitions>
-            <RowDefinition Height="100"/>
+            <RowDefinition Height="100"/> <!-- Lehenengo lerroa 100 unitatetan definituta -->
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -14,17 +15,20 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
+        <!-- Lehenengo lerroko, bigarren zutabean dauden etiketak (NAN eta Izena) -->
         <HorizontalStackLayout Grid.Column="1" Grid.Row="0" HorizontalOptions="CenterAndExpand" VerticalOptions="End">
             <Label x:Name="lblNAN" Text="NAN:" Margin="20" FontSize="Header"/>
             <Label x:Name="lblIzena" Text="Izena:" Margin="20" FontSize="Header"/>
         </HorizontalStackLayout>
 
+        <!-- Bigarren lerroko, lehenengo zutabean, Gordailuaren informazioa -->
         <VerticalStackLayout Grid.Column="0" Grid.Row="1" HorizontalOptions="CenterAndExpand">
             <Label x:Name="lblGordailua" Text="Gordailua" FontSize="Title" Margin="20"/>
             <Label x:Name="lblGordailuDeskribapena" Text="Kaixo" FontSize="Subtitle" Margin="0,0,0,10"/>
             <Label x:Name="lblGordailuSaldo" Text="Kaixo" FontSize="Subtitle" Margin="0,0,0,10"/>
         </VerticalStackLayout>
 
+        <!-- Bigarren lerroko, hirugarren zutabean, Maileguaren informazioa -->
         <VerticalStackLayout Grid.Column="2" Grid.Row="1" HorizontalOptions="CenterAndExpand">
             <Label x:Name="lblMailegua" Text="Mailegua" FontSize="Title" Margin="20"/>
             <Label x:Name="lblMaileguDeskribapena" Text="Kaixo" FontSize="Subtitle" Margin="0,0,0,10"/>

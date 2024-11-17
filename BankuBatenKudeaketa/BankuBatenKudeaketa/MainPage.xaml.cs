@@ -14,434 +14,444 @@ namespace BankuBatenKudeaketa
         {
             InitializeComponent();
 
-            // Inicializa la instancia de DatuBaseaMetodoak con el connection string
             datuBasea = new DatuBaseaMetodoak();
 
-            // Llama al método para actualizar el Label con el número de clientes
-            ActualizarLabelClienteCount();
-            CargarPrimerCliente();
-            CargarNANs();
+            EguneratuLabelBezeroKopurua();
+            LehenengoBezeroaKargatu();
+            NANakKargatu();
         }
 
-        // Método para obtener el conteo de clientes y actualizar el Label
-        private async void ActualizarLabelClienteCount()
-        {
-            // Llamada asíncrona para evitar bloquear la interfaz de usuario
-            int cantidadClientes = await Task.Run(() => datuBasea.LortuBezeroKopurua());
 
-            // Actualiza el texto del Label en la interfaz de usuario
-            lblBezeroKopuraua.Text = $"de {cantidadClientes}";
+
+        // Bezero zatia
+
+
+
+        /// <summary>
+        /// Bezero kopurua datu basean lortzen duen eta lortutako balioa interfazearen etiketan
+        /// eguneratzen duen metodoa.
+        /// </summary>
+        private async void EguneratuLabelBezeroKopurua()
+        {
+            int bezeroKopurua = await Task.Run(() => datuBasea.LortuBezeroKopurua());
+
+            lblBezeroKopuraua.Text = $"de {bezeroKopurua}";
         }
 
-        // Método para cargar la información del primer cliente
-        private async void CargarPrimerCliente()
-        {
-            // Intentar obtener los datos del primer cliente
-            var (nan, nombre) = await datuBasea.ObtenerClientePorLineaAsync(1);
 
-            // Si el cliente se encuentra, actualizar los campos
-            if (nan != null && nombre != null)
+        /// <summary>
+        /// Lehenengo bezeroaren datuak lortzen ditu datu-baseatik eta eremuak eguneratzen ditu bezeroaren informazioarekin, 
+        /// aurkitu ezean eremuak garbitzen ditu.
+        /// </summary>
+        private async void LehenengoBezeroaKargatu()
+        {
+            var (nan, izena) = await datuBasea.LortuBezeroaLerroarenAraberaAsync(1);
+
+            if (nan != null && izena != null)
             {
-                etyBezeroa.Text = "1";  // Asegurarse de que el Entry muestre el número 1
+                etyBezeroa.Text = "1";  
                 etyNAN.Text = nan;
-                etyIzena.Text = nombre;
+                etyIzena.Text = izena;
             }
             else
             {
-                // Si no se encuentra el cliente, limpiar los campos
+
                 etyNAN.Text = "";
                 etyIzena.Text = "";
             }
         }
 
-        // Evento para el botón "Hurrengoa" (suma 1)
+
+        /// <summary>
+        /// Hurrengo bezeroaren datuak lortzen ditu eta eremuak eguneratzen ditu. Bezeroa ez badago, eremuak garbitzen ditu.
+        /// </summary>
         private async void BtnHurrengoa_Clicked(object sender, EventArgs e)
         {
-            int cantidadClientes = await Task.Run(() => datuBasea.LortuBezeroKopurua());
-            // Verificar que el texto ingresado sea un número entero
-            if (int.TryParse(etyBezeroa.Text, out int linea) && linea < cantidadClientes + 1)
+            int bezeroKopurua = await Task.Run(() => datuBasea.LortuBezeroKopurua());
+            if (int.TryParse(etyBezeroa.Text, out int lerroa) && lerroa < bezeroKopurua + 1)
             {
-                linea++;  // Incrementar el número
-                etyBezeroa.Text = linea.ToString();  // Actualizar el Entry
+                lerroa++;
+                etyBezeroa.Text = lerroa.ToString();
 
-                // Llamar al método para obtener el cliente de la nueva línea
-                var (nan, nombre) = await datuBasea.ObtenerClientePorLineaAsync(linea);
+                var (nan, izena) = await datuBasea.LortuBezeroaLerroarenAraberaAsync(lerroa);
 
-                // Si se encuentra el cliente, actualizar los campos
-                if (nan != null && nombre != null)
+                if (nan != null && izena != null)
                 {
                     etyNAN.Text = nan;
-                    etyIzena.Text = nombre;
+                    etyIzena.Text = izena;
                 }
                 else
                 {
-                    // Si no se encuentra el cliente, limpiar los campos
                     etyNAN.Text = "";
                     etyIzena.Text = "";
                 }
             }
         }
 
+
+        /// <summary>
+        /// Aurreko bezeroaren datuak lortzen ditu eta eremuak eguneratzen ditu. Bezeroa ez badago, eremuak garbitzen ditu.
+        /// </summary>
         private async void BtnAurrekoa_Clicked(object sender, EventArgs e)
         {
-            // Verificar que el texto ingresado sea un número entero
-            if (int.TryParse(etyBezeroa.Text, out int linea) && linea > 1)
+            if (int.TryParse(etyBezeroa.Text, out int lerroa) && lerroa > 1)
             {
-                linea--;  // Decrementar el número
-                etyBezeroa.Text = linea.ToString();  // Actualizar el Entry
+                lerroa--;  
+                etyBezeroa.Text = lerroa.ToString();  
 
-                // Llamar al método para obtener el cliente de la nueva línea
-                var (nan, nombre) = await datuBasea.ObtenerClientePorLineaAsync(linea);
+                var (nan, izena) = await datuBasea.LortuBezeroaLerroarenAraberaAsync(lerroa);
 
-                // Si se encuentra el cliente, actualizar los campos
-                if (nan != null && nombre != null)
+                if (nan != null && izena != null)
                 {
                     etyNAN.Text = nan;
-                    etyIzena.Text = nombre;
+                    etyIzena.Text = izena;
                 }
                 else
                 {
-                    // Si no se encuentra el cliente, limpiar los campos
                     etyNAN.Text = "";
                     etyIzena.Text = "";
                 }
             }
         }
 
+
+        /// <summary>
+        /// Bezero berria datu-basean gehitzen du. NAN eta izena sartu gabe badaude, errore-mezua erakusten du. 
+        /// Bezeroa ondo gehitzen bada, interfazea eguneratzen du eta mezu bat erakusten du.
+        /// </summary>
         private async void BtnGehitu_Clicked(object sender, EventArgs e)
         {
-            string nan = etyNAN.Text.Trim();  // Obtener NAN del Entry y quitar espacios
-            string nombre = etyIzena.Text.Trim();  // Obtener nombre del Entry y quitar espacios
+            string nan = etyNAN.Text.Trim();  
+            string izena = etyIzena.Text.Trim();  
 
-            // Verificar que el NAN y el nombre no estén vacíos
-            if (string.IsNullOrEmpty(nan) || string.IsNullOrEmpty(nombre))
+
+            if (string.IsNullOrEmpty(nan) || string.IsNullOrEmpty(izena))
             {
-                await DisplayAlert("Error", "Por favor, ingrese todos los datos.", "OK");
+                await DisplayAlert("Errore", "Mesedez, sartu datu guztiak.", "OK");
                 return;
             }
 
-            // Llamar al método para insertar el nuevo cliente
-            bool exito = await datuBasea.InsertarClienteAsync(nan, nombre);
+            bool arrakasta = await datuBasea.TxertatuBezeroaAsync(nan, izena);
 
-            if (exito)
+            if (arrakasta)
             {
-                await DisplayAlert("Éxito", "Cliente agregado correctamente.", "OK");
+                await DisplayAlert("Arrakasta", "Bezeroa ondo gehitu da.", "OK");
 
-                // Opcionalmente, podrías actualizar la interfaz con el nuevo cliente
-                ActualizarLabelClienteCount();  // Actualizar el número de clientes
-                CargarPrimerCliente();  // Opcional: cargar la información del primer cliente
+                EguneratuLabelBezeroKopurua();  
+                LehenengoBezeroaKargatu();  
             }
             else
             {
-                await DisplayAlert("Error", "Hubo un problema al agregar el cliente.", "OK");
+                await DisplayAlert("Errore", "Bezeroa gehitzeko arazo bat egon da.", "OK");
             }
         }
 
+
+        /// <summary>
+        /// Bezero bat datu-basean ezabatzen du. NAN eta izena sartu gabe badaude, errore-mezua erakusten du. 
+        /// Bezeroa ondo ezabatzen bada, interfazea eguneratzen du eta mezu bat erakusten du.
+        /// </summary>
         private async void BtnKendu_Clicked(object sender, EventArgs e)
         {
-            string nan = etyNAN.Text.Trim();  // Obtener NAN del Entry y quitar espacios
-            string nombre = etyIzena.Text.Trim();  // Obtener nombre del Entry y quitar espacios
+            string nan = etyNAN.Text.Trim();  
+            string izena = etyIzena.Text.Trim();  
 
-            // Verificar que el NAN y el nombre no estén vacíos
-            if (string.IsNullOrEmpty(nan) || string.IsNullOrEmpty(nombre))
+            if (string.IsNullOrEmpty(nan) || string.IsNullOrEmpty(izena))
             {
-                await DisplayAlert("Error", "Por favor, ingrese todos los datos.", "OK");
+                await DisplayAlert("Errore", "Mesedez, sartu datu guztiak.", "OK");
                 return;
             }
 
-            // Llamar al método para eliminar el cliente
-            bool exito = await datuBasea.EliminarClienteAsync(nan, nombre);
+            bool arrakasta = await datuBasea.EzabatuBezeroaAsync(nan, izena);
 
-            if (exito)
+            if (arrakasta)
             {
-                await DisplayAlert("Éxito", "Cliente eliminado correctamente.", "OK");
+                await DisplayAlert("Arrakasta", "Bezeroa ondo ezabatu da.", "OK");
 
-                // Opcionalmente, podrías actualizar la interfaz con la nueva cantidad de clientes
-                ActualizarLabelClienteCount();  // Actualizar el número de clientes
-                CargarPrimerCliente();  // Opcional: cargar la información del primer cliente
+                EguneratuLabelBezeroKopurua();  
+                LehenengoBezeroaKargatu();  
             }
             else
             {
-                await DisplayAlert("Error", "Hubo un problema al eliminar el cliente.", "OK");
+                await DisplayAlert("Errore", "Bezeroa ezabatzeko arazo bat egon da.", "OK");
             }
         }
 
+
+        /// <summary>
+        /// Bezero baten datuak eguneratzen ditu datu-basean. NAN eta izena sartu gabe badaude, errore-mezua erakusten du. 
+        /// Bezeroa ondo eguneratzen bada, interfazea eguneratzen du eta mezu bat erakusten du.
+        /// </summary>
         private async void BtnGorde_Clicked(object sender, EventArgs e)
         {
-            string nan = etyNAN.Text.Trim();  // Obtener NAN del Entry y quitar espacios
-            string nombre = etyIzena.Text.Trim();  // Obtener nombre del Entry y quitar espacios
+            string nan = etyNAN.Text.Trim();  
+            string izena = etyIzena.Text.Trim();  
 
-            // Verificar que el NAN y el nombre no estén vacíos
-            if (string.IsNullOrEmpty(nan) || string.IsNullOrEmpty(nombre))
+            if (string.IsNullOrEmpty(nan) || string.IsNullOrEmpty(izena))
             {
-                await DisplayAlert("Error", "Por favor, ingrese todos los datos.", "OK");
+                await DisplayAlert("Errore", "Mesedez, sartu datu guztiak.", "OK");
                 return;
             }
 
-            // Llamar al método para actualizar el cliente
-            bool exito = await datuBasea.ActualizarClienteAsync(nan, nombre);
+            bool arrakasta = await datuBasea.EguneratuBezeroaAsync(nan, izena);
 
-            if (exito)
+            if (arrakasta)
             {
-                await DisplayAlert("Éxito", "Cliente actualizado correctamente.", "OK");
+                await DisplayAlert("Arrakasta", "Bezeroa ondo eguneratu da.", "OK");
 
-                // Opcionalmente, podrías actualizar la interfaz con la nueva cantidad de clientes
-                ActualizarLabelClienteCount();  // Actualizar el número de clientes
-                CargarPrimerCliente();  // Opcional: cargar la información del primer cliente
+                EguneratuLabelBezeroKopurua();  
+                LehenengoBezeroaKargatu();  
             }
             else
             {
-                await DisplayAlert("Error", "Hubo un problema al actualizar el cliente.", "OK");
+                await DisplayAlert("Errore", "Bezeroa eguneratzeko arazo bat egon da.", "OK");
             }
         }
 
 
 
+        // Kontuen kudeaketa zatia
 
 
-        private async void CargarNANs()
+
+        /// <summary>
+        /// Datu-basean dauden NAN guztiak kargatzen ditu eta hauek Picker-aren elementu gisa erakusten ditu.
+        /// NAN zerrenda hutsik bada, errore-mezu bat erakusten du.
+        /// </summary>
+        private async void NANakKargatu()
         {
-            // Llamar al método para obtener todos los NAN de la base de datos
-            List<string> nanList = await datuBasea.ObtenerTodosLosNANAsync();
+            List<string> nanLista = await datuBasea.LortuNanGuztiakAsync();
 
-            // Limpiar el Picker antes de agregar nuevos elementos
             PkNAN.Items.Clear();
 
-            // Verificar si la lista de NAN no está vacía
-            if (nanList != null && nanList.Count > 0)
+            if (nanLista != null && nanLista.Count > 0)
             {
-                // Agregar cada NAN al Picker
-                foreach (var nan in nanList)
-                {
-                    PkNAN.Items.Add(nan);  // Añadimos el NAN al Picker
-                }
+                PkNAN.ItemsSource = nanLista;  
             }
             else
             {
-                await DisplayAlert("Error", "No se encontraron clientes.", "OK");
+                await DisplayAlert("Ezin izan da NAN zerrenda lortu", "Ez dago NAN daturik.", "OK");
             }
         }
 
+
+        /// <summary>
+        /// Picker-aren elementu bat hautatzean, aukeratutako NANaren arabera bezeroaren izena eta kontuak, 
+        /// baita maileguak ere kargatzen ditu. Bezeroa aurkitzen ez bada, errore-mezua erakusten du.
+        /// </summary>
         private async void PkNAN_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // Verificar que hay un item seleccionado
             if (PkNAN.SelectedIndex != -1)
             {
-                // Obtener el NAN seleccionado
                 string selectedNAN = PkNAN.SelectedItem.ToString();
 
-                // Llamar al método para obtener el nombre del cliente por el NAN
-                var (nan, nombre) = await datuBasea.ObtenerClientePorNANAsync(selectedNAN);
+                var (nan, izena) = await datuBasea.LortuBezeroaNanarenAraberaAsync(selectedNAN);
 
-                // Si el cliente se encuentra, actualizar el campo 'etyIzenaAbizena' con el nombre
-                if (nombre != null)
+                if (izena != null)
                 {
-                    EtyIzenaAbizena.Text = nombre;
+                    EtyIzenaAbizena.Text = izena;
                 }
                 else
                 {
-                    // Si no se encuentra el cliente, mostrar mensaje o dejar el campo vacío
                     EtyIzenaAbizena.Text = "";
-                    await DisplayAlert("Error", "Cliente no encontrado.", "OK");
+                    await DisplayAlert("Errore", "Bezeroa ez da aurkitu.", "OK");
                 }
 
-                List<string> cuentas = await datuBasea.ObtenerCuentasPorNANAsync(selectedNAN);
+                List<string> kontuak = await datuBasea.LortuKontuakNanarenAraberaAsync(selectedNAN);
 
-                // Limpiar la lista de cuentas en el ListView
                 LvDeskribapenaDepositua.ItemsSource = null;
 
-                // Verificar si se encontraron cuentas
-                if (cuentas != null && cuentas.Count > 0)
+                if (kontuak != null && kontuak.Count > 0)
                 {
-                    // Asignar la lista de cuentas al ListView
-                    LvDeskribapenaDepositua.ItemsSource = cuentas;
+                    LvDeskribapenaDepositua.ItemsSource = kontuak;
                 }
                 else
                 {
-                    // Mostrar un mensaje si no se encontraron cuentas
-                    await DisplayAlert("No se encontraron cuentas", "Este cliente no tiene cuentas asociadas.", "OK");
+                    await DisplayAlert("Ez dira kontuak aurkitu", "Bezero honek ez du konturik.", "OK");
                 }
 
-                List<string> prestamo = await datuBasea.ObtenerPrestamoPorNANAsync(selectedNAN);
+                List<string> maileguak = await datuBasea.LortuMaileguakNanarenAraberaAsync(selectedNAN);
 
-                // Limpiar la lista de cuentas en el ListView
                 LvDeskribapenaMailegua.ItemsSource = null;
 
-                // Verificar si se encontraron cuentas
-                if (prestamo != null && prestamo.Count > 0)
+                if (maileguak != null && maileguak.Count > 0)
                 {
-                    // Asignar la lista de cuentas al ListView
-                    LvDeskribapenaMailegua.ItemsSource = prestamo;
+                    LvDeskribapenaMailegua.ItemsSource = maileguak;
                 }
                 else
                 {
-                    // Mostrar un mensaje si no se encontraron cuentas
-                    await DisplayAlert("No se encontraron prestamos", "Este cliente no tiene prestamos asociados.", "OK");
+                    await DisplayAlert("Ez dira maileguak aurkitu", "Bezero honek ez du mailegurik.", "OK");
                 }
             }
         }
 
+
+        /// <summary>
+        /// ListView-aren elementu bat hautatzen denean, "Aldatu Depositua" botoia gaitzen du. 
+        /// Hautapenik ez badago, botoia desgaitzen du.
+        /// </summary>
         private void LvDeskribapenaDepositua_ItemTapped(object sender, ItemTappedEventArgs e)
         {
             if (e.Item != null)
             {
-                // Habilitar el botón BtnAldatuDepositua cuando se selecciona un item
                 BtnAldatuDepositua.IsEnabled = true;
             }
             else
             {
-                // Deshabilitar el botón BtnAldatuDepositua si no hay selección
                 BtnAldatuDepositua.IsEnabled = false;
             }
         }
 
+
+        /// <summary>
+        /// ListView-aren elementu bat hautatzen denean, "Mailegua Ezeztatu" botoia gaitzen du. 
+        /// Hautapenik ez badago, botoia desgaitzen du.
+        /// </summary>
         private void LvDeskribapenaMailegua_ItemTapped(object sender, ItemTappedEventArgs e)
         {
             if (e.Item != null)
             {
-                // Habilitar el botón BtnMaileguaEzeztatu cuando se selecciona un item
                 BtnMaileguaEzeztatu.IsEnabled = true;
             }
             else
             {
-                // Deshabilitar el botón BtnMaileguaEzeztatu si no hay selección
                 BtnMaileguaEzeztatu.IsEnabled = false;
             }
         }
 
+
+        /// <summary>
+        /// "Aldatu Depo" botoia sakatzen denean, hautatutako gordailuaren deskripzioaren arabera saldoa lortzen du,
+        /// eta saldo hori beste orri batera igarotzeko erabiltzen du. Kontu bat hautatu ez bada, errore-mezu bat erakusten du.
+        /// </summary>
         private async void BtnAldatuDepositua_Clicked(object sender, EventArgs e)
         {
             if (LvDeskribapenaDepositua.SelectedItem != null)
             {
-                string NanSeleccionado = PkNAN.SelectedItem.ToString();
-                string descripcionSeleccionada = LvDeskribapenaDepositua.SelectedItem.ToString();
-                decimal? importe = await datuBasea.ObtenerSaldoPorDescripcionAsync(NanSeleccionado, descripcionSeleccionada);
+                string NanHautatua = PkNAN.SelectedItem.ToString();
+                string deskripzioHautatua = LvDeskribapenaDepositua.SelectedItem.ToString();
+                decimal? kantitatea = await datuBasea.LortuSaldoaDeskripzioarenAraberaAsync(NanHautatua, deskripzioHautatua);
 
-                if (importe.HasValue)
+                if (kantitatea.HasValue)
                 {
-                    await Navigation.PushAsync(new Gordailua(descripcionSeleccionada, importe.Value));
+                    await Navigation.PushAsync(new Gordailua(deskripzioHautatua, kantitatea.Value));
                 }
                 else
                 {
-                    await DisplayAlert("Error", "No se pudo obtener el importe del depósito.", "OK");
+                    await DisplayAlert("Errore", "Ez da posible lortzea gordailuaren zenbatekoa.", "OK");
                 }
             }
             else
             {
-                await DisplayAlert("Atención", "Por favor, selecciona una cuenta de la lista.", "OK");
+                await DisplayAlert("Adi", "Mesedez, hautatu kontu bat zerrendan.", "OK");
             }
         }
 
+
+        /// <summary>
+        /// Mailegu bat ezabatzeko prozesua kudeatzen du. Lehenik, erabiltzaileari baieztapena eskatzen dio
+        /// eta, ondoren, datu basean mailegua ezabatzen saiatzen da. Arrakasta edo akatsaren arabera
+        /// eguneratzen du interfazea eta mezuak erakusten ditu.
+        /// </summary>
         private async void BtnMaileguaEzeztatu_Clicked(object sender, EventArgs e)
         {
-            // Verificar si se ha seleccionado algo en el Picker
+ 
             if (LvDeskribapenaMailegua.SelectedItem != null)
             {
-                // Obtener la descripción seleccionada del Picker
-                string descripcionSeleccionada = LvDeskribapenaMailegua.SelectedItem.ToString();
-                string nanSeleccionada= PkNAN.SelectedItem.ToString();
+                string deskripzioHautatua = LvDeskribapenaMailegua.SelectedItem.ToString();
+                string nanHautatua = PkNAN.SelectedItem.ToString();
 
-                // Confirmación de eliminación
-                bool confirmacion = await DisplayAlert("Confirmación", "¿Estás seguro de que deseas eliminar este préstamo?", "Sí", "No");
+                bool baieztapena = await DisplayAlert("Konfirmazioa", "Ziur zaude mailegu hau ezabatu nahi duzula?", "Bai", "Ez");
 
-                if (confirmacion)
+                if (baieztapena)
                 {
-                    // Llamada al método de eliminación en la base de datos
-                    bool exito = await datuBasea.EliminarMaileguaPorDescripcionAsync(descripcionSeleccionada);
+ 
+                    bool arrakasta = await datuBasea.EzabatuMaileguaDeskripzioarenAraberaAsync(deskripzioHautatua);
 
-                    if (exito)
+                    if (arrakasta)
                     {
-                        CargarListaMaileguak(nanSeleccionada);
-
-                        await DisplayAlert("Éxito", "El préstamo ha sido eliminado.", "OK");
+                        KargatuMaileguenZerrenda(nanHautatua);
+                        await DisplayAlert("Arrakasta", "Mailegua ondo ezabatu da.", "OK");
                     }
                     else
                     {
-                        await DisplayAlert("Error", "No se pudo eliminar el préstamo de la base de datos.", "OK");
+                        await DisplayAlert("Errore", "Ez da posible mailegua ezabatzea datu-basean.", "OK");
                     }
                 }
             }
             else
             {
-                await DisplayAlert("Atención", "Por favor, selecciona un préstamo del Picker para eliminar.", "OK");
+                await DisplayAlert("Adi", "Mesedez, hautatu mailegu bat ezabatzeko.", "OK");
             }
         }
 
+
+        /// <summary>
+        /// "Inprimatu" botoia sakatzen denean, hautatutako bezeroaren, maileguaren, eta gordailuaren datuak lortzen ditu 
+        /// eta inprimatzeko orri batera bideratzen ditu. Erabiltzailearen datuak edo mailegu edo saldoaren informazio falta badago,
+        /// lehenetsitako balioekin inprimatzen da. Akats bat gertatzen bada, mezu bat erakusten du.
+        /// </summary>
         private async void BtnInprimatu_Clicked(object sender, EventArgs e)
         {
             if (PkNAN.SelectedItem != null)
             {
-                string NanSeleccionado = PkNAN.SelectedItem.ToString();
-                string MaileguDeskribapena = LvDeskribapenaMailegua.SelectedItem?.ToString() ?? string.Empty;
-
-                // Si no se selecciona un depósito, asignar "No disponible"
-                string GordailuDeskribapena = LvDeskribapenaDepositua.SelectedItem?.ToString() ?? "No disponible";
-
-                string IzenaAbizenaSeleccionado = EtyIzenaAbizena.Text; // Obtener el nombre completo
+                string NanHautatua = PkNAN.SelectedItem.ToString();
+                string MaileguDeskripzioa = LvDeskribapenaMailegua.SelectedItem?.ToString() ?? string.Empty;
+                string GordailuDeskripzioa = LvDeskribapenaDepositua.SelectedItem?.ToString() ?? "Ez dago eskuragarri";
+                string IzenaAbizenaHautatua = EtyIzenaAbizena.Text; 
 
                 try
                 {
-                    // Llamar al método para obtener el préstamo de manera asincrónica
-                    var prestamo = await datuBasea.ObtenerPrestamoPorNanYDescripcionAsync(NanSeleccionado, MaileguDeskribapena);
+                    var mailegua = await datuBasea.LortuMaileguaNanEtaDeskribapenarenAraberaAsync(NanHautatua, MaileguDeskripzioa);
+                    decimal? saldo = await datuBasea.LortuSaldoaDeskripzioarenAraberaAsync(NanHautatua, GordailuDeskripzioa);
+                    string deskripzioMailegua = mailegua.Deskribapena ?? "Ez dago eskuragarri";
+                    decimal kantitateaMailegua = mailegua.Zenbatekoa;  
+                    int epeaMailegua = mailegua.Epea;  
+                    DateTime dataMailegua = mailegua.Data == DateTime.MinValue ? DateTime.MinValue : mailegua.Data;
+                    decimal saldoAzkena = saldo ?? 0.0m;
 
-                    // Llamar al método para obtener el saldo de manera asincrónica
-                    decimal? saldo = await datuBasea.ObtenerSaldoPorDescripcionAsync(NanSeleccionado, GordailuDeskribapena);
-
-                    // Asignar valores a las variables de préstamo, utilizando valores predeterminados si no hay datos
-                    string descripcionPrestamo = prestamo.Descripcion ?? "No disponible";
-                    decimal importePrestamo = prestamo.Importe;  // El valor ya no necesita el operador ? porque es un valor directo
-                    int plazoPrestamo = prestamo.Plazo;  // Lo mismo aquí
-                    DateTime fechaPrestamo = prestamo.Fecha == DateTime.MinValue ? DateTime.MinValue : prestamo.Fecha;
-
-                    // Asignar saldo por defecto si es nulo
-                    decimal saldoFinal = saldo ?? 0.0m;
-
-                    // Siempre navegar a la página Inprimatu, pasando los valores predeterminados si no hay préstamo o saldo
                     await Navigation.PushAsync(new Inprimatu(
-                        descripcionPrestamo,
-                        importePrestamo,
-                        plazoPrestamo,
-                        fechaPrestamo,
-                        saldoFinal,
-                        GordailuDeskribapena,
-                        NanSeleccionado,
-                        IzenaAbizenaSeleccionado
+                        deskripzioMailegua,
+                        kantitateaMailegua,
+                        epeaMailegua,
+                        dataMailegua,
+                        saldoAzkena,
+                        GordailuDeskripzioa,
+                        NanHautatua,
+                        IzenaAbizenaHautatua
                     ));
                 }
                 catch (Exception ex)
                 {
-                    // Manejo de errores
-                    await DisplayAlert("Error", "Ocurrió un error al procesar los datos: " + ex.Message, "OK");
+                    await DisplayAlert("Errore", "Datuak prozesatzerakoan akats bat egon da: " + ex.Message, "OK");
                 }
             }
             else
             {
-                // Si no se selecciona un usuario, mostrar alerta pero no detener el flujo
-                await DisplayAlert("Atención", "Por favor, selecciona un usuario.", "OK");
+                await DisplayAlert("Adi", "Mesedez, hautatu erabiltzaile bat.", "OK");
             }
         }
 
 
-
-
-
-
-
-
-        private async Task CargarListaMaileguak(string pkNan)
+        /// <summary>
+        /// Bezeroaren NAN-a erabiliz, bezeroaren maileguen zerrenda kargatzen du eta 
+        /// hori ListView batean erakusten du. Zerrenda lortzeko datuBasea klaseko metodo bat erabiltzen da.
+        /// </summary>
+        private async Task KargatuMaileguenZerrenda(string pkNan)
         {
-            var listaMaileguak = await datuBasea.ObtenerPrestamoPorNANAsync(pkNan);
-            LvDeskribapenaMailegua.ItemsSource = listaMaileguak;
+            var maileguenZerrenda = await datuBasea.LortuMaileguakNanarenAraberaAsync(pkNan);
+            LvDeskribapenaMailegua.ItemsSource = maileguenZerrenda;
         }
 
 
-
-
-
-
+        /// <summary>
+        /// Botoiaren klikarekin, aplikazioa itzali egiten da.
+        /// </summary>
         private void BtnIrten_Clicked(object sender, EventArgs e)
         {
             Application.Current.Quit();
         }
+
+
     }
 }

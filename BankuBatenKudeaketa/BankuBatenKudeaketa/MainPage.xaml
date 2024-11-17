@@ -5,12 +5,15 @@
              xmlns:tabView="clr-namespace:Syncfusion.Maui.TabView;assembly=Syncfusion.Maui.TabView">
 
     <ContentPage.Content>
+        <!-- SfTabView kontrola, bi fitxa izango ditu -->
         <tabView:SfTabView x:Name="Bezeroak" >
             <tabView:SfTabView.Items>
+                <!-- Lehenengo fitxa: Bezeroa -->
                 <tabView:SfTabItem Header="Bezeroa" BackgroundColor="Black" TextColor="White">
                     <tabView:SfTabItem.Content>
                         <VerticalStackLayout Padding="20">
-                            
+
+                            <!-- Horizontalki antolatuta dauden botoiak eta sarrera -->
                             <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
                                 <Button ImageSource="ezkerra.png" x:Name="btnAurrekoa" WidthRequest="70" BackgroundColor="White" Clicked="BtnAurrekoa_Clicked"/>
                                 <Entry x:Name="etyBezeroa" Text="1" />
@@ -21,28 +24,31 @@
                                 <Button ImageSource="gorde.png" x:Name="btnGorde" WidthRequest="70" BackgroundColor="White" Clicked="BtnGorde_Clicked"/>
                             </HorizontalStackLayout>
 
+                            <!-- Bi zutabe dituen grid-a -->
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 
+                                <!-- Lehenengo zutabean, bezeroaren NAN eta izena erakusten dituen layout-a -->
                                 <VerticalStackLayout  Grid.Column="0" Margin="20">
                                     <Label x:Name="lblNAN" Text="NAN:" Margin="0,10,40,35" HorizontalOptions="End"/>
                                     <Label x:Name="lblIzena" Text="Izena:" Margin="0,0,40,10" HorizontalOptions="End"/>
                                 </VerticalStackLayout>
-                                
+
+                                <!-- Bigarren zutabean, bezeroaren NAN eta izena sartzeko sarrera -->
                                 <VerticalStackLayout  Grid.Column="1" Margin="10">
                                     <Entry x:Name="etyNAN" Margin="-55,10,0,10" HorizontalOptions="Start" WidthRequest="200"/>
                                     <Entry x:Name="etyIzena" Margin="-55,0,0,0" HorizontalOptions="Start" WidthRequest="200"/>
                                 </VerticalStackLayout>
                             </Grid>
-                                
-                            
+
                         </VerticalStackLayout>
                     </tabView:SfTabItem.Content>
                 </tabView:SfTabItem>
 
+                <!-- Bigarren fitxa: Kontu Kudeaketa -->
                 <tabView:SfTabItem Header="Kontu kudeaketa" BackgroundColor="Black" TextColor="White">
                     <tabView:SfTabItem.Content>
                         <Grid>
@@ -51,6 +57,7 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
+                            <!-- Lehenengo zutabean, bezeroari eta deposituari buruzko kontrolak -->
                             <VerticalStackLayout Grid.Column="0" Spacing="20" Margin="30" WidthRequest="300">
                                 <Label x:Name="LblBezeroa" Text="Bezeroa"/>
                                 <Picker x:Name="PkNAN" SelectedIndexChanged="PkNAN_SelectedIndexChanged"/>
@@ -60,6 +67,7 @@
                                 <Button x:Name="BtnInprimatu" Text="Inprimatu" Clicked="BtnInprimatu_Clicked"/>
                             </VerticalStackLayout>
 
+                            <!-- Bigarren zutabean, izen-abizenak eta maileguari buruzko kontrolak -->
                             <VerticalStackLayout Grid.Column="1" Spacing="20" Margin="30" WidthRequest="300">
                                 <Label x:Name="LblIzena" Text="Izena"/>
                                 <Entry x:Name="EtyIzenaAbizena"/>
@@ -74,6 +82,5 @@
             </tabView:SfTabView.Items>
         </tabView:SfTabView>
     </ContentPage.Content>
-
 
 </ContentPage>
