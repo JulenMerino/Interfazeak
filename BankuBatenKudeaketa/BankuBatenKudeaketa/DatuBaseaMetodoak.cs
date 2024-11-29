@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Maui.ApplicationModel.DataTransfer;
 using MySql.Data.MySqlClient;
+using Mysqlx.Crud;
 
 namespace BankuBatenKudeaketa
 {
@@ -479,7 +481,7 @@ namespace BankuBatenKudeaketa
         }
 
 
-        
+
         // Gordailu zatia
 
 
@@ -499,7 +501,7 @@ namespace BankuBatenKudeaketa
         /// </returns>
         public async Task<bool> AldatuZenbatekoaDeskribapenarenAraberaAsync(string deskribapena, decimal zenbatekoBerria)
         {
-            string query = "UPDATE gordailuak SET Importe = @importe WHERE Deskribapena = @deskribapena;";
+            string query = "UPDATE gordailuak SET Saldo = @importe WHERE Deskripzioa = @deskribapena;";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -520,6 +522,7 @@ namespace BankuBatenKudeaketa
                 }
             }
         }
+
 
         /// <summary>
         /// Deskribapenaren arabera gordailu bat ezabatzen duen metodoa.

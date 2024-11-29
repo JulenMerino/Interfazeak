@@ -16,7 +16,7 @@
         </Grid.ColumnDefinitions>
 
         <!-- Lehenengo lerroko, bigarren zutabean dauden etiketak (NAN eta Izena) -->
-        <HorizontalStackLayout Grid.Column="1" Grid.Row="0" HorizontalOptions="CenterAndExpand" VerticalOptions="End">
+        <HorizontalStackLayout Grid.ColumnSpan="2" Grid.Row="0" HorizontalOptions="CenterAndExpand" VerticalOptions="End">
             <Label x:Name="lblNAN" Text="NAN:" Margin="20" FontSize="Header"/>
             <Label x:Name="lblIzena" Text="Izena:" Margin="20" FontSize="Header"/>
         </HorizontalStackLayout>

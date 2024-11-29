@@ -1,4 +1,7 @@
-﻿namespace Hiru_Marran
+﻿using Microsoft.Maui.Controls;
+
+
+namespace Hiru_Marran
 {
     public partial class MainPage : ContentPage
     {
@@ -10,6 +13,8 @@
         public MainPage()
         {
             InitializeComponent();
+            LayoutForMovileDevice();
+
             buttons = new Button[,]
             {
                 { Button00, Button01, Button02 },
@@ -17,8 +22,33 @@
                 { Button20, Button21, Button22 }
             };
 
-            
             ResetBoard();
+        }
+
+
+        private void LayoutForMovileDevice()
+        {
+
+            if (DeviceInfo.Platform == DevicePlatform.iOS || DeviceInfo.Platform == DevicePlatform.Android)
+            {
+                GameGrid.ColumnDefinitions[0].Width = GridLength.Star;
+                GameGrid.ColumnDefinitions[1].Width = GridLength.Star;
+                GameGrid.ColumnDefinitions[2].Width = GridLength.Star;
+
+                GameGrid.RowDefinitions[0].Height = GridLength.Star;
+                GameGrid.RowDefinitions[1].Height = GridLength.Star;
+                GameGrid.RowDefinitions[2].Height = GridLength.Star;
+            }
+            else
+            {
+                GameGrid.ColumnDefinitions[0].Width = new GridLength(150);
+                GameGrid.ColumnDefinitions[1].Width = new GridLength(150);
+                GameGrid.ColumnDefinitions[2].Width = new GridLength(150);
+
+                GameGrid.RowDefinitions[0].Height = new GridLength(150);
+                GameGrid.RowDefinitions[1].Height = new GridLength(150);
+                GameGrid.RowDefinitions[2].Height = new GridLength(150);
+            }
         }
 
         // Taulako botoi bat sakatzen denean

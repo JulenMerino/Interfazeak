@@ -63,6 +63,7 @@
                                 <Picker x:Name="PkNAN" SelectedIndexChanged="PkNAN_SelectedIndexChanged"/>
                                 <Label x:Name="LblDepositua" Text="Depositua"/>
                                 <ListView x:Name="LvDeskribapenaDepositua" ItemTapped="LvDeskribapenaDepositua_ItemTapped"/>
+                                <Label x:Name="lblEzDuDepositurik"/>
                                 <Button x:Name="BtnAldatuDepositua" Text="Aldatu depositua" IsEnabled="False" Clicked="BtnAldatuDepositua_Clicked"/>
                                 <Button x:Name="BtnInprimatu" Text="Inprimatu" Clicked="BtnInprimatu_Clicked"/>
                             </VerticalStackLayout>
@@ -73,6 +74,7 @@
                                 <Entry x:Name="EtyIzenaAbizena"/>
                                 <Label x:Name="LblMailegua" Text="Mailegua"/>
                                 <ListView x:Name="LvDeskribapenaMailegua" ItemTapped="LvDeskribapenaMailegua_ItemTapped"/>
+                                <Label x:Name="lblEzDuMailegurik"/>
                                 <Button x:Name="BtnMaileguaEzeztatu" Text="Mailegua ezeztau" IsEnabled="False" Clicked="BtnMaileguaEzeztatu_Clicked"/>
                                 <Button x:Name="BtnIrten" Text="Irten" WidthRequest="100" HorizontalOptions="Start" Clicked="BtnIrten_Clicked"/>
                             </VerticalStackLayout>

@@ -263,25 +263,33 @@ namespace BankuBatenKudeaketa
 
                 if (kontuak != null && kontuak.Count > 0)
                 {
+                    LvDeskribapenaDepositua.IsVisible = true;
                     LvDeskribapenaDepositua.ItemsSource = kontuak;
+                    lblEzDuDepositurik.Text = "";
+                    
                 }
                 else
                 {
-                    await DisplayAlert("Ez dira kontuak aurkitu", "Bezero honek ez du konturik.", "OK");
+                    LvDeskribapenaDepositua.IsVisible = false;
+                    lblEzDuDepositurik.Text = "Ez du Deposituri";
                 }
 
                 List<string> maileguak = await datuBasea.LortuMaileguakNanarenAraberaAsync(selectedNAN);
 
+                // Limpiar el contenido del ListView
                 LvDeskribapenaMailegua.ItemsSource = null;
 
                 if (maileguak != null && maileguak.Count > 0)
                 {
                     LvDeskribapenaMailegua.ItemsSource = maileguak;
+                    lblEzDuDepositurik.Text = "";
                 }
                 else
                 {
-                    await DisplayAlert("Ez dira maileguak aurkitu", "Bezero honek ez du mailegurik.", "OK");
+                    LvDeskribapenaMailegua.IsVisible = true;
+                    lblEzDuMailegurik.Text = "Ez du mailegurik";
                 }
+
             }
         }
 
@@ -449,7 +457,7 @@ namespace BankuBatenKudeaketa
         /// </summary>
         private void BtnIrten_Clicked(object sender, EventArgs e)
         {
-            Application.Current.Quit();
+            Application.Current?.Quit();
         }
 
 

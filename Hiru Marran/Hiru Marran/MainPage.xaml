@@ -5,28 +5,28 @@
              BackgroundColor="#503C37">
 
     <Grid Padding="20" RowSpacing="20" ColumnSpacing="10">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+    <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
 
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+    <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="*"/>
+    </Grid.ColumnDefinitions>
 
         <Label x:Name="lblTxanda" Text="Txanda: X" FontSize="Large" HorizontalOptions="Center" Grid.Row="0" Grid.ColumnSpan="2" TextColor="White"/>
 
-        <Grid Grid.Row="1" Grid.Column="0" VerticalOptions="Center" HorizontalOptions="Center" Padding="0">
+        <Grid x:Name="GameGrid" Grid.Row="1" Grid.Column="0" VerticalOptions="Center" HorizontalOptions="Center" Padding="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="150"/>
-                <RowDefinition Height="150"/>
-                <RowDefinition Height="150"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="150"/>
-                <ColumnDefinition Width="150"/>
-                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
 
