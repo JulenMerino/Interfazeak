@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<!--Nork sortua: Hegoi Ruiz
+Noiz sortua:
+
+1.Aldaketa
+Nork aldatua: Julen Merino
+Noiz aldatua: 11/12/2024
+    
+    ImageButtoni aldagai izenak jarri 
+    Margen txiki bat sartu label izenan zentratuta egon dadin
+    -->
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BankuKudeaketa.Views.BezeroakView"
+             Background="LightGray">
+    <VerticalStackLayout HorizontalOptions="CenterAndExpand">
+        
+        <!-- Kontrolen sekzioa -->
+        <HorizontalStackLayout>
+
+            <ImageButton x:Name="ImageButtonHasiera" Source="hasiera.png" 
+                         WidthRequest="10" 
+                         HeightRequest="10" 
+                         Clicked="LehenErregistrora"/>
+
+            <ImageButton x:Name="ImageButtonAtzera" Source="atzera.png" 
+                         WidthRequest="10" 
+                         HeightRequest="10" 
+                         Clicked="ErregistroaAtzera"/>
+            
+            <Entry x:Name="EntryBezeroakCurrent" 
+                   WidthRequest="100" 
+                   Background="White" 
+                   TextColor="Black" 
+                   TextChanged="EntryIdAldatu"/>
+            
+            <Label x:Name="LabelBezeroakCount"
+                   WidthRequest="100" 
+                   TextColor="Black" 
+                   VerticalTextAlignment="Center"/>
+
+            <ImageButton x:Name="ImageButtonAurrera" Source="haurrera.png" 
+                         WidthRequest="10" 
+                         HeightRequest="10" 
+                         Clicked="ErregistroaAurrera"/>
+
+            <ImageButton x:Name="ImageButtonBukaera" Source="bukaera.png" 
+                         WidthRequest="10" 
+                         HeightRequest="10" 
+                         Clicked="AzkenErregistrora"/>
+
+
+            <ImageButton x:Name="ImageButtonGehitu" Source="gehitu.png" WidthRequest="10" HeightRequest="10" Clicked="BezeroBerria"/>
+            <ImageButton x:Name="ImageButtonEzabatu" Source="ezabatu.png" WidthRequest="10" HeightRequest="10" Clicked="EzabatuBezeroa"/>
+            <ImageButton x:Name="ImageButtonGorde" Source="gorde.png" WidthRequest="10" HeightRequest="10" Clicked="Gordebezeroa"/>
+            
+        </HorizontalStackLayout>
+        
+        <!-- Datuak sartzeko Areak -->
+        <VerticalStackLayout  HorizontalOptions="Center" VerticalOptions="Center">
+            
+            <HorizontalStackLayout Spacing="15" Margin="10">
+                
+                <Label x:Name="LabelDNI" Text="DNI:" 
+                       TextColor="Black" 
+                       HorizontalTextAlignment="Center"  VerticalTextAlignment="Center"/>
+                
+                <Entry x:Name="EntryNan"  
+                       Background="White" TextColor="Black"/>
+                
+            </HorizontalStackLayout>
+            
+            <HorizontalStackLayout Spacing="10">
+                
+                <Label x:Name="LabelIzena" Text="Izena:" 
+                       TextColor="Black" 
+                       HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                
+                <Entry x:Name="EntryIzena" 
+                       Background="White" 
+                       TextColor="Black"/>
+                
+            </HorizontalStackLayout>
+
+        </VerticalStackLayout>
+    </VerticalStackLayout>
+</ContentPage>

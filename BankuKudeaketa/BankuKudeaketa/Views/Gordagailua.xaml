@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BankuKudeaketa.Views.Gordagailua"
+             xmlns:views="clr-namespace:BankuKudeaketa.Views"
+             Background="LightGray"> 
+    <Grid RowSpacing="10" ColumnSpacing="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="100"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+
+        <!-- Entry-ak-->
+        <Label Text="Deskripzioa" 
+               FontSize="12" 
+               TextColor="Black" 
+               HorizontalTextAlignment="Center" 
+               HeightRequest="15"/>
+        
+        <Entry x:Name="EntryDeskripzioa" 
+               Background="White" 
+               TextColor="Black" 
+               Grid.Column="1" 
+               Grid.ColumnSpan="3"/>
+
+        <Label Text="Saldo" 
+               FontSize="12" 
+               TextColor="Black" 
+               HorizontalTextAlignment="Center" 
+               HeightRequest="15" 
+               Grid.Row="1" />
+        
+        <Entry x:Name="EntrySaldo" 
+               Background="White" 
+               TextColor="Black" 
+               TextChanged="Entry_TextChanged" 
+               Grid.Row="1" 
+               Grid.Column="1" 
+               Grid.ColumnSpan="2"/>
+
+        <!-- Botoiak -->
+        <views:WindowsButton x:Name="ButtonEzabatu" Text="Ezabatu" Luzera="100" Grid.Row="3"/>
+        <views:WindowsButton x:Name="ButtonModifikatu" Text="Modifikatu" Luzera="100" Grid.Row="3" Grid.Column="1"/>
+        <views:WindowsButton x:Name="ButtonIrten" Text="Irten" Luzera="100" Grid.Row="3" Grid.Column="4"/>
+
+    </Grid>
+</ContentPage>

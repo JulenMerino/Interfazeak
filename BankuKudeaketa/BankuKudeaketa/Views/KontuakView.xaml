@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BankuKudeaketa.Views.KontuakView"
+             xmlns:views="clr-namespace:BankuKudeaketa.Views"
+             Background="LightGray">
+    <HorizontalStackLayout>
+        
+        <VerticalStackLayout Spacing="10" Margin="10,0,0,0">
+            
+            <Label Text="Bezeroa" FontSize="12" TextColor="Black"/>
+            
+            <Picker x:Name="PickerBezeroak" 
+                    WidthRequest="150" 
+                    HeightRequest="10" 
+                    Background="White" 
+                    TextColor="Black" 
+                    ItemDisplayBinding="{Binding Nan}" 
+                    SelectedIndexChanged="PickerBezeroak_Aukeratu"/>
+            
+            <Label Text="Gordailuak" FontSize="12" TextColor="Black"/>
+
+            <ListView x:Name="ListViewGordailuak" 
+                      WidthRequest="150" 
+                      HeightRequest="100" 
+                      Background="Gray" 
+                      ItemSelected="Gordailua_Aukeratu">
+                
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextCell Text="{Binding Deskripzioa}" TextColor="Black"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                
+            </ListView>
+            
+            <views:WindowsButton x:Name="ButtonModifikatu" Text="Modifikatu Gordailua" Luzera="150" Aktibatuta="False"/>
+            <views:WindowsButton x:Name="ButtonImprimitu" Text="Imprimitu" Luzera="150"/>
+            
+        </VerticalStackLayout>
+
+        <VerticalStackLayout Margin="10,0,0,0" Spacing="10">
+            
+            <Label Text="Izena" FontSize="12" TextColor="Black"/>
+            
+            <Entry x:Name="EntryIzena" 
+                   WidthRequest="150" 
+                   HeightRequest="10" 
+                   Background="White" 
+                   IsEnabled="False"/>
+            
+            <Label Text="Mailegua" FontSize="12" TextColor="Black"/>
+            
+            <ListView x:Name="ListViewMaileguak" 
+                      WidthRequest="150" 
+                      HeightRequest="100" 
+                      Background="Gray" 
+                      ItemSelected="Mailegua_Aukeratu">
+                
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextCell Text="{Binding Deskripzioa}" TextColor="Black"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                
+            </ListView>
+            
+            <views:WindowsButton x:Name="ButtonEzeztatu" Text="Ezeztatu mailegua" Luzera="150" Aktibatuta="False"/>
+            <views:WindowsButton x:Name="ButtonIrten" Text="Irten" Luzera="150"/>
+            
+        </VerticalStackLayout>
+        
+    </HorizontalStackLayout>
+</ContentPage>
