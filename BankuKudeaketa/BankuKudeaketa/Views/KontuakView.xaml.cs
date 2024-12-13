@@ -1,3 +1,15 @@
+//Nork sortua: Hegoi Ruiz
+//Noiz sortua:
+//
+//1.Aldaketa
+//Nork aldatua: Julen Merino
+//Noiz aldatua: 13/12/2024
+
+//Mugikorrean ongi ikusteko aldaketak 
+//Botoi berriak sortu ditudanez, botoientzako metodoak sortu ditut
+//Leiho berri bat ireki beharrean, leiho berean beste leiho baterako trantsizioa egin dut, eta itzultzeko aukera du.
+
+using System.Diagnostics;
 using System.Text;
 using System.Windows.Input;
 using BankuKudeaketa.Modeloak;
@@ -7,52 +19,37 @@ namespace BankuKudeaketa.Views;
 
 public partial class KontuakView : ContentPage
 {
-    public ICommand CommandGordagailua { get; private set; }
-    public ICommand CommandItxi { get; private set; }
-    public ICommand CommandEzabatuMailegua { get; private set; }
-
-    public ICommand CommandImprimatu { get; private set; }
-
 
     public SQLiteConnection datubasea = DBManager.Instantzia.Db;
 
     public KontuakView()
     {
         InitializeComponent();
-
-        CommandGordagailua = new Command(IrekiGordagailua);
-        CommandItxi = new Command(Itxi);
-        CommandEzabatuMailegua = new Command(EzabatuMailegua);
-        CommandImprimatu = new Command(Imprimatu);
-
-        ButtonModifikatu.Akzioa = CommandGordagailua;
-        ButtonIrten.Akzioa = CommandItxi;
-        ButtonEzeztatu.Akzioa = CommandEzabatuMailegua;
-        ButtonImprimitu.Akzioa = CommandImprimatu;
+        GailuArabera();
 
         PickerBezeroak.ItemsSource = datubasea.Table<Bezeroa>().ToList();
     }
-    /// <summary>
-    /// Gordagailuaren informazioa irikitzen du beste window batean
-    /// </summary>
-    private void IrekiGordagailua()
-    {
-        var tempGordagailua = (Gordailua)ListViewGordailuak.SelectedItem;
-        var lehioa = new Gordagailua(tempGordagailua);
-        var window = new Window(lehioa)
-        {
-            Width = 500,
-            Height = 300
-        };
-        Application.Current?.OpenWindow(window);
-    }
 
-    /// <summary>
-    /// uneko lehioa ixten du
-    /// </summary>
-    private void Itxi()
+    private void GailuArabera()
     {
-        Application.Current?.CloseWindow(this.Window);
+        if (DeviceInfo.Platform == DevicePlatform.iOS || DeviceInfo.Platform == DevicePlatform.Android)
+        {
+            ButtonModifikatu.HeightRequest = 40;
+            ButtonImprimitu.HeightRequest = 40;
+            ButtonEzeztatu.HeightRequest = 40;
+            ButtonIrten.HeightRequest = 40;
+            PickerBezeroak.HeightRequest = 40;
+            EntryIzena.HeightRequest = 40;
+        }
+        else
+        {
+            ButtonModifikatu.HeightRequest = 60;
+            ButtonImprimitu.HeightRequest = 60;
+            ButtonEzeztatu.HeightRequest = 60;
+            ButtonIrten.HeightRequest = 60;
+            PickerBezeroak.HeightRequest = 10;
+            EntryIzena.HeightRequest = 40;
+        }
     }
 
     /// <summary>
@@ -70,8 +67,8 @@ public partial class KontuakView : ContentPage
 
         ListViewMaileguak.ItemsSource = datubasea.Table<Mailegua>().Where(g => g.Nan == bezeroa.Nan).ToList();
 
-        ButtonEzeztatu.Aktibatuta = false;
-        ButtonModifikatu.Aktibatuta = false;
+        ButtonEzeztatu.IsEnabled = false;
+        ButtonModifikatu.IsEnabled = false;
     }
 
     /// <summary>
@@ -83,9 +80,10 @@ public partial class KontuakView : ContentPage
     {
         if (ListViewMaileguak.SelectedItem != null)
         {
-            ButtonEzeztatu.Aktibatuta = true;
+            ButtonEzeztatu.IsEnabled = true;
         }
     }
+
     /// <summary>
     /// Gordailua Listan Item bat aukeratutakoan botoia baliagarri jartzen deun metodoa
     /// </summary>
@@ -95,14 +93,23 @@ public partial class KontuakView : ContentPage
     {
         if (ListViewGordailuak.SelectedItem != null)
         {
-            ButtonModifikatu.Aktibatuta = true;
+            ButtonModifikatu.IsEnabled = true;
         }
+    }
+
+    /// <summary>
+    /// Gordagailuaren informazioa irikitzen du beste window batean
+    /// </summary>
+    private async void ButtonModifikatu_Clicked(object sender, EventArgs e)
+    {
+        var tempGordagailua = (Gordailua)ListViewGordailuak.SelectedItem;
+        await Navigation.PushAsync(new Gordagailua(tempGordagailua));
     }
 
     /// <summary>
     /// Mailegua Ezabatu botoia klikatutakoan Aukeratutako Mailegua ezabatzeaz enkargatzen de funtzioa
     /// </summary>
-    private void EzabatuMailegua()
+    private void ButtonEzeztatu_Clicked(object sender, EventArgs e)
     {
         var tempMailegua = (Mailegua)ListViewMaileguak.SelectedItem;
         datubasea.Insert(new del_Mailegua(tempMailegua));
@@ -114,11 +121,10 @@ public partial class KontuakView : ContentPage
     /// <summary>
     /// Metodo honek Pickerrean haukeratutako Bezeroren datuak erakusten ditu beste pantaila batean
     /// </summary>
-    private void Imprimatu()
+    private void ButtonImprimitu_Clicked(object sender, EventArgs e)
     {
+        if (PickerBezeroak.SelectedItem == null) return;
 
-        if (PickerBezeroak.SelectedItem == null) return;   
-       
         StringBuilder testua = new StringBuilder();
 
         testua.AppendLine("Bezeroa: " + ((Bezeroa)PickerBezeroak.SelectedItem));
@@ -146,4 +152,13 @@ public partial class KontuakView : ContentPage
         Window window = new Window(page);
         Application.Current?.OpenWindow(window);
     }
+
+    /// <summary>
+    /// uneko lehioa ixten du
+    /// </summary>
+    private void ButtonIrten_Clicked(object sender, EventArgs e)
+    {
+        Application.Current?.CloseWindow(this.Window);
+    }
+
 }

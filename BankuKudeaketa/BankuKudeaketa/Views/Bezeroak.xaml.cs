@@ -3,7 +3,7 @@
 //
 //1.Aldaketa
 //Nork aldatua: Julen Merino
-//Noiz aldatua: 11/12/2024
+//Noiz aldatua: 13/12/2024
 
 //Mugikorrean ongi ikusteko aldaketak 
 
@@ -28,16 +28,15 @@ public partial class BezeroakView : ContentPage
 
         InitializeComponent();
         AldatuErregistroa(_posizioa);
-        BotoienTmaina();
+        GailuArabera();
 
     }
 
-    private void BotoienTmaina()
+    private void GailuArabera()
     {
         if (DeviceInfo.Platform == DevicePlatform.iOS || DeviceInfo.Platform == DevicePlatform.Android)
         {
-            // Si la plataforma es Android o iOS, los botones se ajustan a tamaño "estrella".
-            AuekratuBotoienTamaina(40);  // Cambia este valor según lo necesites
+            BotoienTamaina(40); 
             EntryBezeroakCurrent.WidthRequest = 40;
             EntryBezeroakCurrent.FontSize = 15;
             LabelBezeroakCount.WidthRequest = 40;
@@ -56,8 +55,7 @@ public partial class BezeroakView : ContentPage
         }
         else
         {
-            // Si no es iOS ni Android (posiblemente escritorio), se asignan tamaños específicos.
-            AuekratuBotoienTamaina(100);
+            BotoienTamaina(100);
             EntryBezeroakCurrent.WidthRequest = 100;
             EntryBezeroakCurrent.FontSize = 40;
             LabelBezeroakCount.WidthRequest = 100;
@@ -75,9 +73,8 @@ public partial class BezeroakView : ContentPage
     }
 
     // Método para actualizar el tamaño de los botones.
-    private void AuekratuBotoienTamaina(int tamaina)
-    {
-        // Ajusta los tamaños de los botones de la interfaz de usuario.
+    private void BotoienTamaina(int tamaina)
+    { 
         ImageButton[] botoiak = {
             ImageButtonHasiera,
             ImageButtonAtzera,

@@ -1,14 +1,23 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<!--Nork sortua: Hegoi Ruiz
+Noiz sortua:
+
+1.Aldaketa
+Nork aldatua: Julen Merino
+Noiz aldatua: 13/12/2024
+    
+    Button normalak sortu eta ezaugarriak ipini
+    -->
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="BankuKudeaketa.Views.Gordagailua"
              xmlns:views="clr-namespace:BankuKudeaketa.Views"
              Background="LightGray"> 
-    <Grid RowSpacing="10" ColumnSpacing="10">
+    <Grid x:Name="MainGrid" RowSpacing="10" ColumnSpacing="10">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100"/>
             <ColumnDefinition Width="100"/>
-            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="50"/>
             <ColumnDefinition Width="100"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -47,9 +56,9 @@
                Grid.ColumnSpan="2"/>
 
         <!-- Botoiak -->
-        <views:WindowsButton x:Name="ButtonEzabatu" Text="Ezabatu" Luzera="100" Grid.Row="3"/>
-        <views:WindowsButton x:Name="ButtonModifikatu" Text="Modifikatu" Luzera="100" Grid.Row="3" Grid.Column="1"/>
-        <views:WindowsButton x:Name="ButtonIrten" Text="Irten" Luzera="100" Grid.Row="3" Grid.Column="4"/>
+        <Button x:Name="ButtonEzabatu" Text="Ezabatu" Grid.Row="3" Clicked="ButtonEzabatu_Clicked"/>
+        <Button x:Name="ButtonModifikatu" Text="Modifikatu" Grid.Row="3" Grid.Column="1" Clicked="ButtonModifikatu_Clicked"/>
+        <Button x:Name="ButtonIrten" Text="Irten" Grid.Row="3" Grid.Column="4" Clicked="ButtonIrten_Clicked"/>
 
     </Grid>
 </ContentPage>

@@ -3,7 +3,7 @@
 //
 //1.Aldaketa
 //Nork aldatua: Julen Merino
-//Noiz aldatua: 11/12/2024
+//Noiz aldatua: 13/12/2024
 
 //Leiho berri bat ireki beharrean, leiho berean beste leiho baterako trantsizioa egin dut, eta itzultzeko aukera du.
 //Mugikorrean ongi ikusteko aldaketak 
@@ -20,14 +20,14 @@ namespace BankuKudeaketa
         public MainPage()
         {
             InitializeComponent();
-            BotoienTmaina();
+            GailuArabera();
 
         }
 
         /// <summary>
         /// Bai mugikorrean bai ordenagailuan ongi ikusteko metodoa
         /// </summary>
-        private void BotoienTmaina()
+        private void GailuArabera()
         {
             if (DeviceInfo.Platform == DevicePlatform.iOS || DeviceInfo.Platform == DevicePlatform.Android)
             {
