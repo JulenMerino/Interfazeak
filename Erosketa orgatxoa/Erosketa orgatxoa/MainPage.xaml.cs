@@ -7,34 +7,39 @@ namespace Erosketa_orgatxoa
 {
     public class Fruitua
     {
-        public string Izena { get; set; } // Frutaren izena
-        public int Kantitatea { get; set; } // Frutaren kantitatea
+        public string Izena { get; set; } 
+        public int Kantitatea { get; set; } 
 
         public Fruitua(string izena, int kantitatea)
         {
-            Izena = izena; // Frutaren izena ezarri
-            Kantitatea = kantitatea; // Frutaren kantitatea ezarri
+            Izena = izena; 
+            Kantitatea = kantitatea; 
         }
     }
 
     public partial class MainPage : ContentPage
     {
-        public ObservableCollection<Fruitua> gehitu { get; set; } = new ObservableCollection<Fruitua>(); // Frutak gehitzeko bilduma
-        private Stack<Fruitua> kendu = new Stack<Fruitua>(); // Frutak kentzeko pilatuta
-        private const int fruituMax = 20; // Fruta maximoa
+        public ObservableCollection<Fruitua> gehitu { get; set; } = new ObservableCollection<Fruitua>();
+        private Stack<Fruitua> kendu = new Stack<Fruitua>(); 
+        private const int fruituMax = 20; 
 
         public MainPage()
         {
-            InitializeComponent(); // Osagaiak hasieratu
-            lvFruituak.ItemsSource = gehitu; // Irudien iturria ezarri
+            InitializeComponent(); 
+            lvFruituak.ItemsSource = gehitu; 
         }
 
+        /// <summary>
+        /// Frutak guztira zenbatzen dituen metodoa
+        /// </summary>
         private int GetFrutaTotal()
         {
-            // Frutak guztira zenbatzea
-            return gehitu.Sum(f => f.Kantitatea);
+            return gehitu.Sum(f => f.Kantitatea); 
         }
 
+        /// <summary>
+        /// Drag-and-drop hasierako metodoa, frutaren izena zehazteko
+        /// </summary>
         public void Hartu(object sender, DragStartingEventArgs e)
         {
             if (sender is DragGestureRecognizer dragGestureRecognizer)
@@ -43,111 +48,115 @@ namespace Erosketa_orgatxoa
 
                 if (irudia != null)
                 {
-                    string fruituIzena = irudia.Source.ToString(); // Irudiaren iturria lortu
+                    string fruituIzena = irudia.Source.ToString(); 
 
-                    // Frutaren izena egokitu irudiaren izenaren arabera
+
                     if (fruituIzena.Contains("sandia"))
-                        fruituIzena = "Sandia"; // Sandia
+                        fruituIzena = "Sandia"; 
                     else if (fruituIzena.Contains("manzana"))
-                        fruituIzena = "Sagarra"; // Sagarra
+                        fruituIzena = "Sagarra";
                     else if (fruituIzena.Contains("pera"))
-                        fruituIzena = "Udarea"; // Udarea
+                        fruituIzena = "Udarea"; 
                     else if (fruituIzena.Contains("naranja"))
-                        fruituIzena = "Naranja"; // Naranja
+                        fruituIzena = "Naranja"; 
                     else if (fruituIzena.Contains("pinia"))
-                        fruituIzena = "Piña"; // Piña
+                        fruituIzena = "Piña"; 
                     else if (fruituIzena.Contains("melon"))
-                        fruituIzena = "Meloia"; // Meloia
+                        fruituIzena = "Meloia"; 
 
-                    // Frutaren izena ez bada hutsik, irudian ezarri
                     if (!string.IsNullOrEmpty(fruituIzena))
                     {
-                        e.Data.Properties.Add("FruituIzena", fruituIzena);
+                        e.Data.Properties.Add("FruituIzena", fruituIzena); 
                     }
                 }
             }
         }
 
+        /// <summary>
+        /// Fruta erosi (drop) eta gehitu metodoa
+        /// </summary>
         public async void Erosi(object sender, DropEventArgs e)
         {
             if (e.Data.Properties.ContainsKey("FruituIzena"))
             {
-                var fruituIzena = (string)e.Data.Properties["FruituIzena"]; // Frutaren izena lortu
+                var fruituIzena = (string)e.Data.Properties["FruituIzena"]; 
                 e.Handled = true;
 
                 if (!string.IsNullOrEmpty(fruituIzena))
                 {
-                    var fruituaBadago = gehitu.FirstOrDefault(f => f.Izena == fruituIzena); // Fruta dagoen ala ez
-                    int fruituTotal = GetFrutaTotal(); // Frutak guztira zenbatzea
+                    var fruituaBadago = gehitu.FirstOrDefault(f => f.Izena == fruituIzena); 
+                    int fruituTotal = GetFrutaTotal(); 
 
-                    // Maximoa gainditzen bada, alerta erakutsi
                     if (fruituTotal >= fruituMax)
                     {
                         await DisplayAlert("Limitera iritsi zara", "Ezin dira 20 fruta baino gehiago sartu carritoan", "OK");
                         return;
                     }
 
-                    // Fruta dagoen bada, kantitatea handitu
                     if (fruituaBadago != null)
                     {
                         if (fruituTotal + 1 <= fruituMax)
                         {
                             fruituaBadago.Kantitatea++;
-                            gehitu.Remove(fruituaBadago); // Aurretik kendu
-                            gehitu.Add(fruituaBadago); // Gehitu berriro
+                            gehitu.Remove(fruituaBadago); 
+                            gehitu.Add(fruituaBadago); 
                         }
                     }
                     else
                     {
-                        // Fruta berria gehitu
                         if (fruituTotal + 1 <= fruituMax)
                         {
-                            var fruituBerria = new Fruitua(fruituIzena, 1); // Fruta berri bat sortu
-                            gehitu.Add(fruituBerria); // Gehitu bildumara
+                            var fruituBerria = new Fruitua(fruituIzena, 1); 
+                            gehitu.Add(fruituBerria); 
                         }
                     }
 
-                    // Azken fruta kendu pilan gorde
                     kendu.Push(new Fruitua(fruituIzena, 1));
                 }
             }
         }
 
+        /// <summary>
+        /// Azken fruta kentzeko logika
+        /// </summary>
         private void Desegin(object sender, EventArgs e)
         {
-            // Azken fruta kentzeko logika
             if (kendu.Any())
             {
-                var azkenFruitua = kendu.Pop(); // Azken fruta atera
-                var fruituaGehitu = gehitu.FirstOrDefault(f => f.Izena == azkenFruitua.Izena); // Fruta bilatu
+                var azkenFruitua = kendu.Pop(); 
+                var fruituaGehitu = gehitu.FirstOrDefault(f => f.Izena == azkenFruitua.Izena); 
 
                 if (fruituaGehitu != null)
                 {
                     if (fruituaGehitu.Kantitatea > 1)
                     {
-                        fruituaGehitu.Kantitatea--; // Kantitatea murriztu
-                        gehitu.Remove(fruituaGehitu); // Aurretik kendu
-                        gehitu.Add(fruituaGehitu); // Gehitu berriro
+                        fruituaGehitu.Kantitatea--; 
+                        gehitu.Remove(fruituaGehitu); 
+                        gehitu.Add(fruituaGehitu); 
                     }
                     else
                     {
-                        gehitu.Remove(fruituaGehitu); // Fruta guztiz kendu
+                        gehitu.Remove(fruituaGehitu); 
                     }
                 }
             }
         }
 
+        /// <summary>
+        /// Bilduma eta pilak garbitu
+        /// </summary>
         private void Itzuli(object sender, EventArgs e)
         {
-            // Bilduma eta pilak garbitu
-            gehitu.Clear();
-            kendu.Clear();
+            gehitu.Clear(); 
+            kendu.Clear(); 
         }
 
+        /// <summary>
+        /// Aplikazioa itxi
+        /// </summary>
         private void Irten(object sender, EventArgs e)
         {
-            // Aplikazioa itxi
-            Application.Current.Quit();
+            Application.Current.Quit(); 
         }
     }
 }

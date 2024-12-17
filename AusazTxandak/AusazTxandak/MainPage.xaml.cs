@@ -1,124 +1,139 @@
-﻿using System.Collections.ObjectModel; // ObservableCollection erabiliko dugu izenak kudeatzeko
-using System.Reflection; // Reflection erabiliko dugu fitxategiak irakurtzeko
+﻿using System.Collections.ObjectModel;
+using System.Reflection;
 
-namespace AusazTxandak // Nabarmentzen dugun namespace
+namespace AusazTxandak
 {
-    public partial class MainPage : ContentPage // MainPage klasea, ContentPage oinordetzen duena
+    public partial class MainPage : ContentPage
     {
-        public ObservableCollection<string> Izenak { get; set; } = new ObservableCollection<string>(); // Izenen bilduma, UI-ra lotzeko
-        private List<string> erabilgarriIzenak; // Erabilgarri dauden izenak gordetzeko zerrenda
+        public ObservableCollection<string> Izenak { get; set; } = new ObservableCollection<string>();
+        private List<string> erabilgarriIzenak;
 
-        public MainPage() // MainPage eraikitzailea
+        public MainPage()
         {
-            InitializeComponent(); // UI osagaiak inicializatzeko metodoa
-            this.BindingContext = this; // Lotura testuingurua definitzen dugu
+            InitializeComponent();
+            this.BindingContext = this;
         }
 
-        private async void OnLoadNamesClicked(object sender, EventArgs e) // Izenak kargatzeko klik egin denean exekutatuko den metodoa
+        /// <summary>
+        /// Izenak kargatzeko klik egin denean exekutatuko den metodoa
+        /// </summary>
+        private async void OnLoadNamesClicked(object sender, EventArgs e)
         {
-            if (erabilgarriIzenak == null) // Erabilgarri izenak ez badira definituta
+            if (erabilgarriIzenak == null)
             {
-                await KargatuIzenak(); // Izenak kargatzen ditugu
+                await KargatuIzenak(); // Izenak kargatzeko metodoa deitzen dugu
             }
 
-            if (erabilgarriIzenak != null && erabilgarriIzenak.Count > 0) // Izenak erabilgarri badaude
+            if (erabilgarriIzenak != null && erabilgarriIzenak.Count > 0)
             {
-                var Aukeratutakoizena = erabilgarriIzenak[0]; // Lehen izena hautatzen dugu
-                Izenak.Add(Aukeratutakoizena); // Hautatutako izena Izenak bildumara gehitzen dugu
+                var Aukeratutakoizena = erabilgarriIzenak[0];
+                Izenak.Add(Aukeratutakoizena);
 
-                erabilgarriIzenak.RemoveAt(0); // Hautatutako izena erabilgarri izenak zerrendatik ezabatu
+                erabilgarriIzenak.RemoveAt(0);
 
-                if (erabilgarriIzenak.Count == 0) // Izen erabilgarriak agortu badira
+                if (erabilgarriIzenak.Count == 0)
                 {
-                    await DisplayAlert("Bukatuta", "Izen guztiak gehitu dira.", "OK"); // Mezua erakutsi
+                    await DisplayAlert("Bukatuta", "Izen guztiak gehitu dira.", "OK");
                 }
             }
-            else // Izen erabilgarriak ez badira
+            else
             {
-                await DisplayAlert("Error", "Ez daude izen gehiago erabilgarri.", "OK"); // Mezua erakutsi
+                await DisplayAlert("Error", "Ez daude izen gehiago erabilgarri.", "OK");
             }
         }
 
-        private async void OnSaveNamesClicked(object sender, EventArgs e) // Izenak gorde klik egin denean exekutatuko den metodoa
+        /// <summary>
+        /// Izenak gorde klik egin denean exekutatuko den metodoa
+        /// </summary>
+        private async void OnSaveNamesClicked(object sender, EventArgs e)
         {
-            var fitxatizena = FItxategiIzenentry.Text; // Fitxategi izena erabiltzaileak sartutakoa
-            var rutafitxat = RutaFitxategiEntry.Text; // Fitxategiaren ruta erabiltzaileak sartutakoa
+            var fitxatizena = etyFitxategiarenIzena.Text;
+            var rutafitxat = etyfitxategiHelbidea.Text;
 
-            if (string.IsNullOrWhiteSpace(fitxatizena) || string.IsNullOrWhiteSpace(rutafitxat)) // Sartutako datuak baliozkoak ez badira
+            if (string.IsNullOrWhiteSpace(fitxatizena) || string.IsNullOrWhiteSpace(rutafitxat))
             {
-                await DisplayAlert("Error", "Mesdez, sartu ruta eta fitxategi izen egokia.", "OK"); // Mezua erakutsi
-                return; // Metodoa amaitu
+                await DisplayAlert("Error", "Mesdez, sartu ruta eta fitxategi izen egokia.", "OK");
+                return;
             }
 
-            var fitxateiakonpleto = Path.Combine(rutafitxat, fitxatizena); // Fitxategiaren bidea osatzen dugu
+            var fitxateiakonpleto = Path.Combine(rutafitxat, fitxatizena);
             await GordeIzenakAsync(fitxateiakonpleto); // Izenak gordetzeko metodoa deitzen dugu
         }
 
-        private async Task GordeIzenakAsync(string fitxategiaa) // Izenak gordetzeko metodoa
+        /// <summary>
+        /// Izenak gordetzeko metodoa
+        /// </summary>
+        private async Task GordeIzenakAsync(string fitxategiaa)
         {
             try
             {
-                using (var stream = new FileStream(fitxategiaa, FileMode.Create)) // Fitxategia sortzen dugu
+                using (var stream = new FileStream(fitxategiaa, FileMode.Create))
                 {
-                    using (var writer = new StreamWriter(stream)) // StreamWriter erabiliz idazteko prest
+                    using (var writer = new StreamWriter(stream))
                     {
-                        foreach (var nombre in Izenak) // Izenak bilduman zehar ibiltzen gara
+                        foreach (var nombre in Izenak)
                         {
-                            await writer.WriteLineAsync(nombre); // Izenak fitxategian idazten dugu
+                            await writer.WriteLineAsync(nombre); // Izenak fitxategian idazten ditugu
                         }
                     }
                 }
 
-                await DisplayAlert("Ondo", "Izenak gorde dira.", "OK"); // Izenak ondo gorde direla adierazten dugu
+                await DisplayAlert("Ondo", "Izenak gorde dira.", "OK");
             }
-            catch (Exception ex) // Salbuespen bat gertatuz gero
+            catch (Exception ex)
             {
-                await DisplayAlert("Error", "Arazo bat egon da izenak gordetzerakoan.", "OK"); // Mezua erakutsi
-            }
-        }
-
-        private async Task KargatuIzenak() // Izenak kargatzeko metodoa
-        {
-            var Fitxatizena = await IrakurriFitxategiakAsync("ikasleak.txt"); // "ikasleak.txt" fitxategia irakurtzen dugu
-
-            if (Fitxatizena != null && Fitxatizena.Length > 0) // Izenak kargatu badira
-            {
-                Console.WriteLine("Izenak kargatzen......"); // Kontsolan mezu bat inprimatu
-                erabilgarriIzenak = Fitxatizena.ToList(); // Izenak zerrenda bihurtzen dugu
-                erabilgarriIzenak = erabilgarriIzenak.OrderBy(x => Guid.NewGuid()).ToList(); // Izenak nahasten ditugu
-                Console.WriteLine("Izenak nahastuta eta akrgatuta."); // Kontsolan mezu bat inprimatu
-            }
-            else // Izenik ez badago
-            {
-                NombresLabel.Text = "Ez dira izenak aurkitu."; // Label batean mezu bat jarri
+                await DisplayAlert("Error", "Arazo bat egon da izenak gordetzerakoan.", "OK");
             }
         }
 
-        private async Task<string[]> IrakurriFitxategiakAsync(string fitxategi) // Fitxategiak irakurtzeko metodoa
+        /// <summary>
+        /// Izenak kargatzeko metodoa
+        /// </summary>
+        private async Task KargatuIzenak()
         {
-            var assembly = Assembly.GetExecutingAssembly(); // Aktiboa den assembly-a lortzen dugu
-            var resourcePath = $"AusazTxandak.Resources.Raw.{fitxategi}"; // Fitxategiaren bidea osatzen dugu
-            Console.WriteLine(resourcePath); // Kontsolan mezu bat inprimatu
+            var Fitxatizena = await IrakurriFitxategiakAsync("ikasleak.txt"); // Izenak kargatzeko fitxategia irakurtzen dugu
 
-            using (var stream = assembly.GetManifestResourceStream(resourcePath)) // Fitxategia irakurtzen saiatzen gara
+            if (Fitxatizena != null && Fitxatizena.Length > 0)
             {
-                if (stream != null) // Fitxategia aurkitu bada
+                Console.WriteLine("Izenak kargatzen......");
+                erabilgarriIzenak = Fitxatizena.ToList();
+                erabilgarriIzenak = erabilgarriIzenak.OrderBy(x => Guid.NewGuid()).ToList();
+                Console.WriteLine("Izenak nahastuta eta akrgatuta.");
+            }
+            else
+            {
+                lblIzenak.Text = "Ez dira izenak aurkitu.";
+            }
+        }
+
+        /// <summary>
+        /// Fitxategiak irakurtzeko metodoa
+        /// </summary>
+        private async Task<string[]> IrakurriFitxategiakAsync(string fitxategi)
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            var resourcePath = $"AusazTxandak.Resources.Raw.{fitxategi}";
+            Console.WriteLine(resourcePath);
+
+            using (var stream = assembly.GetManifestResourceStream(resourcePath))
+            {
+                if (stream != null)
                 {
-                    using (var reader = new StreamReader(stream)) // StreamReader erabiliz irakurtzeko prest
+                    using (var reader = new StreamReader(stream))
                     {
                         var contenido = await reader.ReadToEndAsync(); // Fitxategiaren edukia irakurri
-                        Console.WriteLine(contenido); // Kontsolan fitxategiaren edukia inprimatu
+                        Console.WriteLine(contenido);
                         return contenido.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries); // Edukia lerroz banatzen dugu
                     }
                 }
-                else // Fitxategia aurkitu ez bada
+                else
                 {
-                    Console.WriteLine("Fitxategia ez da aurkitu."); // Kontsolan mezu bat inprimatu
-                    NombresLabel.Text = "Fitxategia ez da aurkitu"; // Label batean mezu bat jarri
+                    Console.WriteLine("Fitxategia ez da aurkitu.");
+                    lblIzenak.Text = "Fitxategia ez da aurkitu";
                 }
             }
 
-            return new string[0]; // Emaitzarik ez bada, zerrenda huts bat itzultzen dugu
+            return new string[0];
         }
     }
 }

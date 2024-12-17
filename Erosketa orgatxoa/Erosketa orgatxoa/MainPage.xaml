@@ -4,6 +4,7 @@
              x:Class="Erosketa_orgatxoa.MainPage">
 
     <Grid>
+        <!-- Sarea definitzen da: bi lerro eta hiru zutabe -->
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -15,7 +16,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Imágenes de frutas con eventos de arrastre -->
+        <!-- Frutekin irudiak eta arrastatze ekintzak -->
         <VerticalStackLayout Grid.Column="0" Grid.Row="0" Margin="20,50,0,0">
             <HorizontalStackLayout>
                 <Image Source="sandia.png" HeightRequest="100" Margin="10">
@@ -55,14 +56,14 @@
             </HorizontalStackLayout>
         </VerticalStackLayout>
 
-        <!-- Carrito con evento de drop -->
+        <!-- Karroa, drop ekintza bat gehituta -->
         <Image Source="carrito.png" Grid.Column="1" Grid.Row="0" WidthRequest="200" Margin="150,0,150,0">
             <Image.GestureRecognizers>
                 <DropGestureRecognizer Drop="Erosi" />
             </Image.GestureRecognizers>
         </Image>
 
-        <!-- Lista de frutas en el carrito -->
+        <!-- Karroan dauden fruituen zerrenda -->
         <VerticalStackLayout Grid.Column="2" Grid.Row="0">
             <ListView x:Name="lvFruituak" HeightRequest="250" Margin="100,100,0,0">
                 <ListView.ItemTemplate>
@@ -74,13 +75,12 @@
             <Button Text="itzuli" WidthRequest="100" HorizontalOptions="Start" Margin="100,0,0,0" Clicked="Itzuli"/>
         </VerticalStackLayout>
 
-        <!-- Botones adicionales -->
+        <!-- Botoi gehigarriak -->
         <Button Grid.Column="0" Grid.Row="1" HorizontalOptions="Start" VerticalOptions="End" Margin="20" Text="Desegin" 
                 Clicked="Desegin"/>
-        
+
         <Button Grid.Column="3" Grid.Row="1" HorizontalOptions="End" VerticalOptions="End" Margin="20" Text="Irten" 
                 Clicked="Irten"/>
-
 
     </Grid>
 </ContentPage>
