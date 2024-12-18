@@ -4,22 +4,24 @@
              x:Class="AhateariTiro.MainPage">
 
     <Grid>
+        <!-- Griden errenkaden definizioa -->
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="100"/>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="100" />
         </Grid.RowDefinitions>
 
-        <Image Source="fondo.png" Aspect="AspectFill"  Grid.Row="0"  VerticalOptions="FillAndExpand"  HorizontalOptions="FillAndExpand" />
+        <!-- Atzeko planoaren irudia -->
+        <Image Source="fondo.png" Aspect="AspectFill" Grid.Row="0" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" />
 
-        <AbsoluteLayout Grid.Row="0" x:Name="GameArea" HeightRequest="550"/>
+        <!-- Hemen ahateak eta beste elementuak kokatuko dira -->
+        <AbsoluteLayout Grid.Row="0" x:Name="GameArea" HeightRequest="550" />
 
-        <HorizontalStackLayout Grid.Row="1" BackgroundColor="Black"  HorizontalOptions="FillAndExpand"  VerticalOptions="FillAndExpand"  Spacing="30">
+        <!-- Jokoaren kontrolak eta informazioa -->
+        <HorizontalStackLayout Grid.Row="1" BackgroundColor="Black" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Spacing="30">
             <Button x:Name="btnHasi" Text="Hasi" HorizontalOptions="Center" Margin="500,0,0,0" BackgroundColor="Green" WidthRequest="150" HeightRequest="50" />
-            <Label x:Name="lblDenabora" Text="60" HorizontalOptions="Center" TextColor="White" VerticalOptions="Center" FontSize="24"/>
+            <Label x:Name="lblDenabora" Text="60" HorizontalOptions="Center" TextColor="White" VerticalOptions="Center" FontSize="24" />
             <Label x:Name="lblPuntuak" Text="Puntuak: 0" FontSize="24" TextColor="White" Margin="10" HorizontalOptions="Center" VerticalOptions="Center" />
-            <Button x:Name="btnAmaitu" Text="Amaitu" HorizontalOptions="Center" BackgroundColor="Red"  WidthRequest="150" HeightRequest="50" />
+            <Button x:Name="btnAmaitu" Text="Amaitu" HorizontalOptions="Center" BackgroundColor="Red" WidthRequest="150" HeightRequest="50" />
         </HorizontalStackLayout>
     </Grid>
-
 </ContentPage>
-

@@ -6,121 +6,136 @@ namespace Landetxearen_erreserba
 {
     public partial class MainPage : ContentPage
     {
-        public ObservableCollection<string> Irudiak { get; set; } // Irudien bilduma
-        public ObservableCollection<string> ErreserbatutakoAsteak { get; set; } // Erreserbatutako asteen bilduma
+        public ObservableCollection<string> Irudiak { get; set; }
+        public ObservableCollection<string> ErreserbatutakoAsteak { get; set; }
 
         public MainPage()
         {
-            InitializeComponent(); // Osagaiak hasieratu
-            IrudiakHasieratu(); // Irudiak hasieratu
-            ErreserbatutakoAsteak = new ObservableCollection<string>(); // Bilduma hasieratu
-            BindingContext = this; // Kontextoa lotu
+            InitializeComponent();
+            IrudiakHasieratu();
+            ErreserbatutakoAsteak = new ObservableCollection<string>();
+            BindingContext = this;
         }
 
+        /// <summary>
+        /// Irudien bilduma hasieratzen du.
+        /// </summary>
         private void IrudiakHasieratu()
         {
-            // Irudiak hasieratu
             Irudiak = new ObservableCollection<string>
             {
-                "bat.jpg", // Lehen irudia
-                "bi.jpg",  // Bigarren irudia
-                "hiru.jpg", // Hirugarren irudia
-                "lau.jpg"  // Laugarren irudia
+                "bat.jpg",
+                "bi.jpg",
+                "hiru.jpg",
+                "lau.jpg"
             };
         }
 
+        /// <summary>
+        /// CheckBox bat aldatu denean guztirako prezioa eguneratzen du.
+        /// </summary>
         public void CheckBoxAldatzean(object sender, CheckedChangedEventArgs e)
         {
-            // CheckBox bat aldatu denean, guztira eguneratu
             GuztiraEguneratu();
         }
 
+        /// <summary>
+        /// Guztirako prezioa kalkulatzen du eta interfazeko testuak eguneratzen ditu.
+        /// </summary>
         private void GuztiraEguneratu()
         {
-            decimal guztira = 0; // Guztira aldagaia hasieratu
+            decimal guztira = 0;
 
-            // CheckBox bakoitzaren egoera egiaztatu eta prezioa gehitu
             if (ChAireportu.IsChecked)
-                guztira += 25; // Aireportuko gehigarria
+                guztira += 25;
 
             if (ChBisita.IsChecked)
-                guztira += 150; // Bisitaren gehigarria
+                guztira += 150;
 
             if (ChUme.IsChecked)
-                guztira += 40; // Ume gehiagarria
+                guztira += 40;
 
-            EtyGehigarri.Text = guztira.ToString(); // Gehigarria testu bezala ezarri
+            EtyGehigarri.Text = guztira.ToString();
 
-            // Estancia eta gehigarriak prezioak kalkulatu
-            decimal estanciaPrezioa = 300; // Estancia prezioa
-            decimal gehigarriakPrezioa = guztira; // Gehigarri prezioa
-            decimal guztiraDut = estanciaPrezioa + gehigarriakPrezioa; // Guztira kalkulatu
-            EtyGuztira.Text = guztiraDut.ToString(); // Guztira testu bezala ezarri
+            decimal estanciaPrezioa = 300;
+            decimal gehigarriakPrezioa = guztira;
+            decimal guztiraDut = estanciaPrezioa + gehigarriakPrezioa;
+            EtyGuztira.Text = guztiraDut.ToString();
         }
 
+        /// <summary>
+        /// Erreserba egiten du eta astea erreserbatuta dagoen egiaztatzen du.
+        /// </summary>
         private void ErreserbaEgin()
         {
-            // Aste hasiera eta amaiera kalkulatu
-            var asteHasiera = BookingDatePicker.Date.StartOfWeek(DayOfWeek.Monday); // Aste hasiera
-            var asteAmaiera = asteHasiera.AddDays(6); // Aste amaiera
-            string hilabeteIzena = LortuEuskeraHilabeteIzena(asteHasiera.Month); // Hilabete izena lortu euskeraz
-            string asteIrangoa = $"{asteHasiera:yyyy}: {hilabeteIzena} {asteHasiera.Day}-{asteAmaiera.Day}"; // Aste irangoa osatu
+            var asteHasiera = BookingDatePicker.Date.StartOfWeek(DayOfWeek.Monday);
+            var asteAmaiera = asteHasiera.AddDays(6);
+            string hilabeteIzena = LortuEuskeraHilabeteIzena(asteHasiera.Month);
+            string asteIrangoa = $"{asteHasiera:yyyy}: {hilabeteIzena} {asteHasiera.Day}-{asteAmaiera.Day}";
 
-            // Astea erreserbatuta dagoen ala ez egiaztatu
             if (AsteaErreserbatutaDago(asteIrangoa))
             {
-                DisplayAlert("Errorea", "Aste hau dagoeneko erreserbaturik dago.", "Onartu"); // Errorea jakinarazi
+                DisplayAlert("Errorea", "Aste hau dagoeneko erreserbaturik dago.", "Onartu");
             }
             else
             {
-                // Erreserbatutako astea bildumara gehitu
                 ErreserbatutakoAsteak.Add(asteIrangoa);
-                DisplayAlert("Arrakasta", "Erreserba ongi egin da.", "Onartu"); // Arrakasta jakinarazi
+                DisplayAlert("Arrakasta", "Erreserba ongi egin da.", "Onartu");
             }
         }
 
+        /// <summary>
+        /// Hilabete zenbakia jasotzen du eta euskerazko izena itzultzen du.
+        /// </summary>
         private string LortuEuskeraHilabeteIzena(int hilabetea)
         {
-            // Hilabete izenen hiztegia euskeraz
             string[] hilabeteakEuskeraz = {
-                "Urtarrila", // Urtarrila
-                "Otsaila",   // Otsaila
-                "Martxoa",   // Martxoa
-                "Apirila",   // Apirila
-                "Maiatza",   // Maiatza
-                "Ekaina",    // Ekaina
-                "Uztaila",   // Uztaila
-                "Abuztua",   // Abuztua
-                "Iraila",    // Iraila
-                "Urria",     // Urria
-                "Azaroa",    // Azaroa
-                "Abendua"    // Abendua
+                "Urtarrila",
+                "Otsaila",
+                "Martxoa",
+                "Apirila",
+                "Maiatza",
+                "Ekaina",
+                "Uztaila",
+                "Abuztua",
+                "Iraila",
+                "Urria",
+                "Azaroa",
+                "Abendua"
             };
 
-            return hilabeteakEuskeraz[hilabetea - 1]; // Indizea egokitu hilabeteak 1etik hasten direlako
+            return hilabeteakEuskeraz[hilabetea - 1];
         }
 
+        /// <summary>
+        /// Aste irangoa erreserbatuta dagoen edo ez egiaztatzen du.
+        /// </summary>
         private bool AsteaErreserbatutaDago(string asteIrangoa)
         {
-            // Astea erreserbatuta dagoen egiaztatu
             return ErreserbatutakoAsteak.Contains(asteIrangoa);
         }
 
+        /// <summary>
+        /// Erreserba botoia sakatzean erreserba funtzioa exekutatzen du.
+        /// </summary>
         private void ErreserbaBotoia_Clicked(object sender, EventArgs e)
         {
-            // Botoia sakatzean erreserba funtzioa deitzen du
             ErreserbaEgin();
         }
     }
 
-    // Aste hasiera kalkulatzeko luzapen klasea
+    /// <summary>
+    /// Datarekin erlazionatutako luzapen metodoak eskaintzen dituen klasea.
+    /// </summary>
     public static class DateTimeExtensions
     {
+        /// <summary>
+        /// Emandako datarekin bat datozen astearen lehen eguna itzultzen du.
+        /// </summary>
         public static DateTime StartOfWeek(this DateTime dt, DayOfWeek startOfWeek)
         {
-            // Aste hasiera kalkulatzeko logika
-            int desberdintasuna = (7 + (dt.DayOfWeek - startOfWeek)) % 7; // Aste hasierara arteko desberdintasuna
-            return dt.AddDays(-1 * desberdintasuna).Date; // Aste hasiera itzuli
+            int desberdintasuna = (7 + (dt.DayOfWeek - startOfWeek)) % 7;
+            return dt.AddDays(-1 * desberdintasuna).Date;
         }
     }
 }

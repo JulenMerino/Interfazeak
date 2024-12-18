@@ -6,9 +6,7 @@
     <VerticalStackLayout Padding="20" Spacing="20">
 
         <!-- 49 CheckBox-en panel bat koadernoan -->
-        <Grid x:Name="PnlCheckBox" ColumnSpacing="10" RowSpacing="10">
-            <!-- CheckBox-ak dinamikoki sortuko dira atzealdeko kodean -->
-        </Grid>
+        <Grid x:Name="PnlCheckBox" ColumnSpacing="10" RowSpacing="10"/>
 
         <!-- Hautatutako zenbakiak erakusten dituen TextBox-a -->
         <HorizontalStackLayout>
@@ -20,7 +18,6 @@
         <HorizontalStackLayout>
             <Label Text="Irabazle zenbakiak: " VerticalOptions="Center"/>
             <HorizontalStackLayout x:Name="EtyIrabazitakoZenbakiak" Spacing="5" HorizontalOptions="StartAndExpand">
-                <!-- Hemen irabazle zenbakiak erakusteko Entry dinamikoak gehituko dira -->
             </HorizontalStackLayout>
         </HorizontalStackLayout>
 

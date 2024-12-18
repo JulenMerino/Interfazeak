@@ -4,6 +4,7 @@
              x:Class="HarraiaPaperaGuraize.MainPage">
 
     <Grid>
+        <!-- Griden errenkaden definizioa -->
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -11,6 +12,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+        <!-- Griden zutabeen definizioa -->
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200"/>
             <ColumnDefinition Width="200"/>
@@ -19,19 +21,23 @@
             <ColumnDefinition Width="200"/>
         </Grid.ColumnDefinitions>
 
+        <!-- Informazioa ematen duten labelak-->
         <Label Grid.Row="0" Grid.ColumnSpan="3" Text="Zure Aukera" HorizontalOptions="Center" FontSize="Large"/>
         <Label Grid.Row="0" Grid.Column="4" Text="Makina" HorizontalOptions="Center" FontSize="Large"/>
         <Label Grid.Row="2" Grid.ColumnSpan="3" x:Name="NirePuntuak" HorizontalOptions="Center" FontSize="Large"/>
         <Label Grid.Row="2" Grid.Column="3" Text="Puntuak" HorizontalOptions="Center" FontSize="Large"/>
         <Label Grid.Row="2" Grid.Column="4" x:Name="MakinarenPuntuak" HorizontalOptions="Center" FontSize="Large"/>
 
-        <Image Grid.Row="1" Grid.Column="0" Source="piedra.png"  GestureRecognizers="{TapGestureRecognizer Tapped='JokalariakAukeratutakoan'}"/>
-        <Image Grid.Row="1" Grid.Column="1" Source="papel.png"  GestureRecognizers="{TapGestureRecognizer Tapped='JokalariakAukeratutakoan'}"/>
-        <Image Grid.Row="1" Grid.Column="2" Source="tijeras.png"  GestureRecognizers="{TapGestureRecognizer Tapped='JokalariakAukeratutakoan'}"/>
+        <!-- Harria, Papera, Guraizearen irudiak -->
+        <Image Grid.Row="1" Grid.Column="0" Source="piedra.png" GestureRecognizers="{TapGestureRecognizer Tapped='JokalariakAukeratutakoan'}"/>
+        <Image Grid.Row="1" Grid.Column="1" Source="papel.png" GestureRecognizers="{TapGestureRecognizer Tapped='JokalariakAukeratutakoan'}"/>
+        <Image Grid.Row="1" Grid.Column="2" Source="tijeras.png" GestureRecognizers="{TapGestureRecognizer Tapped='JokalariakAukeratutakoan'}"/>
+
+        <!-- Makinak autatzen duen irudia-->
         <Image x:Name="MakinarenAukera" Grid.Row="1" Grid.Column="4" Source="default.png" />
 
+        <!-- Irten botoia-->
         <Button Text="Irten" Grid.Row="3" Grid.Column="4" Margin="4" HorizontalOptions="Center" HeightRequest="50" Clicked="Irten"/>
-
 
     </Grid>
 

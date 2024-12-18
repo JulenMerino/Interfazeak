@@ -4,12 +4,14 @@
              x:Class="Landetxearen_erreserba.MainPage">
 
     <Grid>
+        <!-- Griden zutabeak definitzen dira -->
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="300" />
             <ColumnDefinition Width="300" />
             <ColumnDefinition Width="200" />
         </Grid.ColumnDefinitions>
 
+        <!-- Lehen zutabea: Irudi karusela -->
         <StackLayout Grid.Column="0">
             <CarouselView Grid.Column="0" HeightRequest="300" IndicatorView="indicator" ItemsSource="{Binding Images}" Loop="False" WidthRequest="200">
                 <CarouselView.ItemTemplate>
@@ -21,12 +23,15 @@
                 </CarouselView.ItemTemplate>
             </CarouselView>
 
+            <!-- Karuselaren adierazleak -->
             <IndicatorView x:Name="indicator" Grid.Column="0" Margin="0,-20,0,150" HorizontalOptions="Center" IndicatorColor="Gray" IndicatorSize="10" IndicatorsShape="Circle" SelectedIndicatorColor="White" VerticalOptions="End" />
         </StackLayout>
 
+        <!-- Bigarren zutabea: Gehigarriak eta prezioak -->
         <StackLayout Grid.Column="1">
-
             <Label Text="Servicios adicionales:" FontAttributes="Bold" />
+
+            <!-- Gehigarri aukera bakoitza -->
             <VerticalStackLayout>
                 <StackLayout Orientation="Horizontal">
                     <CheckBox x:Name="ChAireportu" CheckedChanged="OnCheckBoxCheckedChanged"/>
@@ -42,6 +47,7 @@
                 </StackLayout>
             </VerticalStackLayout>
 
+            <!-- Prezioak erakusteko -->
             <HorizontalStackLayout Margin="0,0,0,10">
                 <Label Text="Egonaldiaren prezioa:" VerticalOptions="Center"/>
                 <Entry x:Name="EtyEstantzia" Text="300" IsEnabled="False" WidthRequest="100" VerticalOptions="Center" />
@@ -59,14 +65,17 @@
                 <Entry x:Name="EtyGuztira" Text="{Binding TotalPrice}" IsEnabled="False" WidthRequest="100" VerticalOptions="Center"/>
                 <Label Text="€" VerticalOptions="Center"/>
             </HorizontalStackLayout>
-
         </StackLayout>
 
+        <!-- Hirugarren zutabea: Erreserba data eta asteak -->
         <StackLayout Grid.Column="2">
+            
+            <!-- Erreserba egiteko data aukeratzea -->
             <Label Text="Selecciona la fecha de reserva:" />
             <DatePicker x:Name="BookingDatePicker" Date="{Binding CurrentDate}" Format="dd/mm/yyyy"/>
             <Button x:Name="BookingButton" Text="Erreserba egin" Clicked="BookingButton_Clicked" />
 
+            <!-- Eskuragarri dauden asteak erakusteko -->
             <Label Text="Semanas Disponibles:" />
             <ListView x:Name="AvailableWeeksList" ItemsSource="{Binding ReservedWeeks}">
                 <ListView.ItemTemplate>
