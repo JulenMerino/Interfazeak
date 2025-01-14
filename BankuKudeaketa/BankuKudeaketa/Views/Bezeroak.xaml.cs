@@ -97,18 +97,27 @@ public partial class BezeroakView : ContentPage
     /// Aukeratutako erregistroa aldatzen denean ejutatzen den kodea honek erregistroaren datuen arabera betetzen du interfazea
     /// </summary>
     /// <param name="posizioa"> bezeroaren id-a</param> 
-    private void AldatuErregistroa(long  posizioa)
+    private void AldatuErregistroa(long posizioa, bool berria = false)
     {
+        if (posizioa < 0 || posizioa > _posizioMax - 1 && !berria) return;
+
         _posizioa = posizioa;
         var bezeroak = datubasea.Table<Bezeroa>().ToArray();
-        bezeroa = bezeroak[posizioa];
+        if (posizioa >= bezeroak.Length)
+        {
+            bezeroa = new Bezeroa();
+        }
+        else
+        {
+            bezeroa = bezeroak[posizioa];
+        }
 
         EntryIzena.Text = bezeroa?.Izena ?? "";
         EntryNan.Text = bezeroa?.Nan ?? "";
 
         EntryBezeroakCurrent.Text = _posizioa.ToString();
 
-        _posizioMax = datubasea.Table<Bezeroa>().Count() -1;
+        _posizioMax = datubasea.Table<Bezeroa>().Count();
         LabelBezeroakCount.Text = "-" + _posizioMax + "-tik";
 
     }
@@ -130,11 +139,6 @@ public partial class BezeroakView : ContentPage
     private void EntryIdAldatu(object sender, TextChangedEventArgs e)
     {
         _posizioa = long.Parse(EntryBezeroakCurrent.Text);
-        if (_posizioa < 0 || _posizioa > _posizioMax) 
-        {
-            EntryBezeroakCurrent.Text = _posizioa.ToString();
-            return; 
-        }
 
         AldatuErregistroa(_posizioa);
     }
@@ -147,12 +151,8 @@ public partial class BezeroakView : ContentPage
     private void ErregistroaAtzera(object sender, EventArgs e)
     {
         var posizioa = _posizioa - 1;
-        if (posizioa < 0 || posizioa > _posizioMax)
-        {
-            EntryBezeroakCurrent.Text = _posizioa.ToString();
-            return;
-        }
-        AldatuErregistroa(posizioa);
+
+        AldatuErregistroa(posizioa, true);
     }
 
     /// <summary>
@@ -163,11 +163,7 @@ public partial class BezeroakView : ContentPage
     private void ErregistroaAurrera(object sender, EventArgs e)
     {
         var posizioa = _posizioa + 1;
-        if (posizioa < 0 || posizioa > _posizioMax)
-        {
-            EntryBezeroakCurrent.Text = _posizioa.ToString();
-            return;
-        }
+
         AldatuErregistroa(posizioa);
     }
     /// <summary>
@@ -187,7 +183,7 @@ public partial class BezeroakView : ContentPage
     /// <param name="e"></param>
     private void BezeroBerria(object sender, EventArgs e)
     {
-        AldatuErregistroa(_posizioMax + 1);
+        AldatuErregistroa(_posizioMax + 1, true);
     }
     /// <summary>
     /// Aukeratutako bezeroa ezabatzen du
@@ -199,7 +195,7 @@ public partial class BezeroakView : ContentPage
         datubasea.Insert(new del_Bezeroa(bezeroa));
         datubasea.Delete(bezeroa);
         AldatuErregistroa(_posizioMax);
-       
+
     }
 
     /// <summary>
@@ -214,8 +210,8 @@ public partial class BezeroakView : ContentPage
         bezeroa.Nan = EntryNan.Text;
         if (datubasea.Find<Bezeroa>(bezeroa.Id) != null)
         {
-        datubasea.Update(bezeroa);
-            
+            datubasea.Update(bezeroa);
+
         }
         else
         {
