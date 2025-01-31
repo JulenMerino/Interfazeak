@@ -1,0 +1,123 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Ordezkaritza.Views.Informazioa"
+             xmlns:tabView="clr-namespace:Syncfusion.Maui.TabView;assembly=Syncfusion.Maui.TabView">
+
+    <ContentPage.Content>
+        <tabView:SfTabView x:Name="tvInformazioa">
+            <!-- Pestaña 1: XML irakurri -->
+            <tabView:SfTabItem Header="XML irakurri" BackgroundColor="Black" TextColor="White">
+                <tabView:SfTabItem.Content>
+                    <VerticalStackLayout Padding="0,50,0,0" BackgroundColor="#e7c8ab">
+                        <Label x:Name="lblXMLIrakurri" Text="XML-ak irakurri" FontSize="Header" FontAttributes="Bold" HorizontalOptions="Center" Margin="0,0,0,20"/>
+                        <Label x:Name="lblXMLHelbidea" Text="Sartu XML fitxategia dagoen helbidea" FontSize="Medium" HorizontalOptions="Center" Margin="0,0,0,50"/>
+                        <Button x:Name="btnAukeratuXMLa" Text="Aukeratu XML-a" WidthRequest="300" FontSize="Medium" BackgroundColor="#034886" Margin="0,0,0,50" Clicked="btnAukeratuXMLa_Clicked"/>
+                        <Label x:Name="lblEmaitzaAukeratu" Text="asdfasd" FontSize="Large" HorizontalOptions="Center" Margin="0,0,0,50"/>
+                        <Button x:Name="btnKargatuDatuak" Text="Kargatu Datuak" WidthRequest="300" FontSize="Medium" BackgroundColor="#034886" Clicked="btnKargatuDatuak_Clicked"/>
+                    </VerticalStackLayout>
+                </tabView:SfTabItem.Content>
+            </tabView:SfTabItem>
+
+            <!-- Pestaña 2: Eskaeren erantzuna -->
+            <tabView:SfTabItem Header="Eskaeren erantzuna" BackgroundColor="Black" TextColor="White">
+                <tabView:SfTabItem.Content>
+                    <Grid BackgroundColor="#e7c8ab">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="200"/>
+                            <RowDefinition Height="200"/>
+                            <RowDefinition Height="200"/>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <VerticalStackLayout Grid.Column="0" Grid.Row="0" HorizontalOptions="Center" WidthRequest="300" Margin="20">
+                            <Label x:Name="lblEskaeraZenabkia" Text="Eskaera zenbaki" FontSize="Medium" Margin="0,0,0,20"/>
+                            <Entry x:Name="etyEskaeraZenabkia"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" Grid.Row="0" HorizontalOptions="Center" WidthRequest="300" Margin="20">
+                            <Label x:Name="lblBidalketaKodea" Text="Bidalketa kodea" FontSize="Medium" Margin="0,0,0,20"/>
+                            <Entry x:Name="etyBidalketaKodea"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="0" Grid.Row="1" HorizontalOptions="Center" WidthRequest="300" Margin="20">
+                            <Label x:Name="lblTokia" Text="Nora bidali behar den" FontSize="Medium" Margin="0,0,0,20"/>
+                            <Entry x:Name="etyTokia"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" Grid.Row="1" HorizontalOptions="Center" WidthRequest="300" Margin="20">
+                            <Label x:Name="lblData" Text="Data(YYYY/MM/DD)" FontSize="Medium" Margin="0,0,0,20"/>
+                            <Entry x:Name="etyData"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="0" Grid.Row="2"  HorizontalOptions="Center" WidthRequest="300" Margin="20">
+                            <Label x:Name="lblLista" Text="Lista" FontSize="Medium" Margin="0,0,0,20"/>
+                            <Entry x:Name="etyLista"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" Grid.Row="2" HorizontalOptions="Center" WidthRequest="300" Margin="20">
+                            <Label x:Name="lblPrezioTotala" Text="Prezio Totala" FontSize="Medium" Margin="0,0,0,20"/>
+                            <Entry x:Name="etyPrezioTotala"/>
+                        </VerticalStackLayout>
+                        <Button x:Name="btnFaktura" Text="Faktura ikusi" Grid.Row="3" Grid.ColumnSpan="2" WidthRequest="200" BackgroundColor="#034886" />
+                    </Grid>
+                </tabView:SfTabItem.Content>
+            </tabView:SfTabItem>
+
+            <!-- Pestaña 3: Stock -->
+            <tabView:SfTabItem Header="Stock" BackgroundColor="Black" TextColor="White">
+                <tabView:SfTabItem.Content>
+                    <ScrollView BackgroundColor="#e7c8ab">
+                        <VerticalStackLayout>
+                            <CollectionView x:Name="ProduktuakColection" HeightRequest="550">
+                                <CollectionView.ItemsLayout>
+                                    <GridItemsLayout Orientation="Vertical" Span="2" />
+                                </CollectionView.ItemsLayout>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Padding="10">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <Image Grid.Row="0" Grid.ColumnSpan="2" Source="{Binding Irudia}" Aspect="AspectFill" HeightRequest="100" WidthRequest="100" HorizontalOptions="Center" />
+                                            <Label Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Izena}" FontAttributes="Bold" FontSize="Medium" HorizontalOptions="Center" Margin="0,5,0,5" />
+                                            <HorizontalStackLayout Grid.Row="2" HorizontalOptions="Center">
+                                                <Label Text="Kantitatea: " FontAttributes="Italic" VerticalOptions="End" />
+                                                <Label Text="{Binding Kantitatea}" FontAttributes="Italic" VerticalOptions="End" Margin="5,0,20,0" />
+                                                <Label Text="Prezioa: " FontAttributes="Italic" VerticalOptions="End"/>
+                                                <Label Text="{Binding Prezioa}" FontAttributes="Italic" VerticalOptions="End" Margin="5,0,20,0" />
+                                            </HorizontalStackLayout>
+                                        </Grid>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                            <Button x:Name="btnStocKBerritu" Text="Stock-a Berritu" HorizontalOptions="Center" WidthRequest="200" BackgroundColor="#034886" Margin="20" Clicked="btnStocKBerritu_Clicked"/>
+                        </VerticalStackLayout>
+                    </ScrollView>
+                </tabView:SfTabItem.Content>
+            </tabView:SfTabItem>
+
+            <!-- Pestaña 4: Informeak/Estadistikak -->
+            <tabView:SfTabItem Header="Informeak/Estadistikak" BackgroundColor="Black" TextColor="White">
+                <tabView:SfTabItem.Content>
+                    <VerticalStackLayout BackgroundColor="#e7c8ab">
+                        <HorizontalStackLayout>
+                            <Button x:Name="btnHilabetekoEskaerak" Text="Hilabeteko eskaerak" WidthRequest="245" HeightRequest="75" BackgroundColor="#034886" Margin="20" Clicked="btnHilabetekoEskaerak_Clicked"/>
+                            <Button x:Name="btnEskaerakEgoitzaNagusira" Text="Eskaerak egoitza nagusira" WidthRequest="245" BackgroundColor="#034886" Margin="20" Clicked="btnEskaerakEgoitzaNagusira_Clicked"/>
+                            <Button x:Name="btnGehienEskatutakoProduktua" Text="Gehien eskatutako produktuak" WidthRequest="245" BackgroundColor="#034886" Margin="20" Clicked="btnGehienEskatutakoProduktua_Clicked"/>
+                            <Button x:Name="btnGehienSaltzenDuenBazkidea" Text="Gehien saltzen duen bazkidea" WidthRequest="245" BackgroundColor="#034886" Margin="20" Clicked="btnGehienSaltzenDuenBazkidea_Clicked"/>
+                            <Button x:Name="btnIrabaziHandienaDuenBazkidea" Text="Irabazi handien duen bazkidea" WidthRequest="245" BackgroundColor="#034886" Margin="20" Clicked="btnIrabaziHandienaDuenBazkidea_Clicked"/>
+                        </HorizontalStackLayout>
+
+                        <TableView x:Name="InformeakTableView">
+                            <TableRoot>
+                                <TableSection x:Name="InfoSection">
+
+                                </TableSection>
+                            </TableRoot>
+                        </TableView>
+                    </VerticalStackLayout>
+                </tabView:SfTabItem.Content>
+            </tabView:SfTabItem>
+        </tabView:SfTabView>
+    </ContentPage.Content>
+</ContentPage>

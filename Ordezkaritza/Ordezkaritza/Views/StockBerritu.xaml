@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Ordezkaritza.Views.StockBerritu">
+
+    <ScrollView>
+        <VerticalStackLayout BackgroundColor="#e7c8ab">
+            <CollectionView x:Name="ProduktuakColection"  HeightRequest="575" Margin="50,50,50,0">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" Span="2" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Image Grid.Row="0" Grid.ColumnSpan="2" Source="{Binding Irudia}" Aspect="AspectFill" HeightRequest="100" WidthRequest="100" HorizontalOptions="Center" />
+                            <Label Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Izena}" FontAttributes="Bold" FontSize="Medium" HorizontalOptions="Center" Margin="0,5,0,5" />
+                            <HorizontalStackLayout Grid.Row="2" HorizontalOptions="Center">
+                                <Label Text="Kantitatea: " FontAttributes="Italic" FontSize="Medium" VerticalOptions="Center" />
+                                <Label Text="{Binding Kantitatea}" FontAttributes="Italic" FontSize="Medium"  VerticalOptions="Center" Margin="5,0,20,0" />
+                                <VerticalStackLayout>
+                                    <Button x:Name="btnGehitu" Text="+" BackgroundColor="#034886" Clicked="btnGehitu_Clicked" Margin="10"/>
+                                    <Button x:Name="btnKendu" Text="-" BackgroundColor="#034886" Clicked="btnKendu_Clicked" Margin="10" IsEnabled="{Binding EzinKendu}"/>
+                                </VerticalStackLayout>
+                            </HorizontalStackLayout>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <Button x:Name="btnSortuXML" Text="Sortu XML-a" HorizontalOptions="Center"  WidthRequest="200" BackgroundColor="#034886" Clicked="btnSortuXML_Clicked"/>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
