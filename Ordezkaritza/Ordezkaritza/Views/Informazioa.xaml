@@ -82,7 +82,7 @@
                                             <Label Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Izena}" FontAttributes="Bold" FontSize="Medium" HorizontalOptions="Center" Margin="0,5,0,5" />
                                             <HorizontalStackLayout Grid.Row="2" HorizontalOptions="Center">
                                                 <Label Text="Kantitatea: " FontAttributes="Italic" VerticalOptions="End" />
-                                                <Label Text="{Binding Kantitatea}" FontAttributes="Italic" VerticalOptions="End" Margin="5,0,20,0" />
+                                                <Label Text="{Binding Stock}" FontAttributes="Italic" VerticalOptions="End" Margin="5,0,20,0" />
                                                 <Label Text="Prezioa: " FontAttributes="Italic" VerticalOptions="End"/>
                                                 <Label Text="{Binding Prezioa}" FontAttributes="Italic" VerticalOptions="End" Margin="5,0,20,0" />
                                             </HorizontalStackLayout>

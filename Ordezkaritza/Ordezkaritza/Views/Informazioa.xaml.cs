@@ -1,4 +1,5 @@
 
+using Ordezkaritza.Data;
 using Syncfusion.Maui.Core.Carousel;
 using System.Collections.ObjectModel;
 
@@ -6,10 +7,15 @@ namespace Ordezkaritza.Views;
 
 public partial class Informazioa : ContentPage
 {
-    public ObservableCollection<Produktua> Produktuak { get; set; }
+    private readonly Database _database;
+    public ObservableCollection<Katalogoa> Katalogoa { get; set; }
     public Informazioa()
     {
         InitializeComponent();
+        _database = new Database("Komertzialak.db");
+
+        Katalogoa = new ObservableCollection<Katalogoa>();
+
         ProduktuColection();
 
     }
@@ -33,33 +39,49 @@ public partial class Informazioa : ContentPage
     //Stock zatia
 
 
-    private void ProduktuColection()
+    private async void ProduktuColection()
     {
-        Produktuak = new ObservableCollection<Produktua>
-            {
-                new Produktua { Irudia = "analogiko1.png", Izena = "Producto 1", Kantitatea = 5, Prezioa = "10.00€" },
-                new Produktua { Irudia = "analogiko2.png", Izena = "Producto 2", Kantitatea = 113, Prezioa = "15.50€" },
-                new Produktua { Irudia = "analogiko3.png", Izena = "Producto 3", Kantitatea = 10, Prezioa = "7.75€" },
-                new Produktua { Irudia = "analogiko4.png", Izena = "Producto 4", Kantitatea = 7, Prezioa = "21.75€" },
-                new Produktua { Irudia = "analogiko5.png", Izena = "Producto 5", Kantitatea = 11, Prezioa = "18.75€" },
-               
-            };
+        var katalogoas = await _database.GetAllKatalogoasAsync();
 
-        ProduktuakColection.ItemsSource = Produktuak;
+        Katalogoa.Clear();
+
+        foreach (var katalogoa in katalogoas)
+        {
+            Katalogoa.Add(new Katalogoa
+            {
+                Produktu_kod = katalogoa.Produktu_kod,
+                Izena = katalogoa.Izena,
+                Prezioa = katalogoa.Prezioa,
+                Stock = katalogoa.Stock,
+                Irudia = GetImageForProduct(katalogoa.Produktu_kod) 
+            });
+        }
+
+        ProduktuakColection.ItemsSource = Katalogoa;
+    }
+
+    private string GetImageForProduct(string productCode)
+    {
+
+        switch (productCode)
+        {
+            case "1": 
+                return "analogiko1.png";
+            case "2": 
+                return "analogiko2.png";
+            case "3": 
+                return "analogiko3.png";
+            default:
+                return "default_image.png";  
+        }
     }
 
     private async void btnStocKBerritu_Clicked(object sender, EventArgs e)
     {
+        
         await Navigation.PushAsync(new Views.StockBerritu());
     }
 
-    public class Produktua
-    {
-        public string Irudia { get; set; }
-        public string Izena { get; set; }
-        public int Kantitatea { get; set; }
-        public string Prezioa { get; set; }
-    }
 
 
 
