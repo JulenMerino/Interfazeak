@@ -1,4 +1,6 @@
 ﻿using SQLite;
+using System.Diagnostics;
+using System.Xml.Linq;
 
 
 namespace Ordezkaritza.Data
@@ -10,7 +12,10 @@ namespace Ordezkaritza.Data
 
         public Database(string dbPath)
         {
-            _dbPath = Path.Combine(FileSystem.AppDataDirectory, "Komertzialak.db");
+            _dbPath = dbPath ?? Path.Combine(FileSystem.AppDataDirectory, "Komertzialak.db");
+
+            // Debug.WriteLine($" Ruta de la base de datos: {Path.GetFullPath(_dbPath)}");
+
 
             // Si la base de datos no existe, copiarla desde el archivo de recursos
             if (!File.Exists(_dbPath))
@@ -58,5 +63,62 @@ namespace Ordezkaritza.Data
         public Task<int> DeletePartnerAsync(Partner partner) => _database.DeleteAsync(partner);
         public Task<int> DeleteEskaeraGoiburuaAsync(Eskaera_Goiburua eskaeraGoiburua) => _database.DeleteAsync(eskaeraGoiburua);
         public Task<int> DeleteEskaeraXehetasunaAsync(Eskaera_Xehetasuna eskaeraXehetasuna) => _database.DeleteAsync(eskaeraXehetasuna);
+
+        public async Task<string> PickXmlFileAsync()
+        {
+
+            var xmlFileType = new FilePickerFileType(new Dictionary<DevicePlatform, IEnumerable<string>>
+            {
+                { DevicePlatform.WinUI, new[] { ".xml" } }
+            });
+            var result = await FilePicker.Default.PickAsync(new PickOptions
+            {
+                FileTypes = xmlFileType
+            });
+
+            return result?.FullPath;
+        }
+        public async Task<List<Katalogoa>> ReadXmlFileAsync(string filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath)) return null;
+
+            var xmlContent = await File.ReadAllTextAsync(filePath);
+            var xdoc = XDocument.Parse(xmlContent);
+
+            var dataList = xdoc.Descendants("Producto")
+                .Select(x => new Katalogoa
+                {
+                    Produktu_kod = (int)x.Element("Codigo"),
+                    Izena = (string)x.Element("Nombre"),
+                    Prezioa = (decimal)x.Element("Precio"),
+                    Stock = (int)x.Element("Stock")
+                }).ToList();
+
+            return dataList;
+        }
+        public async Task SaveDataFromXmlAsync(string filePath)
+        {
+            var data = await ReadXmlFileAsync(filePath);
+            if (data == null || data.Count == 0)
+            {
+                // Debug.WriteLine("No hay datos para guardar en la base de datos.");
+                return;
+            }
+
+            foreach (var item in data)
+            {
+                try
+                {
+                    int result = await _database.InsertAsync(item);
+                    //Debug.WriteLine($"Guardado en BD: {item.Produktu_kod}, Filas afectadas: {result}");
+                }
+                catch (Exception ex)
+                {
+                    //Debug.WriteLine($"Error al guardar {item.Produktu_kod}: {ex.Message}");
+                }
+            }
+        }
+
     }
+
 }

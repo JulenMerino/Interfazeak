@@ -1,36 +1,59 @@
-
 using Ordezkaritza.Data;
-using Syncfusion.Maui.Core.Carousel;
 using System.Collections.ObjectModel;
+using System.Xml.Linq;
 
 namespace Ordezkaritza.Views;
 
 public partial class Informazioa : ContentPage
 {
     private readonly Database _database;
+    private string filePath;
     public ObservableCollection<Katalogoa> Katalogoa { get; set; }
+
     public Informazioa()
     {
         InitializeComponent();
         _database = new Database("Komertzialak.db");
-
         Katalogoa = new ObservableCollection<Katalogoa>();
 
         ProduktuColection();
-
     }
 
-    //XML-ak irakurtzeko zatia
-
-
-    private void btnAukeratuXMLa_Clicked(object sender, EventArgs e)
+    // Método para seleccionar el XML
+    private async void btnAukeratuXMLa_Clicked(object sender, EventArgs e)
     {
+        filePath = await _database.PickXmlFileAsync(); 
 
+        if (!string.IsNullOrEmpty(filePath))
+        {
+            lblEmaitzaAukeratu.Text = Path.GetFileName(filePath) + " aukeratu duzu";
+        }
     }
 
-    private void btnKargatuDatuak_Clicked(object sender, EventArgs e)
+    // Método para cargar datos del XML y guardarlos en la base de datos
+    private async void btnKargatuDatuak_Clicked(object sender, EventArgs e)
     {
+        if (string.IsNullOrEmpty(filePath))
+        {
+            await DisplayAlert("Errorea", "Mesedez, hautatu XML fitxategia lehenik.", "OK");
+            return;
+        }
+
+        await _database.SaveDataFromXmlAsync(filePath); // Guardar datos en BD
+
+        // Actualizar la lista en la UI
+        var katalogoaList = await _database.GetAllKatalogoasAsync();
+        Katalogoa.Clear();
+        foreach (var item in katalogoaList)
+        {
+            Katalogoa.Add(item);
+        }
+
+        await DisplayAlert("Arrakasta", "Datuak ongi kargatu dira!", "OK");
     }
+
+
+    
 
 
 
@@ -41,11 +64,11 @@ public partial class Informazioa : ContentPage
 
     private async void ProduktuColection()
     {
-        var katalogoas = await _database.GetAllKatalogoasAsync();
+        var katalogoak = await _database.GetAllKatalogoasAsync();
 
         Katalogoa.Clear();
 
-        foreach (var katalogoa in katalogoas)
+        foreach (var katalogoa in katalogoak)
         {
             Katalogoa.Add(new Katalogoa
             {
@@ -60,16 +83,16 @@ public partial class Informazioa : ContentPage
         ProduktuakColection.ItemsSource = Katalogoa;
     }
 
-    private string GetImageForProduct(string productCode)
+    private string GetImageForProduct(int productCode)
     {
 
         switch (productCode)
         {
-            case "1": 
+            case 1: 
                 return "analogiko1.png";
-            case "2": 
+            case 2: 
                 return "analogiko2.png";
-            case "3": 
+            case 3: 
                 return "analogiko3.png";
             default:
                 return "default_image.png";  
