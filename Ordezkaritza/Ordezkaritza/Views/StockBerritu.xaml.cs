@@ -1,93 +1,125 @@
+using Ordezkaritza.Data;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Xml.Linq;
 
 namespace Ordezkaritza.Views;
 
 public partial class StockBerritu : ContentPage
 {
-    public ObservableCollection<Produktua> Produktuak { get; set; }
+    private readonly Database _database;
+    public ObservableCollection<Katalogoa> Katalogoa { get; set; }
     public StockBerritu()
 	{
 		InitializeComponent();
+        _database = new Database("Komertzialak.db");
+        Katalogoa = new ObservableCollection<Katalogoa>();
         ProduktuColection();
 
     }
 
-    private void ProduktuColection()
+    private async void ProduktuColection()
     {
-        Produktuak = new ObservableCollection<Produktua>
-            {
-                new Produktua { Irudia = "analogiko1.png", Izena = "Producto 1", Kantitatea = 0 },
-                new Produktua { Irudia = "analogiko2.png", Izena = "Producto 2", Kantitatea = 0 },
-                new Produktua { Irudia = "analogiko3.png", Izena = "Producto 3", Kantitatea = 0 },
-                new Produktua { Irudia = "analogiko4.png", Izena = "Producto 4", Kantitatea = 0 },
-                new Produktua { Irudia = "analogiko5.png", Izena = "Producto 5", Kantitatea = 0 },
+        var katalogoak = await _database.GetAllKatalogoasAsync();
 
-            };
+        Katalogoa.Clear();
 
-        ProduktuakColection.ItemsSource = Produktuak;
-    }
-
-    private void btnStocKBerritu_Clicked(object sender, EventArgs e)
-    {
-
-    }
-
-    public class Produktua : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public string Irudia { get; set; }
-        public string Izena { get; set; }
-
-        private int _kantitatea;
-        public int Kantitatea
+        foreach (var katalogoa in katalogoak)
         {
-            get => _kantitatea;
-            set
+            Katalogoa.Add(new Katalogoa
             {
-                if (_kantitatea != value)
-                {
-                    _kantitatea = value;
-                    kenduBotoiaDesgaitu(nameof(Kantitatea));
-                    kenduBotoiaDesgaitu(nameof(EzinKendu)); 
-                }
-            }
+                Produktu_kod = katalogoa.Produktu_kod,
+                Izena = katalogoa.Izena,
+                Prezioa = katalogoa.Prezioa,
+                Stock = 0,
+                Irudia = GetImageForProduct(katalogoa.Produktu_kod)
+            });
         }
 
-        public bool EzinKendu => Kantitatea > 0;
+        ProduktuakColection.ItemsSource = Katalogoa;
+    }
 
+    private string GetImageForProduct(int productCode)
+    {
 
-        protected void kenduBotoiaDesgaitu(string Desgaitu)
+        switch (productCode)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(Desgaitu));
-            
+            case 1:
+                return "analogiko1.png";
+            case 2:
+                return "analogiko2.png";
+            case 3:
+                return "analogiko3.png";
+            default:
+                return "default_image.png";
         }
     }
 
 
     private void btnGehitu_Clicked(object sender, EventArgs e)
     {
-        if (sender is Button button && button.BindingContext is Produktua produktua)
-        {
-            produktua.Kantitatea++;
-        }
+
+        var button = (Button)sender;
+        var product = (Katalogoa)button.BindingContext;
+        
+        product.Stock++;
+
+
     }
 
     private void btnKendu_Clicked(object sender, EventArgs e)
     {
-        if (sender is Button button && button.BindingContext is Produktua produktua)
+
+        var button = (Button)sender;
+        var product = (Katalogoa)button.BindingContext;
+
+
+        if (product.Stock > 0)
         {
-            produktua.Kantitatea--;
+            product.Stock--;
         }
+
     }
 
 
 
     private void btnSortuXML_Clicked(object sender, EventArgs e)
     {
+        // Filtramos los productos cuyo stock es mayor que 0
+        var productosConStock = Katalogoa.Where(p => p.Stock > 0).ToList();
 
+        if (productosConStock.Count == 0)
+        {
+            // Si no hay productos con stock, mostramos un mensaje
+            DisplayAlert("Error", "No hay productos con cantidad para generar el XML.", "OK");
+            return;
+        }
+
+        // Crear el documento XML
+        var xml = new XDocument(
+            new XElement("productos",
+                productosConStock.Select(p => new XElement("producto",
+                    new XElement("codigo", p.Produktu_kod),
+                    new XElement("nombre", p.Izena),
+                    new XElement("precio", p.Prezioa),
+                    new XElement("stock", p.Stock)
+                ))
+            )
+        );
+
+        string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+
+        string fileName = $"Eskaera_{timestamp}.xml";
+
+        
+        string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), fileName);
+
+        // Guardar el XML en el archivo
+        xml.Save(filePath);
+
+        // Informar al usuario que el archivo se ha creado correctamente
+        DisplayAlert("Éxito", $"El archivo XML se ha creado correctamente en: {Path.GetFullPath(filePath)}", "OK");
     }
 
-    
+
 }
