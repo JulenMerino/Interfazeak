@@ -9,15 +9,22 @@ public partial class Informazioa : ContentPage
     private readonly Database _database;
     private string filePath;
     public ObservableCollection<Katalogoa> Katalogoa { get; set; }
+    private ObservableCollection<Partner> Partners;
 
     public Informazioa()
     {
         InitializeComponent();
         _database = new Database("Komertzialak.db");
         Katalogoa = new ObservableCollection<Katalogoa>();
+        Partners = new ObservableCollection<Partner>();
+
 
         ProduktuColection();
+        LoadPartners();
     }
+
+
+    // XML fitxategiak Irakurri
 
     // Método para seleccionar el XML
     private async void btnAukeratuXMLa_Clicked(object sender, EventArgs e)
@@ -53,7 +60,33 @@ public partial class Informazioa : ContentPage
     }
 
 
-    
+
+
+
+
+
+    //Eskaera zatia
+
+    private void pkPartner_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (pkPartner.SelectedIndex != -1)
+        {
+            var selectedPartner = (Partner)pkPartner.SelectedItem;
+            etyHelbidea.Text = selectedPartner?.Helbidea ?? "";
+        }
+    }
+
+    private async void LoadPartners()
+    {
+        var partners = await _database.GetAllPartnersAsync();
+        Partners.Clear();
+        foreach (var partner in partners)
+        {
+            Partners.Add(partner);
+        }
+        pkPartner.ItemsSource = Partners;
+    }
+
 
 
 
@@ -81,6 +114,7 @@ public partial class Informazioa : ContentPage
         }
 
         ProduktuakColection.ItemsSource = Katalogoa;
+        cvEskaera.ItemsSource = Katalogoa;
     }
 
     private string GetImageForProduct(int productCode)
@@ -108,7 +142,7 @@ public partial class Informazioa : ContentPage
 
 
 
-
+    //Informeak/Estadisticas zatia
 
 
     private void btnHilabetekoEskaerak_Clicked(object sender, EventArgs e)
@@ -151,7 +185,7 @@ public partial class Informazioa : ContentPage
         }
     }
 
-   
+    
 }
 
 

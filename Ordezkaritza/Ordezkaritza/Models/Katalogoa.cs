@@ -20,7 +20,7 @@ public class Katalogoa : INotifyPropertyChanged
             if (_stock != value)
             {
                 _stock = value;
-                OnPropertyChanged(nameof(Stock));  // Notificar el cambio en la propiedad Stock
+                OnPropertyChanged(nameof(Stock));  
             }
         }
     }

@@ -114,10 +114,10 @@ public partial class StockBerritu : ContentPage
         
         string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), fileName);
 
-        // Guardar el XML en el archivo
+        
         xml.Save(filePath);
 
-        // Informar al usuario que el archivo se ha creado correctamente
+        
         DisplayAlert("Éxito", $"El archivo XML se ha creado correctamente en: {Path.GetFullPath(filePath)}", "OK");
     }
 

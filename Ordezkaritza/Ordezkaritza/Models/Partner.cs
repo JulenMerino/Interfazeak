@@ -9,4 +9,9 @@ public class Partner
     public string Telefonoa { get; set; }
     public string Egoera { get; set; }
     public int ID_komertzial { get; set; }
+
+    public override string ToString()
+    {
+        return Izena;
+    }
 }

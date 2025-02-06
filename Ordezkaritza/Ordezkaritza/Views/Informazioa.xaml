@@ -23,40 +23,63 @@
                 <tabView:SfTabItem.Content>
                     <Grid BackgroundColor="#e7c8ab">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="200"/>
-                            <RowDefinition Height="200"/>
-                            <RowDefinition Height="200"/>
+                            <RowDefinition Height="150"/>
+                            <RowDefinition Height="150"/>
+                            <RowDefinition Height="150"/>
+                            <RowDefinition Height="150"/>
                             <RowDefinition Height="auto"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <VerticalStackLayout Grid.Column="0" Grid.Row="0" HorizontalOptions="Center" WidthRequest="300" Margin="20">
+                        <VerticalStackLayout Grid.Column="0" Grid.Row="0" HorizontalOptions="Center" WidthRequest="300" Margin="10">
                             <Label x:Name="lblEskaeraZenabkia" Text="Eskaera zenbaki" FontSize="Medium" Margin="0,0,0,20"/>
-                            <Entry x:Name="etyEskaeraZenabkia"/>
+                            <Picker x:Name="pkPartner" Title="Seleccione un partner" SelectedIndexChanged="pkPartner_SelectedIndexChanged"/>
                         </VerticalStackLayout>
-                        <VerticalStackLayout Grid.Column="1" Grid.Row="0" HorizontalOptions="Center" WidthRequest="300" Margin="20">
+                        <VerticalStackLayout Grid.Column="0" Grid.Row="1" HorizontalOptions="Center" WidthRequest="300" Margin="10">
                             <Label x:Name="lblBidalketaKodea" Text="Bidalketa kodea" FontSize="Medium" Margin="0,0,0,20"/>
                             <Entry x:Name="etyBidalketaKodea"/>
                         </VerticalStackLayout>
-                        <VerticalStackLayout Grid.Column="0" Grid.Row="1" HorizontalOptions="Center" WidthRequest="300" Margin="20">
-                            <Label x:Name="lblTokia" Text="Nora bidali behar den" FontSize="Medium" Margin="0,0,0,20"/>
-                            <Entry x:Name="etyTokia"/>
+                        <VerticalStackLayout Grid.Column="0" Grid.Row="2" HorizontalOptions="Center" WidthRequest="300" Margin="10">
+                            <Label x:Name="lblHelbidea" Text="Nora bidali behar den" FontSize="Medium" Margin="0,0,0,20"/>
+                            <Entry x:Name="etyHelbidea"/>
                         </VerticalStackLayout>
-                        <VerticalStackLayout Grid.Column="1" Grid.Row="1" HorizontalOptions="Center" WidthRequest="300" Margin="20">
+                        <VerticalStackLayout Grid.Column="0" Grid.Row="3" HorizontalOptions="Center" WidthRequest="300" Margin="10">
                             <Label x:Name="lblData" Text="Data(YYYY/MM/DD)" FontSize="Medium" Margin="0,0,0,20"/>
-                            <Entry x:Name="etyData"/>
+                            <DatePicker x:Name="dpData" Format="yyyy/MM/dd" WidthRequest="300"/>
                         </VerticalStackLayout>
-                        <VerticalStackLayout Grid.Column="0" Grid.Row="2"  HorizontalOptions="Center" WidthRequest="300" Margin="20">
-                            <Label x:Name="lblLista" Text="Lista" FontSize="Medium" Margin="0,0,0,20"/>
-                            <Entry x:Name="etyLista"/>
+                        <VerticalStackLayout Grid.Column="1" Grid.RowSpan="3"  HorizontalOptions="Center" WidthRequest="500" Margin="10">
+                            <Label x:Name="lblLista" Text="Lista" FontSize="Medium" />
+                            <CollectionView x:Name="cvEskaera" >
+                                <CollectionView.ItemsLayout>
+                                    <GridItemsLayout Orientation="Vertical" Span="3" />
+                                </CollectionView.ItemsLayout>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <Image Grid.Row="0" Grid.ColumnSpan="2" Source="{Binding Irudia}" Aspect="AspectFill" HeightRequest="75" WidthRequest="75" HorizontalOptions="Center" />
+                                            <Label Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Izena}" FontAttributes="Bold" FontSize="Medium" HorizontalOptions="Center" Margin="0,5,0,5" />
+                                            <HorizontalStackLayout Grid.Row="2" HorizontalOptions="CenterAndExpand" WidthRequest="200">
+                                                <Button x:Name="btnKenduaKantitatea" Text="-" Margin="5"/>
+                                                <Entry x:Name="etyKantitatea" Margin="5"/>
+                                                <Button x:Name="btnGehituKantitatea" Text="+" Margin="5"/>
+                                            </HorizontalStackLayout>
+                                        </Grid>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
                         </VerticalStackLayout>
-                        <VerticalStackLayout Grid.Column="1" Grid.Row="2" HorizontalOptions="Center" WidthRequest="300" Margin="20">
+                        <VerticalStackLayout Grid.Column="1" Grid.Row="3" HorizontalOptions="Center" WidthRequest="500" Margin="20">
                             <Label x:Name="lblPrezioTotala" Text="Prezio Totala" FontSize="Medium" Margin="0,0,0,20"/>
                             <Entry x:Name="etyPrezioTotala"/>
                         </VerticalStackLayout>
-                        <Button x:Name="btnFaktura" Text="Faktura ikusi" Grid.Row="3" Grid.ColumnSpan="2" WidthRequest="200" BackgroundColor="#034886" />
+                        <Button x:Name="btnFaktura" Text="Faktura ikusi" Grid.Row="4" Grid.ColumnSpan="2" WidthRequest="200" BackgroundColor="#034886" />
                     </Grid>
                 </tabView:SfTabItem.Content>
             </tabView:SfTabItem>

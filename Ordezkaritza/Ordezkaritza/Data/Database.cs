@@ -1,4 +1,5 @@
-﻿using SQLite;
+﻿using Java.Time.Chrono;
+using SQLite;
 using System.Diagnostics;
 using System.Xml.Linq;
 
@@ -64,6 +65,12 @@ namespace Ordezkaritza.Data
         public Task<int> DeleteEskaeraGoiburuaAsync(Eskaera_Goiburua eskaeraGoiburua) => _database.DeleteAsync(eskaeraGoiburua);
         public Task<int> DeleteEskaeraXehetasunaAsync(Eskaera_Xehetasuna eskaeraXehetasuna) => _database.DeleteAsync(eskaeraXehetasuna);
 
+
+
+
+
+
+        //XML zatia
         public async Task<string> PickXmlFileAsync()
         {
 
@@ -78,7 +85,7 @@ namespace Ordezkaritza.Data
 
             return result?.FullPath;
         }
-        public async Task<List<Katalogoa>> ReadXmlFileAsync(string filePath)
+        public async Task<List<Katalogoa>> KatalogoaEguneratuXML(string filePath)
         {
             if (string.IsNullOrWhiteSpace(filePath)) return null;
 
@@ -96,27 +103,94 @@ namespace Ordezkaritza.Data
 
             return dataList;
         }
+
+        public async Task<List<Partner>> PartneraEguneratuXML(string filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath)) return null;
+
+            var xmlContent = await File.ReadAllTextAsync(filePath);
+            var xdoc = XDocument.Parse(xmlContent);
+
+            var dataList = xdoc.Descendants("Partner")
+                .Select(x => new Partner
+                {
+                    Partner_ID = (int)x.Element("Kodea"),
+                    Izena = (string)x.Element("Izena"),
+                    Helbidea = (string)x.Element("Helbidea"),
+                    Telefonoa = (string)x.Element("Telefonoa"),
+                    Egoera =(string)x.Element("Egoera"),
+                }).ToList();
+
+            return dataList;
+        }
         public async Task SaveDataFromXmlAsync(string filePath)
         {
-            var data = await ReadXmlFileAsync(filePath);
-            if (data == null || data.Count == 0)
+            var fitxategiIzena = Path.GetFileName(filePath);
+
+            //Debug.WriteLine($"XML fitxategia: {Path.GetFileName(filePath)}");
+
+            if (fitxategiIzena == "Froga.xml")
             {
-                // Debug.WriteLine("No hay datos para guardar en la base de datos.");
-                return;
+                var data = await KatalogoaEguneratuXML(filePath);
+                if (data == null || data.Count == 0)
+                {
+                    // Debug.WriteLine("No hay datos para guardar en la base de datos.");
+                    return;
+                }
+
+                foreach (var item in data)
+                {
+                    try
+                    {
+                        int result = await _database.InsertAsync(item);
+                        //Debug.WriteLine($"Guardado en BD: {item.Produktu_kod}, Filas afectadas: {result}");
+                    }
+                    catch (Exception ex)
+                    {
+                        //Debug.WriteLine($"Error al guardar {item.Produktu_kod}: {ex.Message}");
+                    }
+                }
             }
 
-            foreach (var item in data)
+            else if (fitxategiIzena == "Partner.xml")
             {
-                try
+                var data = await PartneraEguneratuXML(filePath);
+                if (data == null || data.Count == 0)
                 {
-                    int result = await _database.InsertAsync(item);
-                    //Debug.WriteLine($"Guardado en BD: {item.Produktu_kod}, Filas afectadas: {result}");
+                    // Debug.WriteLine("No hay datos para guardar en la base de datos.");
+                    return;
                 }
-                catch (Exception ex)
+
+                foreach (var item in data)
                 {
-                    //Debug.WriteLine($"Error al guardar {item.Produktu_kod}: {ex.Message}");
+                    try
+                    {
+                        int result = await _database.InsertAsync(item);
+                        //Debug.WriteLine($"Guardado en BD: {item.Produktu_kod}, Filas afectadas: {result}");
+                    }
+                    catch (Exception ex)
+                    {
+                        //Debug.WriteLine($"Error al guardar {item.Produktu_kod}: {ex.Message}");
+                    }
                 }
             }
+
+            else if (fitxategiIzena == "pedidos.xml")
+            {
+                
+            }
+
+        }
+
+        //Eskaera zatia
+        public Task<List<Partner>> GetPartnersAsync()
+        {
+            return _database.Table<Partner>().ToListAsync();
+        }
+
+        public Task<int> AddPartnerAsync(Partner partner)
+        {
+            return _database.InsertAsync(partner);
         }
 
     }
