@@ -12,7 +12,7 @@
                         <Label x:Name="lblXMLIrakurri" Text="XML-ak irakurri" FontSize="Header" FontAttributes="Bold" HorizontalOptions="Center" Margin="0,0,0,20"/>
                         <Label x:Name="lblXMLHelbidea" Text="Sartu XML fitxategia dagoen helbidea" FontSize="Medium" HorizontalOptions="Center" Margin="0,0,0,50"/>
                         <Button x:Name="btnAukeratuXMLa" Text="Aukeratu XML-a" WidthRequest="300" FontSize="Medium" BackgroundColor="#034886" Margin="0,0,0,50" Clicked="btnAukeratuXMLa_Clicked"/>
-                        <Label x:Name="lblEmaitzaAukeratu" Text="asdfasd" FontSize="Large" HorizontalOptions="Center" Margin="0,0,0,50"/>
+                        <Label x:Name="lblEmaitzaAukeratu" FontSize="Large" HorizontalOptions="Center" Margin="0,0,0,50"/>
                         <Button x:Name="btnKargatuDatuak" Text="Kargatu Datuak" WidthRequest="300" FontSize="Medium" BackgroundColor="#034886" Clicked="btnKargatuDatuak_Clicked"/>
                     </VerticalStackLayout>
                 </tabView:SfTabItem.Content>
@@ -33,25 +33,25 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <VerticalStackLayout Grid.Column="0" Grid.Row="0" HorizontalOptions="Center" WidthRequest="300" Margin="10">
+                        <VerticalStackLayout Grid.Column="0" Grid.Row="0" HorizontalOptions="Center" WidthRequest="300" Margin="20">
                             <Label x:Name="lblEskaeraZenabkia" Text="Eskaera zenbaki" FontSize="Medium" Margin="0,0,0,20"/>
                             <Picker x:Name="pkPartner" Title="Seleccione un partner" SelectedIndexChanged="pkPartner_SelectedIndexChanged"/>
                         </VerticalStackLayout>
-                        <VerticalStackLayout Grid.Column="0" Grid.Row="1" HorizontalOptions="Center" WidthRequest="300" Margin="10">
+                        <VerticalStackLayout Grid.Column="0" Grid.Row="1" HorizontalOptions="Center" WidthRequest="300" Margin="20">
                             <Label x:Name="lblBidalketaKodea" Text="Bidalketa kodea" FontSize="Medium" Margin="0,0,0,20"/>
                             <Entry x:Name="etyBidalketaKodea"/>
                         </VerticalStackLayout>
-                        <VerticalStackLayout Grid.Column="0" Grid.Row="2" HorizontalOptions="Center" WidthRequest="300" Margin="10">
+                        <VerticalStackLayout Grid.Column="0" Grid.Row="2" HorizontalOptions="Center" WidthRequest="300" Margin="20">
                             <Label x:Name="lblHelbidea" Text="Nora bidali behar den" FontSize="Medium" Margin="0,0,0,20"/>
                             <Entry x:Name="etyHelbidea"/>
                         </VerticalStackLayout>
-                        <VerticalStackLayout Grid.Column="0" Grid.Row="3" HorizontalOptions="Center" WidthRequest="300" Margin="10">
+                        <VerticalStackLayout Grid.Column="0" Grid.Row="3" HorizontalOptions="Center" WidthRequest="300" Margin="20">
                             <Label x:Name="lblData" Text="Data(YYYY/MM/DD)" FontSize="Medium" Margin="0,0,0,20"/>
                             <DatePicker x:Name="dpData" Format="yyyy/MM/dd" WidthRequest="300"/>
                         </VerticalStackLayout>
-                        <VerticalStackLayout Grid.Column="1" Grid.RowSpan="3"  HorizontalOptions="Center" WidthRequest="500" Margin="10">
+                        <VerticalStackLayout Grid.Column="1" Grid.RowSpan="4"  HorizontalOptions="Center" WidthRequest="500" Margin="20">
                             <Label x:Name="lblLista" Text="Lista" FontSize="Medium" />
-                            <CollectionView x:Name="cvEskaera" >
+                            <CollectionView x:Name="cvEskaera" HeightRequest="400">
                                 <CollectionView.ItemsLayout>
                                     <GridItemsLayout Orientation="Vertical" Span="3" />
                                 </CollectionView.ItemsLayout>

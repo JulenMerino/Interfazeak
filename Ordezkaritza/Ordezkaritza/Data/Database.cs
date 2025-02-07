@@ -1,4 +1,4 @@
-﻿using Java.Time.Chrono;
+﻿
 using SQLite;
 using System.Diagnostics;
 using System.Xml.Linq;
@@ -111,17 +111,55 @@ namespace Ordezkaritza.Data
             var xmlContent = await File.ReadAllTextAsync(filePath);
             var xdoc = XDocument.Parse(xmlContent);
 
-            var dataList = xdoc.Descendants("Partner")
+            var dataList = xdoc.Descendants("partner")
                 .Select(x => new Partner
                 {
-                    Partner_ID = (int)x.Element("Kodea"),
-                    Izena = (string)x.Element("Izena"),
-                    Helbidea = (string)x.Element("Helbidea"),
-                    Telefonoa = (string)x.Element("Telefonoa"),
-                    Egoera =(string)x.Element("Egoera"),
+                    Izena = (string)x.Element("nombre"),
+                    Helbidea = (string)x.Element("direccion"),
+                    Telefonoa = (string)x.Element("telefono"),
+                    Egoera =(string)x.Element("estado"),
+                    ID_komertzial = (int)x.Element("idComercial")
                 }).ToList();
 
             return dataList;
+        }
+
+        public async Task<(List<Eskaera_Goiburua>, List<Eskaera_Xehetasuna>)> BidalketaEguneratuXML(string xmlFileName)
+        {
+            string xmlPath = Path.Combine(FileSystem.AppDataDirectory, xmlFileName);
+            if (!File.Exists(xmlPath))
+                throw new FileNotFoundException("XML file not found", xmlPath);
+
+            var xmlContent = await File.ReadAllTextAsync(xmlPath);
+            var xdoc = XDocument.Parse(xmlContent);
+
+            var orders = new List<Eskaera_Goiburua>();
+            var details = new List<Eskaera_Xehetasuna>();
+
+            foreach (var pedido in xdoc.Descendants("Pedido"))
+            {
+                var order = new Eskaera_Goiburua
+                {
+                    Data = DateTime.Now,
+                    Egoera = (string)pedido.Element("EstadoPedido"),
+                    Bidalketa_Helb = "",
+                    Komertzial_ID = (int)pedido.Element("IDComercial"),
+                    Partner_ID = (int)pedido.Element("IDPartner")
+                };
+                orders.Add(order);
+
+                var detail = new Eskaera_Xehetasuna
+                {
+                    Eskaera_kod = order.Eskaera_kod,
+                    Produktu_kod = (string)pedido.Element("ID"),
+                    Deskribapena = (string)pedido.Element("Nombre"),
+                    Prezioa = (decimal)pedido.Element("Precio"),
+                    Guztira = (decimal)pedido.Element("Precio") * (int)pedido.Element("Cantidad")
+                };
+                details.Add(detail);
+            }
+
+            return (orders, details);
         }
         public async Task SaveDataFromXmlAsync(string filePath)
         {
@@ -142,19 +180,57 @@ namespace Ordezkaritza.Data
                 {
                     try
                     {
-                        int result = await _database.InsertAsync(item);
-                        //Debug.WriteLine($"Guardado en BD: {item.Produktu_kod}, Filas afectadas: {result}");
+                        // Verificar si el producto ya existe en la base de datos
+                        var existingItem = await _database.Table<Katalogoa>()
+                            .FirstOrDefaultAsync(x => x.Produktu_kod == item.Produktu_kod);
+
+                        if (existingItem != null)
+                        {
+                            // Si existe, sumamos la cantidad
+                            existingItem.Stock += item.Stock;
+                            await _database.UpdateAsync(existingItem);
+                            // Debug.WriteLine($"Actualizado en BD: {item.Produktu_kod}, Stock actualizado: {existingItem.Stock}");
+                        }
+                        else
+                        {
+                            // Si no existe, insertamos el nuevo producto
+                            await _database.InsertAsync(item);
+                            // Debug.WriteLine($"Guardado en BD: {item.Produktu_kod}");
+                        }
                     }
                     catch (Exception ex)
                     {
-                        //Debug.WriteLine($"Error al guardar {item.Produktu_kod}: {ex.Message}");
+                        // Debug.WriteLine($"Error al guardar {item.Produktu_kod}: {ex.Message}");
                     }
                 }
             }
 
-            else if (fitxategiIzena == "Partner.xml")
+            else if (fitxategiIzena == "partner_berriak.xml")
             {
                 var data = await PartneraEguneratuXML(filePath);
+                if (data == null || data.Count == 0)
+                {
+                    //Debug.WriteLine("No hay datos para guardar en la base de datos.");
+                    return;
+                }
+
+                foreach (var item in data)
+                {
+                    try
+                    {
+                        int result = await _database.InsertAsync(item);
+                        //Debug.WriteLine($"Guardado en BD: {item.Izena}, Filas afectadas: {result}");
+                    }
+                    catch (Exception ex)
+                    {
+                        //Debug.WriteLine($"Error al guardar {item.Izena }: {ex.Message}");
+                    }
+                }
+            }
+
+            else if (fitxategiIzena == "pedidos.xml")
+            {
+                var (data, details) = await BidalketaEguneratuXML(filePath);
                 if (data == null || data.Count == 0)
                 {
                     // Debug.WriteLine("No hay datos para guardar en la base de datos.");
@@ -165,19 +241,27 @@ namespace Ordezkaritza.Data
                 {
                     try
                     {
-                        int result = await _database.InsertAsync(item);
-                        //Debug.WriteLine($"Guardado en BD: {item.Produktu_kod}, Filas afectadas: {result}");
+                        await _database.InsertAsync(item);
+                        //Debug.WriteLine($"Guardado en BD: {item.EskaeraID}, Filas afectadas: {result}");
                     }
                     catch (Exception ex)
                     {
-                        //Debug.WriteLine($"Error al guardar {item.Produktu_kod}: {ex.Message}");
+                        //Debug.WriteLine($"Error al guardar {item.EskaeraID}: {ex.Message}");
                     }
                 }
-            }
 
-            else if (fitxategiIzena == "pedidos.xml")
-            {
-                
+                foreach (var detail in details)
+                {
+                    try
+                    {
+                        await _database.InsertAsync(detail);
+                        //Debug.WriteLine($"Guardado en BD: {item.EskaeraID}, Filas afectadas: {result}");
+                    }
+                    catch (Exception ex)
+                    {
+                        //Debug.WriteLine($"Error al guardar {item.EskaeraID}: {ex.Message}");
+                    }
+                }
             }
 
         }

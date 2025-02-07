@@ -107,17 +107,14 @@ public partial class StockBerritu : ContentPage
             )
         );
 
-        string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+        string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmm");
 
         string fileName = $"Eskaera_{timestamp}.xml";
 
-        
-        string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), fileName);
+        string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), fileName);
 
-        
         xml.Save(filePath);
 
-        
         DisplayAlert("Éxito", $"El archivo XML se ha creado correctamente en: {Path.GetFullPath(filePath)}", "OK");
     }
 
