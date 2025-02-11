@@ -1,5 +1,6 @@
 using Ordezkaritza.Data;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Xml.Linq;
 
 namespace Ordezkaritza.Views;
@@ -85,6 +86,111 @@ public partial class Informazioa : ContentPage
             Partners.Add(partner);
         }
         pkPartner.ItemsSource = Partners;
+    }
+
+
+    //  Botón para aumentar cantidad (Botón +)
+    private decimal CalcularTotal()
+    {
+        return Katalogoa.Sum(p => p.PrezioTotala); //  Suma de (Cantidad * Precio) de todos los productos
+    }
+
+    // Botón para aumentar cantidad (Botón +)
+    private void btnGehituKantitatea_Clicked(object sender, EventArgs e)
+    {
+        if (sender is Button button && button.BindingContext is Katalogoa produktua)
+        {
+            if (produktua.Kantitatea < produktua.Stock) // No superar stock máximo
+            {
+                produktua.Kantitatea++;
+                ActualizarTotal(); // Actualiza el precio total
+            }
+        }
+    }
+
+    // Botón para disminuir cantidad (Botón -)
+    private void btnKenduaKantitatea_Clicked(object sender, EventArgs e)
+    {
+        if (sender is Button button && button.BindingContext is Katalogoa produktua)
+        {
+            if (produktua.Kantitatea > 0) // No bajar de 0
+            {
+                produktua.Kantitatea--;
+                ActualizarTotal(); // Actualiza el precio total
+            }
+        }
+    }
+
+    private async void ActualizarTotal()
+    {
+        etyPrezioTotala.Text = CalcularTotal().ToString("F2");
+    }
+
+    private async void btnFaktura_Clicked(object sender, EventArgs e)
+    {
+        // Obtenemos el Partner seleccionado
+        var partnerSeleccionado = pkPartner.SelectedItem as Partner;
+        if (partnerSeleccionado == null)
+        {
+            await DisplayAlert("Error", "Selecciona un partner antes de continuar.", "OK");
+            return;
+        }
+
+        // Guardamos la información del formulario antes de recorrer los productos
+        var eskaera = new Eskaera_Goiburua
+        {
+            Partner_ID = partnerSeleccionado.Partner_ID,      // Obtenemos el ID del partner
+            Komertzial_ID = partnerSeleccionado.ID_komertzial, // Obtenemos el ID del comercial
+            Egoera = "Pendiente",
+            Data = dpData.Date.ToString("yyyy/MM/dd")
+        };
+
+        // Insertamos la información en la base de datos
+        await _database.InsertEskaeraGoiburuaAsync(eskaera);
+
+        // Recorremos todos los productos y guardamos los que tienen una cantidad mayor a 0
+        foreach (var produktua in Katalogoa)
+        {
+            if (produktua.Kantitatea > 0)
+            {
+                var nuevaEskaera = new Eskaera_Xehetasuna
+                {
+                    Eskaera_kod = eskaera.Eskaera_kod,
+                    Produktu_kod = produktua.Produktu_kod.ToString(),
+                    Deskribapena = produktua.Izena,
+                    Guztira = produktua.Prezioa * produktua.Kantitatea,
+                    Prezioa = produktua.Prezioa,
+                    Kantitatea = produktua.Kantitatea
+                };
+
+                Debug.WriteLine($"Eskaera: {nuevaEskaera.Produktu_kod} - {nuevaEskaera.Deskribapena} - {nuevaEskaera.Kantitatea} - {nuevaEskaera.Guztira} - {eskaera.Eskaera_kod}");
+
+                // Guardamos el nuevo registro en la tabla
+                  await _database.InsertEskaeraXehetasunaAsync(nuevaEskaera);
+            }
+        }
+
+        // Después de guardar, actualizamos el total
+        ActualizarTotal();
+    }
+
+
+
+
+    //  Si el usuario edita manualmente el Entry
+    private void etyKantitatea_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        if (sender is Entry entry && entry.BindingContext is Katalogoa produktua)
+        {
+            if (int.TryParse(entry.Text, out int nuevaCantidad))
+            {
+                produktua.Kantitatea = nuevaCantidad; //  Se ajustará automáticamente al rango 0 - Stock
+            }
+            else
+            {
+                entry.Text = produktua.Kantitatea.ToString(); //  Evita valores no numéricos
+            }
+        }
     }
 
 
@@ -185,7 +291,12 @@ public partial class Informazioa : ContentPage
         }
     }
 
+
+
+
+
     
+
 }
 
 

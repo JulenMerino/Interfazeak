@@ -124,43 +124,8 @@ namespace Ordezkaritza.Data
             return dataList;
         }
 
-        public async Task<(List<Eskaera_Goiburua>, List<Eskaera_Xehetasuna>)> BidalketaEguneratuXML(string xmlFileName)
-        {
-            string xmlPath = Path.Combine(FileSystem.AppDataDirectory, xmlFileName);
-            if (!File.Exists(xmlPath))
-                throw new FileNotFoundException("XML file not found", xmlPath);
+        
 
-            var xmlContent = await File.ReadAllTextAsync(xmlPath);
-            var xdoc = XDocument.Parse(xmlContent);
-
-            var orders = new List<Eskaera_Goiburua>();
-            var details = new List<Eskaera_Xehetasuna>();
-
-            foreach (var pedido in xdoc.Descendants("Pedido"))
-            {
-                var order = new Eskaera_Goiburua
-                {
-                    Data = DateTime.Now,
-                    Egoera = (string)pedido.Element("EstadoPedido"),
-                    Bidalketa_Helb = "",
-                    Komertzial_ID = (int)pedido.Element("IDComercial"),
-                    Partner_ID = (int)pedido.Element("IDPartner")
-                };
-                orders.Add(order);
-
-                var detail = new Eskaera_Xehetasuna
-                {
-                    Eskaera_kod = order.Eskaera_kod,
-                    Produktu_kod = (string)pedido.Element("ID"),
-                    Deskribapena = (string)pedido.Element("Nombre"),
-                    Prezioa = (decimal)pedido.Element("Precio"),
-                    Guztira = (decimal)pedido.Element("Precio") * (int)pedido.Element("Cantidad")
-                };
-                details.Add(detail);
-            }
-
-            return (orders, details);
-        }
         public async Task SaveDataFromXmlAsync(string filePath)
         {
             var fitxategiIzena = Path.GetFileName(filePath);
@@ -226,42 +191,7 @@ namespace Ordezkaritza.Data
                         //Debug.WriteLine($"Error al guardar {item.Izena }: {ex.Message}");
                     }
                 }
-            }
 
-            else if (fitxategiIzena == "pedidos.xml")
-            {
-                var (data, details) = await BidalketaEguneratuXML(filePath);
-                if (data == null || data.Count == 0)
-                {
-                    // Debug.WriteLine("No hay datos para guardar en la base de datos.");
-                    return;
-                }
-
-                foreach (var item in data)
-                {
-                    try
-                    {
-                        await _database.InsertAsync(item);
-                        //Debug.WriteLine($"Guardado en BD: {item.EskaeraID}, Filas afectadas: {result}");
-                    }
-                    catch (Exception ex)
-                    {
-                        //Debug.WriteLine($"Error al guardar {item.EskaeraID}: {ex.Message}");
-                    }
-                }
-
-                foreach (var detail in details)
-                {
-                    try
-                    {
-                        await _database.InsertAsync(detail);
-                        //Debug.WriteLine($"Guardado en BD: {item.EskaeraID}, Filas afectadas: {result}");
-                    }
-                    catch (Exception ex)
-                    {
-                        //Debug.WriteLine($"Error al guardar {item.EskaeraID}: {ex.Message}");
-                    }
-                }
             }
 
         }
@@ -276,6 +206,29 @@ namespace Ordezkaritza.Data
         {
             return _database.InsertAsync(partner);
         }
+
+        public Task<Partner> GetPartnerByIdAsync(int id)
+        {
+            return _database.Table<Partner>().Where(p => p.Partner_ID == id).FirstOrDefaultAsync();
+        }
+        public async Task<List<Eskaera_Goiburua>> GetEskaerakByPartnerIdAsync(int partnerId)
+        {
+            return await _database.Table<Eskaera_Goiburua>()
+                .Where(e => e.Partner_ID == partnerId)
+                .ToListAsync();
+        }
+        public async Task<Eskaera_Xehetasuna> GetEskaeraByProduktuKodAsync(int produktuaKod)
+        {
+            return await _database.Table<Eskaera_Xehetasuna>()
+                .Where(e => e.Produktu_kod == produktuaKod.ToString())
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<List<Eskaera_Xehetasuna>> GetAllEskaeraXehetasunakAsync()
+        {
+            return await _database.Table<Eskaera_Xehetasuna>().ToListAsync();
+        }
+
 
     }
 

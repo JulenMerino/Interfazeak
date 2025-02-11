@@ -34,26 +34,22 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <VerticalStackLayout Grid.Column="0" Grid.Row="0" HorizontalOptions="Center" WidthRequest="300" Margin="20">
-                            <Label x:Name="lblEskaeraZenabkia" Text="Eskaera zenbaki" FontSize="Medium" Margin="0,0,0,20"/>
-                            <Picker x:Name="pkPartner" Title="Seleccione un partner" SelectedIndexChanged="pkPartner_SelectedIndexChanged"/>
+                            <Label x:Name="lblAuketatuPartner" Text="Aukeratu Partner bat" FontSize="Medium" Margin="0,0,0,20"/>
+                            <Picker x:Name="pkPartner" SelectedIndexChanged="pkPartner_SelectedIndexChanged"/>
                         </VerticalStackLayout>
                         <VerticalStackLayout Grid.Column="0" Grid.Row="1" HorizontalOptions="Center" WidthRequest="300" Margin="20">
-                            <Label x:Name="lblBidalketaKodea" Text="Bidalketa kodea" FontSize="Medium" Margin="0,0,0,20"/>
-                            <Entry x:Name="etyBidalketaKodea"/>
-                        </VerticalStackLayout>
-                        <VerticalStackLayout Grid.Column="0" Grid.Row="2" HorizontalOptions="Center" WidthRequest="300" Margin="20">
-                            <Label x:Name="lblHelbidea" Text="Nora bidali behar den" FontSize="Medium" Margin="0,0,0,20"/>
+                            <Label x:Name="lblHelbidea" Text="Helbidea" FontSize="Medium" Margin="0,0,0,20"/>
                             <Entry x:Name="etyHelbidea"/>
                         </VerticalStackLayout>
-                        <VerticalStackLayout Grid.Column="0" Grid.Row="3" HorizontalOptions="Center" WidthRequest="300" Margin="20">
+                        <VerticalStackLayout Grid.Column="0" Grid.Row="2" HorizontalOptions="Center" WidthRequest="300" Margin="20">
                             <Label x:Name="lblData" Text="Data(YYYY/MM/DD)" FontSize="Medium" Margin="0,0,0,20"/>
                             <DatePicker x:Name="dpData" Format="yyyy/MM/dd" WidthRequest="300"/>
                         </VerticalStackLayout>
-                        <VerticalStackLayout Grid.Column="1" Grid.RowSpan="4"  HorizontalOptions="Center" WidthRequest="500" Margin="20">
+                        <VerticalStackLayout Grid.Column="1" Grid.RowSpan="3" HorizontalOptions="Center" WidthRequest="500" Margin="20">
                             <Label x:Name="lblLista" Text="Lista" FontSize="Medium" />
-                            <CollectionView x:Name="cvEskaera" HeightRequest="400">
+                            <CollectionView x:Name="cvEskaera" HeightRequest="350">
                                 <CollectionView.ItemsLayout>
-                                    <GridItemsLayout Orientation="Vertical" Span="3" />
+                                    <GridItemsLayout Orientation="Vertical"  Span="3" />
                                 </CollectionView.ItemsLayout>
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate>
@@ -66,20 +62,20 @@
                                             <Image Grid.Row="0" Grid.ColumnSpan="2" Source="{Binding Irudia}" Aspect="AspectFill" HeightRequest="75" WidthRequest="75" HorizontalOptions="Center" />
                                             <Label Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Izena}" FontAttributes="Bold" FontSize="Medium" HorizontalOptions="Center" Margin="0,5,0,5" />
                                             <HorizontalStackLayout Grid.Row="2" HorizontalOptions="CenterAndExpand" WidthRequest="200">
-                                                <Button x:Name="btnKenduaKantitatea" Text="-" Margin="5"/>
-                                                <Entry x:Name="etyKantitatea" Margin="5"/>
-                                                <Button x:Name="btnGehituKantitatea" Text="+" Margin="5"/>
+                                                <Button x:Name="btnKenduaKantitatea" Text="-" Margin="5" Clicked="btnKenduaKantitatea_Clicked"/>
+                                                <Entry x:Name="etyKantitatea" Margin="5"  Text="{Binding Kantitatea, Mode=TwoWay}"/>
+                                                <Button x:Name="btnGehituKantitatea" Text="+" Margin="5" Clicked="btnGehituKantitatea_Clicked"/>
                                             </HorizontalStackLayout>
                                         </Grid>
                                     </DataTemplate>
                                 </CollectionView.ItemTemplate>
                             </CollectionView>
                         </VerticalStackLayout>
-                        <VerticalStackLayout Grid.Column="1" Grid.Row="3" HorizontalOptions="Center" WidthRequest="500" Margin="20">
-                            <Label x:Name="lblPrezioTotala" Text="Prezio Totala" FontSize="Medium" Margin="0,0,0,20"/>
-                            <Entry x:Name="etyPrezioTotala"/>
+                        <VerticalStackLayout Grid.Column="1" Grid.Row="3">
+                            <Label x:Name="lblPrezioTotala" Text="Prezio Totala" FontSize="Medium" Margin="0,0,0,20"  />
+                            <Entry x:Name="etyPrezioTotala" />
                         </VerticalStackLayout>
-                        <Button x:Name="btnFaktura" Text="Faktura ikusi" Grid.Row="4" Grid.ColumnSpan="2" WidthRequest="200" BackgroundColor="#034886" />
+                        <Button x:Name="btnFactura" Text="Faktura ikusi" Grid.Row="4" Grid.ColumnSpan="2" WidthRequest="200" BackgroundColor="#034886" Clicked="btnFaktura_Clicked" />
                     </Grid>
                 </tabView:SfTabItem.Content>
             </tabView:SfTabItem>
