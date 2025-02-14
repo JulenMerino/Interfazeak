@@ -1,4 +1,5 @@
 using Ordezkaritza.Data;
+using Ordezkaritza.Models;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Xml.Linq;
@@ -166,12 +167,24 @@ public partial class Informazioa : ContentPage
                 Debug.WriteLine($"Eskaera: {nuevaEskaera.Produktu_kod} - {nuevaEskaera.Deskribapena} - {nuevaEskaera.Kantitatea} - {nuevaEskaera.Guztira} - {eskaera.Eskaera_kod}");
 
                 // Guardamos el nuevo registro en la tabla
-                  await _database.InsertEskaeraXehetasunaAsync(nuevaEskaera);
+                await _database.InsertEskaeraXehetasunaAsync(nuevaEskaera);
             }
         }
 
+        var bidalketa = new Bidalketa
+        {
+            Enpresa_izena = "Correos",
+            Data = dpData.Date.ToString("yyyy/MM/dd"),
+            Eskaera_kod = eskaera.Eskaera_kod
+        };
+
+        await _database.InsertBidalketaAsync(bidalketa);
+
+
         // Después de guardar, actualizamos el total
         ActualizarTotal();
+
+        await Navigation.PushAsync(new Views.FakturaIkusi(partnerSeleccionado, eskaera.Eskaera_kod.ToString()));
     }
 
 
