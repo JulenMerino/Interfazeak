@@ -280,9 +280,11 @@ public partial class Informazioa : ContentPage
         EguneratuTaula(datos);
     }
 
-    private void btnGehienEskatutakoProduktua_Clicked(object sender, EventArgs e)
+    private async void btnGehienEskatutakoProduktua_Clicked(object sender, EventArgs e)
     {
-        var datos = new List<string> { "Produktua A", "Produktua B", "Produktua C" };
+        var productosMasVendidos = await _database.ObtenerProductosMasVendidosAsync();
+
+        var datos = productosMasVendidos.Select(p => $"{p.ProduktuKod} - {p.Izena}: {p.TotalKantitatea} unidades, {p.Prezioa}€").ToList();
         EguneratuTaula(datos);
     }
 

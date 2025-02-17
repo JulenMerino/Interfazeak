@@ -250,6 +250,25 @@ namespace Ordezkaritza.Data
         }
 
 
+        public async Task<List<(string ProduktuKod, string Izena, decimal Prezioa, int TotalKantitatea)>> ObtenerProductosMasVendidosAsync()
+        {
+            var eskaeraXehetasunak = await _database.Table<Eskaera_Xehetasuna>().ToListAsync();
+            var katalogoa = await _database.Table<Katalogoa>().ToListAsync();
+
+            var productosMasVendidos = eskaeraXehetasunak
+                .GroupBy(e => e.Produktu_kod)
+                .Select(g => new { ProduktuKod = g.Key, TotalKantitatea = g.Sum(e => e.Kantitatea) })
+                .OrderByDescending(p => p.TotalKantitatea)
+                .ToList();
+
+            return productosMasVendidos
+                .Select(p => {
+                    var producto = katalogoa.FirstOrDefault(k => k.Produktu_kod.ToString() == p.ProduktuKod);
+                    return (p.ProduktuKod, producto?.Izena ?? "Desconocido", producto?.Prezioa ?? 0, p.TotalKantitatea);
+                })
+                .ToList();
+        }
+
     }
 
 }

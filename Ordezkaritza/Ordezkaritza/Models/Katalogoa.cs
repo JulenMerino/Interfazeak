@@ -38,7 +38,7 @@ public class Katalogoa : INotifyPropertyChanged
             }
         }
     }
-
+    [Ignore]
     public int Kantitatea // Cantidad seleccionada
     {
         get => _kantitatea;
