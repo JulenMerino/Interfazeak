@@ -1,6 +1,5 @@
 using Ordezkaritza.Data;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Xml.Linq;
 
 namespace Ordezkaritza.Views;
@@ -12,37 +11,39 @@ public partial class StockBerritu : ContentPage
     public StockBerritu()
 	{
 		InitializeComponent();
+
         _database = new Database("Komertzialak.db");
         Katalogoa = new ObservableCollection<Katalogoa>();
-        ProduktuColection();
+        
 
+        ProduktuaKargatu();
     }
 
-    private async void ProduktuColection()
+    private async void ProduktuaKargatu()
     {
-        var katalogoak = await _database.GetAllKatalogoasAsync();
+        var produktuak = await _database.GetAllKatalogoasAsync();
 
         Katalogoa.Clear();
 
-        foreach (var katalogoa in katalogoak)
+        foreach (var produktuenInformazioa in produktuak)
         {
             Katalogoa.Add(new Katalogoa
             {
-                Produktu_kod = katalogoa.Produktu_kod,
-                Izena = katalogoa.Izena,
-                Prezioa = katalogoa.Prezioa,
+                Produktu_kod = produktuenInformazioa.Produktu_kod,
+                Izena = produktuenInformazioa.Izena,
+                Prezioa = produktuenInformazioa.Prezioa,
                 Stock = 0,
-                Irudia = GetImageForProduct(katalogoa.Produktu_kod)
+                Irudia = LortuIrudia(produktuenInformazioa.Produktu_kod)
             });
         }
 
         ProduktuakColection.ItemsSource = Katalogoa;
     }
 
-    private string GetImageForProduct(int productCode)
+    private string LortuIrudia(int produktuKodea)
     {
 
-        switch (productCode)
+        switch (produktuKodea)
         {
             case 1:
                 return "analogiko1.png";
@@ -59,10 +60,10 @@ public partial class StockBerritu : ContentPage
     private void btnGehitu_Clicked(object sender, EventArgs e)
     {
 
-        var button = (Button)sender;
-        var product = (Katalogoa)button.BindingContext;
-        
-        product.Stock++;
+        var botoia = (Button)sender;
+        var produktua = (Katalogoa)botoia.BindingContext;
+
+        produktua.Stock++;
 
 
     }
@@ -70,13 +71,13 @@ public partial class StockBerritu : ContentPage
     private void btnKendu_Clicked(object sender, EventArgs e)
     {
 
-        var button = (Button)sender;
-        var product = (Katalogoa)button.BindingContext;
+        var botoia = (Button)sender;
+        var produktua = (Katalogoa)botoia.BindingContext;
 
 
-        if (product.Stock > 0)
+        if (produktua.Stock > 0)
         {
-            product.Stock--;
+            produktua.Stock--;
         }
 
     }
@@ -85,20 +86,17 @@ public partial class StockBerritu : ContentPage
 
     private void btnSortuXML_Clicked(object sender, EventArgs e)
     {
-        // Filtramos los productos cuyo stock es mayor que 0
-        var productosConStock = Katalogoa.Where(p => p.Stock > 0).ToList();
+        var stockDutenProduktuak = Katalogoa.Where(p => p.Stock > 0).ToList();
 
-        if (productosConStock.Count == 0)
+        if (stockDutenProduktuak.Count == 0)
         {
-            // Si no hay productos con stock, mostramos un mensaje
-            DisplayAlert("Error", "No hay productos con cantidad para generar el XML.", "OK");
+            DisplayAlert("Arazoa", "Ez duzu kantitaterik jarri.", "OK");
             return;
         }
 
-        // Crear el documento XML
         var xml = new XDocument(
             new XElement("productos",
-                productosConStock.Select(p => new XElement("producto",
+                stockDutenProduktuak.Select(p => new XElement("producto",
                     new XElement("codigo", p.Produktu_kod),
                     new XElement("nombre", p.Izena),
                     new XElement("precio", p.Prezioa),
@@ -107,15 +105,15 @@ public partial class StockBerritu : ContentPage
             )
         );
 
-        string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmm");
+        string data = DateTime.Now.ToString("yyyyMMdd_HHmm");
 
-        string fileName = $"Eskaera_{timestamp}.xml";
+        string fitxategiIzena = $"Eskaera_{data}.xml";
 
-        string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), fileName);
+        string fitxategiHelbidea = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), fitxategiIzena);
 
-        xml.Save(filePath);
+        xml.Save(fitxategiHelbidea);
 
-        DisplayAlert("Éxito", $"El archivo XML se ha creado correctamente en: {Path.GetFullPath(filePath)}", "OK");
+        DisplayAlert("Lortuta", $"XML zuzenki sortu da helbide honetan: {Path.GetFullPath(fitxategiHelbidea)}", "OK");
     }
 
 

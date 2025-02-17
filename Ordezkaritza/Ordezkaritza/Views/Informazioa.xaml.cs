@@ -9,57 +9,61 @@ namespace Ordezkaritza.Views;
 public partial class Informazioa : ContentPage
 {
     private readonly Database _database;
-    private string filePath;
+    private string fitxategiHelbidea;
     public ObservableCollection<Katalogoa> Katalogoa { get; set; }
     private ObservableCollection<Partner> Partners;
 
     public Informazioa()
     {
         InitializeComponent();
+
         _database = new Database("Komertzialak.db");
         Katalogoa = new ObservableCollection<Katalogoa>();
         Partners = new ObservableCollection<Partner>();
 
 
-        ProduktuColection();
-        LoadPartners();
+        ProduktuaKargatu();
+        KargatuPartnerrak();
     }
 
 
     // XML fitxategiak Irakurri
 
-    // Método para seleccionar el XML
     private async void btnAukeratuXMLa_Clicked(object sender, EventArgs e)
     {
-        filePath = await _database.PickXmlFileAsync(); 
+        fitxategiHelbidea = await _database.PickXmlFileAsync(); 
 
-        if (!string.IsNullOrEmpty(filePath))
+        if (!string.IsNullOrEmpty(fitxategiHelbidea))
         {
-            lblEmaitzaAukeratu.Text = Path.GetFileName(filePath) + " aukeratu duzu";
+            lblEmaitzaAukeratu.Text = Path.GetFileName(fitxategiHelbidea) + " aukeratu duzu";
         }
     }
 
-    // Método para cargar datos del XML y guardarlos en la base de datos
+
     private async void btnKargatuDatuak_Clicked(object sender, EventArgs e)
     {
-        if (string.IsNullOrEmpty(filePath))
+        if (string.IsNullOrEmpty(fitxategiHelbidea))
         {
             await DisplayAlert("Errorea", "Mesedez, hautatu XML fitxategia lehenik.", "OK");
             return;
         }
 
-        await _database.SaveDataFromXmlAsync(filePath); // Guardar datos en BD
+        await _database.SaveDataFromXmlAsync(fitxategiHelbidea); 
 
-        // Actualizar la lista en la UI
-        var katalogoaList = await _database.GetAllKatalogoasAsync();
+
+        var katalogoLista = await _database.GetAllKatalogoasAsync();
         Katalogoa.Clear();
-        foreach (var item in katalogoaList)
+        foreach (var produktua in katalogoLista)
         {
-            Katalogoa.Add(item);
+            Katalogoa.Add(produktua);
         }
 
         await DisplayAlert("Arrakasta", "Datuak ongi kargatu dira!", "OK");
     }
+
+
+
+
 
 
 
@@ -78,7 +82,7 @@ public partial class Informazioa : ContentPage
         }
     }
 
-    private async void LoadPartners()
+    private async void KargatuPartnerrak()
     {
         var partners = await _database.GetAllPartnersAsync();
         Partners.Clear();
@@ -90,84 +94,79 @@ public partial class Informazioa : ContentPage
     }
 
 
-    //  Botón para aumentar cantidad (Botón +)
-    private decimal CalcularTotal()
+
+    private decimal TotalaKalkulatu()
     {
-        return Katalogoa.Sum(p => p.PrezioTotala); //  Suma de (Cantidad * Precio) de todos los productos
+        return Katalogoa.Sum(p => p.PrezioTotala); 
     }
 
-    // Botón para aumentar cantidad (Botón +)
     private void btnGehituKantitatea_Clicked(object sender, EventArgs e)
     {
-        if (sender is Button button && button.BindingContext is Katalogoa produktua)
+        if (sender is Button button && button.BindingContext is Katalogoa produktuKantitatea)
         {
-            if (produktua.Kantitatea < produktua.Stock) // No superar stock máximo
+            if (produktuKantitatea.Kantitatea < produktuKantitatea.Stock) 
             {
-                produktua.Kantitatea++;
-                ActualizarTotal(); // Actualiza el precio total
+                produktuKantitatea.Kantitatea++;
+                TotalaEguneratu(); 
             }
         }
     }
 
-    // Botón para disminuir cantidad (Botón -)
+
     private void btnKenduaKantitatea_Clicked(object sender, EventArgs e)
     {
-        if (sender is Button button && button.BindingContext is Katalogoa produktua)
+        if (sender is Button button && button.BindingContext is Katalogoa produktuKantitatea)
         {
-            if (produktua.Kantitatea > 0) // No bajar de 0
+            if (produktuKantitatea.Kantitatea > 0) 
             {
-                produktua.Kantitatea--;
-                ActualizarTotal(); // Actualiza el precio total
+                produktuKantitatea.Kantitatea--;
+                TotalaEguneratu(); 
             }
         }
     }
 
-    private async void ActualizarTotal()
+    private async void TotalaEguneratu()
     {
-        etyPrezioTotala.Text = CalcularTotal().ToString("F2");
+        etyPrezioTotala.Text = TotalaKalkulatu().ToString("F2");
     }
 
     private async void btnFaktura_Clicked(object sender, EventArgs e)
     {
-        // Obtenemos el Partner seleccionado
-        var partnerSeleccionado = pkPartner.SelectedItem as Partner;
-        if (partnerSeleccionado == null)
+        var AukeratutatkoPartnerra = pkPartner.SelectedItem as Partner;
+        if (AukeratutatkoPartnerra == null)
         {
             await DisplayAlert("Error", "Selecciona un partner antes de continuar.", "OK");
             return;
         }
 
-        // Guardamos la información del formulario antes de recorrer los productos
-        var eskaera = new Eskaera_Goiburua
+        var eskaeraGoiburua = new Eskaera_Goiburua
         {
-            Partner_ID = partnerSeleccionado.Partner_ID,      // Obtenemos el ID del partner
-            Komertzial_ID = partnerSeleccionado.ID_komertzial, // Obtenemos el ID del comercial
+            Partner_ID = AukeratutatkoPartnerra.Partner_ID,      
+            Komertzial_ID = AukeratutatkoPartnerra.ID_komertzial, 
             Egoera = "Pendiente",
             Data = dpData.Date.ToString("yyyy/MM/dd")
         };
 
-        // Insertamos la información en la base de datos
-        await _database.InsertEskaeraGoiburuaAsync(eskaera);
+        await _database.InsertEskaeraGoiburuaAsync(eskaeraGoiburua);
 
-        // Recorremos todos los productos y guardamos los que tienen una cantidad mayor a 0
-        foreach (var produktua in Katalogoa)
+
+        foreach (var produktuInformazioa in Katalogoa)
         {
-            if (produktua.Kantitatea > 0)
+            if (produktuInformazioa.Kantitatea > 0)
             {
-                var nuevaEskaera = new Eskaera_Xehetasuna
+                var eskaeraXehetasunak = new Eskaera_Xehetasuna
                 {
-                    Eskaera_kod = eskaera.Eskaera_kod,
-                    Produktu_kod = produktua.Produktu_kod.ToString(),
-                    Deskribapena = produktua.Izena,
-                    Guztira = produktua.Prezioa * produktua.Kantitatea,
-                    Prezioa = produktua.Prezioa,
-                    Kantitatea = produktua.Kantitatea
+                    Eskaera_kod = eskaeraGoiburua.Eskaera_kod,
+                    Produktu_kod = produktuInformazioa.Produktu_kod.ToString(),
+                    Deskribapena = produktuInformazioa.Izena,
+                    Guztira = produktuInformazioa.Prezioa * produktuInformazioa.Kantitatea,
+                    Prezioa = produktuInformazioa.Prezioa,
+                    Kantitatea = produktuInformazioa.Kantitatea
                 };
 
-                Debug.WriteLine($"Eskaera: {nuevaEskaera.Produktu_kod} - {nuevaEskaera.Deskribapena} - {nuevaEskaera.Kantitatea} - {nuevaEskaera.Guztira} - {eskaera.Eskaera_kod}");
+                Debug.WriteLine($"Eskaera: {eskaeraXehetasunak.Produktu_kod} - {eskaeraXehetasunak.Deskribapena} - {eskaeraXehetasunak.Kantitatea} - {eskaeraXehetasunak.Guztira} - {eskaeraXehetasunak.Eskaera_kod}");
 
-                // Guardamos el nuevo registro en la tabla
-                await _database.InsertEskaeraXehetasunaAsync(nuevaEskaera);
+                await _database.InsertEskaeraXehetasunaAsync(eskaeraXehetasunak);
             }
         }
 
@@ -175,36 +174,41 @@ public partial class Informazioa : ContentPage
         {
             Enpresa_izena = "Correos",
             Data = dpData.Date.ToString("yyyy/MM/dd"),
-            Eskaera_kod = eskaera.Eskaera_kod
+            Eskaera_kod = eskaeraGoiburua.Eskaera_kod
         };
 
         await _database.InsertBidalketaAsync(bidalketa);
 
 
-        // Después de guardar, actualizamos el total
-        ActualizarTotal();
+        TotalaEguneratu();
 
-        await Navigation.PushAsync(new Views.FakturaIkusi(partnerSeleccionado, eskaera.Eskaera_kod.ToString()));
+        await Navigation.PushAsync(new Views.FakturaIkusi(AukeratutatkoPartnerra, eskaeraGoiburua.Eskaera_kod.ToString()));
     }
 
 
-
-
-    //  Si el usuario edita manualmente el Entry
     private void etyKantitatea_TextChanged(object sender, TextChangedEventArgs e)
     {
-        if (sender is Entry entry && entry.BindingContext is Katalogoa produktua)
+        if (sender is Entry entry && entry.BindingContext is Katalogoa produktuKantitatea)
         {
-            if (int.TryParse(entry.Text, out int nuevaCantidad))
+            if (int.TryParse(entry.Text, out int kantitateBerria))
             {
-                produktua.Kantitatea = nuevaCantidad; //  Se ajustará automáticamente al rango 0 - Stock
+                produktuKantitatea.Kantitatea = kantitateBerria; 
             }
             else
             {
-                entry.Text = produktua.Kantitatea.ToString(); //  Evita valores no numéricos
+                entry.Text = produktuKantitatea.Kantitatea.ToString(); 
             }
         }
     }
+
+
+
+
+
+
+
+
+
 
 
 
@@ -214,21 +218,21 @@ public partial class Informazioa : ContentPage
     //Stock zatia
 
 
-    private async void ProduktuColection()
+    private async void ProduktuaKargatu()
     {
-        var katalogoak = await _database.GetAllKatalogoasAsync();
+        var produktuak = await _database.GetAllKatalogoasAsync();
 
         Katalogoa.Clear();
 
-        foreach (var katalogoa in katalogoak)
+        foreach (var produktuenInformazioa in produktuak)
         {
             Katalogoa.Add(new Katalogoa
             {
-                Produktu_kod = katalogoa.Produktu_kod,
-                Izena = katalogoa.Izena,
-                Prezioa = katalogoa.Prezioa,
-                Stock = katalogoa.Stock,
-                Irudia = GetImageForProduct(katalogoa.Produktu_kod) 
+                Produktu_kod = produktuenInformazioa.Produktu_kod,
+                Izena = produktuenInformazioa.Izena,
+                Prezioa = produktuenInformazioa.Prezioa,
+                Stock = produktuenInformazioa.Stock,
+                Irudia = LortuIrudia(produktuenInformazioa.Produktu_kod) 
             });
         }
 
@@ -236,10 +240,10 @@ public partial class Informazioa : ContentPage
         cvEskaera.ItemsSource = Katalogoa;
     }
 
-    private string GetImageForProduct(int productCode)
+    private string LortuIrudia(int produktuKodea)
     {
 
-        switch (productCode)
+        switch (produktuKodea)
         {
             case 1: 
                 return "analogiko1.png";
@@ -267,40 +271,40 @@ public partial class Informazioa : ContentPage
     private void btnHilabetekoEskaerak_Clicked(object sender, EventArgs e)
     {
         var datos = new List<string> { "Eskaera 1", "Eskaera 2", "Eskaera 3" };
-        ActualizarInformeakTableView(datos);
+        EguneratuTaula(datos);
     }
 
     private void btnEskaerakEgoitzaNagusira_Clicked(object sender, EventArgs e)
     {
         var datos = new List<string> { "Egoitza Nagusira 1", "Egoitza Nagusira 2" };
-        ActualizarInformeakTableView(datos);
+        EguneratuTaula(datos);
     }
 
     private void btnGehienEskatutakoProduktua_Clicked(object sender, EventArgs e)
     {
         var datos = new List<string> { "Produktua A", "Produktua B", "Produktua C" };
-        ActualizarInformeakTableView(datos);
+        EguneratuTaula(datos);
     }
 
     private void btnGehienSaltzenDuenBazkidea_Clicked(object sender, EventArgs e)
     {
         var datos = new List<string> { "Bazkidea 1", "Bazkidea 2" };
-        ActualizarInformeakTableView(datos);
+        EguneratuTaula(datos);
     }
 
     private void btnIrabaziHandienaDuenBazkidea_Clicked(object sender, EventArgs e)
     {
         var datos = new List<string> { "Bazkidea X - 1000€", "Bazkidea Y - 900€" };
-        ActualizarInformeakTableView(datos);
+        EguneratuTaula(datos);
     }
 
-    private void ActualizarInformeakTableView(List<string> datos)
+    private void EguneratuTaula(List<string> taulakoDatuak)
     {
         InfoSection.Clear(); 
 
-        foreach (var dato in datos)
+        foreach (var eguneratuakoDatuak in taulakoDatuak)
         {
-            InfoSection.Add(new TextCell { Text = dato });
+            InfoSection.Add(new TextCell { Text = eguneratuakoDatuak });
         }
     }
 

@@ -60,5 +60,6 @@
                 </TableRoot>
             </TableView>
         </VerticalStackLayout>
+        <Button x:Name="btnSortuXML" Grid.ColumnSpan="2" Grid.Row="4" Text="Sortu XML-a" WidthRequest="150" HeightRequest="50" Clicked="btnSortuXML_Clicked" />
     </Grid>
 </ContentPage>
