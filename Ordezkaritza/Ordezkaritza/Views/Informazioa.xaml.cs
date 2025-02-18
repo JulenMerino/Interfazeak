@@ -288,16 +288,21 @@ public partial class Informazioa : ContentPage
         EguneratuTaula(datos);
     }
 
-    private void btnGehienSaltzenDuenBazkidea_Clicked(object sender, EventArgs e)
+    private async void btnGehienSaltzenDuenBazkidea_Clicked(object sender, EventArgs e)
     {
-        var datos = new List<string> { "Bazkidea 1", "Bazkidea 2" };
-        EguneratuTaula(datos);
+        var datos = await _database.GetTopSellingPartnersByTotalUnitsAsync();
+
+        var formattedData = datos.Select(d => $"{d.Socio} - {d.Unidades_Vendidas} unidades").ToList();
+
+        EguneratuTaula(formattedData);
     }
 
-    private void btnIrabaziHandienaDuenBazkidea_Clicked(object sender, EventArgs e)
+
+    private async void btnIrabaziHandienaDuenBazkidea_Clicked(object sender, EventArgs e)
     {
-        var datos = new List<string> { "Bazkidea X - 1000€", "Bazkidea Y - 900€" };
-        EguneratuTaula(datos);
+        var datos = await _database.GetTopSellingPartnersAsync();
+        var formattedData = datos.Select(d => $"{d.Socio} - {d.Unidades_Vendidas} unidades - {d.Total_Vendido}€").ToList();
+        EguneratuTaula(formattedData);
     }
 
     private void EguneratuTaula(List<string> taulakoDatuak)

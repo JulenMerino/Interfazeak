@@ -269,6 +269,78 @@ namespace Ordezkaritza.Data
                 .ToList();
         }
 
+        public async Task<List<SalesReport>> GetTopSellingPartnersByTotalUnitsAsync()
+        {
+            var orders = await _database.Table<Eskaera_Goiburua>().ToListAsync();
+            var details = await _database.Table<Eskaera_Xehetasuna>().ToListAsync();
+            var partners = await _database.Table<Partner>().ToListAsync();
+
+            var result = details
+                .Join(orders, d => d.Eskaera_kod, o => o.Eskaera_kod, (d, o) => new { d, o })
+                .Join(partners, combined => combined.o.Partner_ID, p => p.Partner_ID, (combined, p) => new
+                {
+                    p.Partner_ID,
+                    p.Izena,
+                    combined.d.Kantitatea 
+                })
+                .GroupBy(x => new { x.Partner_ID, x.Izena })
+                .Select(g => new SalesReport
+                {
+                    Partner_ID = g.Key.Partner_ID,
+                    Socio = g.Key.Izena,
+                    Unidades_Vendidas = g.Sum(x => x.Kantitatea),  
+                    Total_Vendido = 0 
+                })
+                .OrderByDescending(x => x.Unidades_Vendidas) 
+                .ToList();
+
+            return result;
+        }
+
+
+
+        public async Task<List<SalesReport>> GetTopSellingPartnersAsync()
+        {
+            var orders = await _database.Table<Eskaera_Goiburua>().ToListAsync();
+            var details = await _database.Table<Eskaera_Xehetasuna>().ToListAsync();
+            var partners = await _database.Table<Partner>().ToListAsync();
+
+            var result = details
+                .Join(orders, d => d.Eskaera_kod, o => o.Eskaera_kod, (d, o) => new { d, o })
+                .Join(partners, combined => combined.o.Partner_ID, p => p.Partner_ID, (combined, p) => new
+                {
+                    p.Partner_ID,
+                    p.Izena,
+                    combined.d.Kantitatea,
+                    combined.d.Guztira
+                })
+                .GroupBy(x => new { x.Partner_ID, x.Izena })  // Agrupar solo por Partner_ID y nombre
+                .Select(g => new SalesReport
+                {
+                    Partner_ID = g.Key.Partner_ID,
+                    Socio = g.Key.Izena,
+                    Unidades_Vendidas = g.Sum(x => x.Kantitatea),
+                    Total_Vendido = g.Sum(x => x.Guztira)
+                })
+                .OrderByDescending(x => x.Total_Vendido)
+                .ToList();
+
+            return result;
+        }
+
+
+
+        public class SalesReport
+        {
+            public int Partner_ID { get; set; }
+            public string Socio { get; set; }
+            public string Producto { get; set; }
+            public int Unidades_Vendidas { get; set; }
+            public decimal Total_Vendido { get; set; }
+        }
     }
 
+
 }
+
+
