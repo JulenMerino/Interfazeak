@@ -1,4 +1,5 @@
 using Ordezkaritza.Data;
+using Ordezkaritza.Models;
 using System.Collections.ObjectModel;
 using System.Xml.Linq;
 
@@ -84,7 +85,7 @@ public partial class StockBerritu : ContentPage
 
 
 
-    private void btnSortuXML_Clicked(object sender, EventArgs e)
+    private async void btnSortuXML_Clicked(object sender, EventArgs e)
     {
         var stockDutenProduktuak = Katalogoa.Where(p => p.Stock > 0).ToList();
 
@@ -114,6 +115,22 @@ public partial class StockBerritu : ContentPage
         xml.Save(fitxategiHelbidea);
 
         DisplayAlert("Lortuta", $"XML zuzenki sortu da helbide honetan: {Path.GetFullPath(fitxategiHelbidea)}", "OK");
+
+        int nextEskaeraKod = _database.GetNextEskaeraKod();
+
+        foreach (var producto in stockDutenProduktuak)
+        {
+            var nuevaEgoitzaNagusia = new EgoitzaNagusia
+            {
+                Eskaera_kod = nextEskaeraKod,
+                Izena = producto.Izena,
+                Kantitatea = producto.Stock,  // Asumimos que la cantidad es el stock disponible.
+                Produktu_kod = producto.Produktu_kod
+            };
+
+            await _database.InsertEgoitzaNagusiaAsync(nuevaEgoitzaNagusia);
+        }
+
     }
 
 

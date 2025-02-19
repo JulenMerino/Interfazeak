@@ -37,6 +37,7 @@ namespace Ordezkaritza.Data
             _database.CreateTableAsync<Eskaera_Goiburua>().Wait();
             _database.CreateTableAsync<Eskaera_Xehetasuna>().Wait();
             _database.CreateTableAsync<Bidalketa>().Wait();
+            _database.CreateTableAsync<EgoitzaNagusia>().Wait();
 
 
         }
@@ -48,6 +49,7 @@ namespace Ordezkaritza.Data
         public Task<List<Eskaera_Goiburua>> GetAllEskaeraGoiburuaAsync() => _database.Table<Eskaera_Goiburua>().ToListAsync();
         public Task<List<Eskaera_Xehetasuna>> GetAllEskaeraXehetasunaAsync() => _database.Table<Eskaera_Xehetasuna>().ToListAsync();
         public Task<List<Bidalketa>> GetAllBidalketaAsync() => _database.Table<Bidalketa>().ToListAsync();
+        public Task<List<EgoitzaNagusia>> GetAllEgoitzaNagusiaAsync() => _database.Table<EgoitzaNagusia>().ToListAsync();
 
         // Métodos para insertar nuevos registros
         public Task<int> InsertKatalogoaAsync(Katalogoa katalogoa) => _database.InsertAsync(katalogoa);
@@ -56,6 +58,7 @@ namespace Ordezkaritza.Data
         public Task<int> InsertEskaeraGoiburuaAsync(Eskaera_Goiburua eskaeraGoiburua) => _database.InsertAsync(eskaeraGoiburua);
         public Task<int> InsertEskaeraXehetasunaAsync(Eskaera_Xehetasuna eskaeraXehetasuna) => _database.InsertAsync(eskaeraXehetasuna);
         public Task<int> InsertBidalketaAsync(Bidalketa bidalketa) => _database.InsertAsync(bidalketa);
+        public Task<int> InsertEgoitzaNagusiaAsync(EgoitzaNagusia egoitzaNagusia) => _database.InsertAsync(egoitzaNagusia);
 
         // Métodos para actualizar registros
         public Task<int> UpdateKatalogoaAsync(Katalogoa katalogoa) => _database.UpdateAsync(katalogoa);
@@ -64,6 +67,7 @@ namespace Ordezkaritza.Data
         public Task<int> UpdateEskaeraGoiburuaAsync(Eskaera_Goiburua eskaeraGoiburua) => _database.UpdateAsync(eskaeraGoiburua);
         public Task<int> UpdateEskaeraXehetasunaAsync(Eskaera_Xehetasuna eskaeraXehetasuna) => _database.UpdateAsync(eskaeraXehetasuna);
         public Task<int> UpdateBidalketaAsync(Bidalketa bidalketa) => _database.UpdateAsync(bidalketa);
+        public Task<int> UpdateEgoitzaNagusiaAsync(EgoitzaNagusia egoitzaNagusia) => _database.UpdateAsync(egoitzaNagusia);
 
         // Métodos para eliminar registros
         public Task<int> DeleteKatalogoaAsync(Katalogoa katalogoa) => _database.DeleteAsync(katalogoa);
@@ -72,6 +76,7 @@ namespace Ordezkaritza.Data
         public Task<int> DeleteEskaeraGoiburuaAsync(Eskaera_Goiburua eskaeraGoiburua) => _database.DeleteAsync(eskaeraGoiburua);
         public Task<int> DeleteEskaeraXehetasunaAsync(Eskaera_Xehetasuna eskaeraXehetasuna) => _database.DeleteAsync(eskaeraXehetasuna);
         public Task<int> DeleteBidalketaAsync(Bidalketa bidalketa) => _database.DeleteAsync(bidalketa);
+        public Task<int> DeleteEgoitzaNagusiaAsync(EgoitzaNagusia egoitzaNagusia) => _database.DeleteAsync(egoitzaNagusia);
 
 
 
@@ -204,6 +209,11 @@ namespace Ordezkaritza.Data
 
         }
 
+
+
+
+
+
         //Eskaera zatia
         public Task<List<Partner>> GetPartnersAsync()
         {
@@ -250,6 +260,10 @@ namespace Ordezkaritza.Data
         }
 
 
+
+
+
+        // Informeak eta estadiskica
         public async Task<List<(string ProduktuKod, string Izena, decimal Prezioa, int TotalKantitatea)>> ObtenerProductosMasVendidosAsync()
         {
             var eskaeraXehetasunak = await _database.Table<Eskaera_Xehetasuna>().ToListAsync();
@@ -328,7 +342,23 @@ namespace Ordezkaritza.Data
             return result;
         }
 
+        public async Task<List<(Eskaera_Goiburua, List<Eskaera_Xehetasuna>)>> GetCurrentMonthOrdersWithDetailsAsync()
+        {
+            var firstDayOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
 
+            // Obtener todas las órdenes y filtrar en memoria
+            var allOrders = await _database.Table<Eskaera_Goiburua>().ToListAsync();
+            var orders = allOrders
+                         .Where(o => DateTime.TryParse(o.Data, out var date) && date >= firstDayOfMonth && date <= lastDayOfMonth)
+                         .ToList();
+
+            // Obtener detalles de los pedidos
+            var allOrderDetails = await _database.Table<Eskaera_Xehetasuna>().ToListAsync();
+            var orderDetails = allOrderDetails.Where(d => orders.Any(o => o.Eskaera_kod == d.Eskaera_kod)).ToList();
+
+            return orders.Select(o => (o, orderDetails.Where(d => d.Eskaera_kod == o.Eskaera_kod).ToList())).ToList();
+        }
 
         public class SalesReport
         {
@@ -338,9 +368,20 @@ namespace Ordezkaritza.Data
             public int Unidades_Vendidas { get; set; }
             public decimal Total_Vendido { get; set; }
         }
+
+        public int GetNextEskaeraKod()
+        {
+            using var connection = new SQLiteConnection(_dbPath);
+
+            // Obtener el último Eskaera_kod
+            var lastEskaera = connection.Table<EgoitzaNagusia>().OrderByDescending(e => e.Eskaera_kod).FirstOrDefault();
+
+            // Si no hay registros, se comienza desde 1
+            int nextEskaeraKod = lastEskaera != null ? lastEskaera.Eskaera_kod + 1 : 1;
+
+            return nextEskaeraKod;
+        }
     }
-
-
 }
 
 

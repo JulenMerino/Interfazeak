@@ -268,15 +268,19 @@ public partial class Informazioa : ContentPage
     //Informeak/Estadisticas zatia
 
 
-    private void btnHilabetekoEskaerak_Clicked(object sender, EventArgs e)
+    private async void btnHilabetekoEskaerak_Clicked(object sender, EventArgs e)
     {
-        var datos = new List<string> { "Eskaera 1", "Eskaera 2", "Eskaera 3" };
+        var ordersWithDetails = await _database.GetCurrentMonthOrdersWithDetailsAsync();
+        var datos = ordersWithDetails.Select(o => $"Eskaera {o.Item1.Eskaera_kod} - Data: {o.Item1.Data}, Partner ID: {o.Item1.Partner_ID}, Produktuak: [{string.Join(", ", o.Item2.Select(d => d.Deskribapena + " - Kantitatea: " + d.Kantitatea))}]").ToList();
         EguneratuTaula(datos);
     }
 
-    private void btnEskaerakEgoitzaNagusira_Clicked(object sender, EventArgs e)
+    private async void btnEskaerakEgoitzaNagusira_Clicked(object sender, EventArgs e)
     {
-        var datos = new List<string> { "Egoitza Nagusira 1", "Egoitza Nagusira 2" };
+        var egoitzaNagusia = await _database.GetAllEgoitzaNagusiaAsync();
+        var datos = egoitzaNagusia.GroupBy(e => e.Eskaera_kod)
+                                   .Select(g => $"Eskaera kodea: {g.Key} [{string.Join(", ", g.Select(e => e.Izena + " - Kantitatea: " + e.Kantitatea))}]")
+                                   .ToList();
         EguneratuTaula(datos);
     }
 
