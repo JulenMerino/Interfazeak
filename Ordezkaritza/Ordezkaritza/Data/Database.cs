@@ -28,6 +28,8 @@ namespace Ordezkaritza.Data
 
             _database = new SQLiteAsyncConnection(_dbPath);
 
+
+            // Datu basearen taulak sortzeko 
             _database.CreateTableAsync<Katalogoa>().Wait();
             _database.CreateTableAsync<Komertziala>().Wait();
             _database.CreateTableAsync<Partner>().Wait();
@@ -39,48 +41,28 @@ namespace Ordezkaritza.Data
 
         }
 
-        // Métodos para obtener todos los registros
+        // Erregistroak lortzeko metodoak
         public Task<List<Katalogoa>> GetAllKatalogoasAsync() => _database.Table<Katalogoa>().ToListAsync();
-        public Task<List<Komertziala>> GetAllKomertzialasAsync() => _database.Table<Komertziala>().ToListAsync();
         public Task<List<Partner>> GetAllPartnersAsync() => _database.Table<Partner>().ToListAsync();
-        public Task<List<Eskaera_Goiburua>> GetAllEskaeraGoiburuaAsync() => _database.Table<Eskaera_Goiburua>().ToListAsync();
-        public Task<List<Eskaera_Xehetasuna>> GetAllEskaeraXehetasunaAsync() => _database.Table<Eskaera_Xehetasuna>().ToListAsync();
-        public Task<List<Bidalketa>> GetAllBidalketaAsync() => _database.Table<Bidalketa>().ToListAsync();
         public Task<List<EgoitzaNagusia>> GetAllEgoitzaNagusiaAsync() => _database.Table<EgoitzaNagusia>().ToListAsync();
 
-        // Métodos para insertar nuevos registros
-        public Task<int> InsertKatalogoaAsync(Katalogoa katalogoa) => _database.InsertAsync(katalogoa);
-        public Task<int> InsertKomertzialaAsync(Komertziala komertziala) => _database.InsertAsync(komertziala);
-        public Task<int> InsertPartnerAsync(Partner partner) => _database.InsertAsync(partner);
+        // Erregistroak sartzeko metodoak
         public Task<int> InsertEskaeraGoiburuaAsync(Eskaera_Goiburua eskaeraGoiburua) => _database.InsertAsync(eskaeraGoiburua);
         public Task<int> InsertEskaeraXehetasunaAsync(Eskaera_Xehetasuna eskaeraXehetasuna) => _database.InsertAsync(eskaeraXehetasuna);
         public Task<int> InsertBidalketaAsync(Bidalketa bidalketa) => _database.InsertAsync(bidalketa);
         public Task<int> InsertEgoitzaNagusiaAsync(EgoitzaNagusia egoitzaNagusia) => _database.InsertAsync(egoitzaNagusia);
 
-        // Métodos para actualizar registros
+        // Erregistroak eguneratzeko metodoak
         public Task<int> UpdateKatalogoaAsync(Katalogoa katalogoa) => _database.UpdateAsync(katalogoa);
-        public Task<int> UpdateKomertzialaAsync(Komertziala komertziala) => _database.UpdateAsync(komertziala);
-        public Task<int> UpdatePartnerAsync(Partner partner) => _database.UpdateAsync(partner);
-        public Task<int> UpdateEskaeraGoiburuaAsync(Eskaera_Goiburua eskaeraGoiburua) => _database.UpdateAsync(eskaeraGoiburua);
-        public Task<int> UpdateEskaeraXehetasunaAsync(Eskaera_Xehetasuna eskaeraXehetasuna) => _database.UpdateAsync(eskaeraXehetasuna);
-        public Task<int> UpdateBidalketaAsync(Bidalketa bidalketa) => _database.UpdateAsync(bidalketa);
-        public Task<int> UpdateEgoitzaNagusiaAsync(EgoitzaNagusia egoitzaNagusia) => _database.UpdateAsync(egoitzaNagusia);
-
-        // Métodos para eliminar registros
-        public Task<int> DeleteKatalogoaAsync(Katalogoa katalogoa) => _database.DeleteAsync(katalogoa);
-        public Task<int> DeleteKomertzialaAsync(Komertziala komertziala) => _database.DeleteAsync(komertziala);
-        public Task<int> DeletePartnerAsync(Partner partner) => _database.DeleteAsync(partner);
-        public Task<int> DeleteEskaeraGoiburuaAsync(Eskaera_Goiburua eskaeraGoiburua) => _database.DeleteAsync(eskaeraGoiburua);
-        public Task<int> DeleteEskaeraXehetasunaAsync(Eskaera_Xehetasuna eskaeraXehetasuna) => _database.DeleteAsync(eskaeraXehetasuna);
-        public Task<int> DeleteBidalketaAsync(Bidalketa bidalketa) => _database.DeleteAsync(bidalketa);
-        public Task<int> DeleteEgoitzaNagusiaAsync(EgoitzaNagusia egoitzaNagusia) => _database.DeleteAsync(egoitzaNagusia);
-
-
-
 
 
 
         //XML zatia
+
+        /// <summary>
+        /// XML fitxategia aukeratzeko metodoa
+        /// </summary>
+        /// <returns>XML fitxategiaren helbidea</returns>
         public async Task<string> AuketatuXmlFitxategia()
         {
 
@@ -95,6 +77,12 @@ namespace Ordezkaritza.Data
 
             return result?.FullPath;
         }
+
+        /// <summary>
+        /// katalogoko informazioa XML fitxategitik lortzeko metodoa
+        /// </summary>
+        /// <param name="fitxategiHelbidea"></param>
+        /// <returns>Produktu bakoitzaren informazioa</returns>
         public async Task<List<Katalogoa>> KatalogoaEguneratuXML(string fitxategiHelbidea)
         {
             if (string.IsNullOrWhiteSpace(fitxategiHelbidea)) return null;
@@ -114,6 +102,11 @@ namespace Ordezkaritza.Data
             return infromazioLista;
         }
 
+        /// <summary>
+        /// partnerren informazioa XML fitxategitik lortzeko metodoa
+        /// </summary>
+        /// <param name="fitxategiHelbidea"></param>
+        /// <returns>Partner bakoitzaren informazioa</returns>
         public async Task<List<Partner>> PartneraEguneratuXML(string fitxategiHelbidea)
         {
             if (string.IsNullOrWhiteSpace(fitxategiHelbidea)) return null;
@@ -134,15 +127,18 @@ namespace Ordezkaritza.Data
             return infromazioLista;
         }
 
-        
 
+        /// <summary>
+        /// Informnazioa XML fitxategitik datu basean gordetzeko metodoa
+        /// </summary>
+        /// <param name="fitxategiHelbidea"></param>
         public async Task SaveDataFromXmlAsync(string fitxategiHelbidea)
         {
             var fitxategiIzena = Path.GetFileName(fitxategiHelbidea);
 
             //Debug.WriteLine($"XML fitxategia: {Path.GetFileName(filePath)}");
 
-            if (fitxategiIzena == "Froga.xml")
+            if (fitxategiIzena == "EgoitzaNagusia.xml")
             {
                 var data = await KatalogoaEguneratuXML(fitxategiHelbidea);
                 if (data == null || data.Count == 0)
@@ -213,6 +209,11 @@ namespace Ordezkaritza.Data
 
         //Eskaera zatia
 
+        /// <summary>
+        /// Eskaera kodea lortuz, bidalketa egitko informazioa lortzeko metodoa
+        /// </summary>
+        /// <param name="eskaeraKod"></param>
+        /// <returns>Datu baseko informazioa</returns>
         public async Task<Bidalketa> GetBidalketaByEskaeraKodAsync(int eskaeraKod)
         {
             return await _database.Table<Bidalketa>()
@@ -220,11 +221,21 @@ namespace Ordezkaritza.Data
                 .FirstOrDefaultAsync();
         }
 
+        /// <summary>
+        /// eskaera kodea lortuz, eskaera xehetasunak lortzeko metodoa
+        /// </summary>
+        /// <param name="eskaeraKod"></param>
+        /// <returns>Datu baseko informazioa</returns>
         public Task<List<Eskaera_Xehetasuna>> GetEskaeraByEskaeraKodAsync(int eskaeraKod)
         {
             return _database.Table<Eskaera_Xehetasuna>().Where(e => e.Eskaera_kod == eskaeraKod).ToListAsync();
         }
 
+        /// <summary>
+        /// Kodea lortuz, katalogoaren informazioa lortzeko metodoa
+        /// </summary>
+        /// <param name="produktuaKod"></param>
+        /// <returns>Datu baseko informazioa</returns>
         public async Task<Katalogoa> GetProduktuaByKodAsync(int produktuaKod)
         {
             return await _database.Table<Katalogoa>().Where(p => p.Produktu_kod == produktuaKod).FirstOrDefaultAsync();
@@ -235,6 +246,10 @@ namespace Ordezkaritza.Data
 
         // Informeak eta estadiskica
 
+        /// <summary>
+        /// Hilabeteko eskaerak lortzeko metodoa
+        /// </summary>
+        /// <returns>Datu baseko informazioa</returns>
         public async Task<List<(Eskaera_Goiburua, List<Eskaera_Xehetasuna>)>> LortuHilabetekoEskaerak()
         {
             var hilabetekoLehenEguna = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
@@ -253,6 +268,11 @@ namespace Ordezkaritza.Data
 
         //GetAllEgoitzaNagusiaAsync-rekin lortua
 
+
+        /// <summary>
+        /// Gehien eskatutako produktua lortzeko metodoa
+        /// </summary>
+        /// <returns>Datu baseko informazioa</returns>
         public async Task<List<(string ProduktuKod, string Izena, decimal Prezioa, int TotalKantitatea)>> LortuGehienEskatutakoProduktua()
         {
             var eskaeraXehetasunak = await _database.Table<Eskaera_Xehetasuna>().ToListAsync();
@@ -272,6 +292,10 @@ namespace Ordezkaritza.Data
                 .ToList();
         }
 
+        /// <summary>
+        /// Kantitate handien saltzen duen partnera lortzeko metodoa
+        /// </summary>
+        /// <returns>Datu baseko informazioa</returns>
         public async Task<List<EskaeraObjetua>> LortuKantitateHandienSaltzenDuenPartnera()
         {
             var eskaeraGoiburuak = await _database.Table<Eskaera_Goiburua>().ToListAsync();
@@ -301,7 +325,10 @@ namespace Ordezkaritza.Data
         }
 
 
-
+        /// <summary>
+        /// Irabazi handien duen partnera lortzeko metodoa
+        /// </summary>
+        /// <returns>Datu baseko informazioa</returns>
         public async Task<List<EskaeraObjetua>> LortuIrabaziHandienDuenPartnera()
         {
             var eskaeraGoiburuak = await _database.Table<Eskaera_Goiburua>().ToListAsync();
@@ -331,8 +358,10 @@ namespace Ordezkaritza.Data
             return informazioGuztia;
         }
 
-        
 
+        /// <summary>
+        /// Eskaera objetua, eskaera xehetasunak eta partneren informazioa gordetzeko klasea
+        /// </summary>
         public class EskaeraObjetua
         {
             public int Partner_ID { get; set; }
@@ -342,12 +371,14 @@ namespace Ordezkaritza.Data
             public decimal Total_Vendido { get; set; }
         }
 
+
+        /// <summary>
+        /// Egoitza nagusian hurrengo eskaera kodea lortzeko metodoa
+        /// </summary>
+        /// <returns>Datu baseko informazioa</returns>
         public int LortuHurregoEskaeraKod()
         {
-            // Obtener el último Eskaera_kod
             var lastEskaera = _database.Table<EgoitzaNagusia>().OrderByDescending(e => e.Eskaera_kod).FirstOrDefaultAsync().Result;
-
-            // Si no hay registros, se comienza desde 1
             int nextEskaeraKod = lastEskaera != null ? lastEskaera.Eskaera_kod + 1 : 1;
 
             return nextEskaeraKod;

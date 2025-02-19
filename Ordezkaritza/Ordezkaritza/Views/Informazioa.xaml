@@ -5,7 +5,7 @@
 
     <ContentPage.Content>
         <tabView:SfTabView x:Name="tvInformazioa">
-            <!-- Pestaña 1: XML irakurri -->
+            <!-- 1. lehioa: XML irakurri -->
             <tabView:SfTabItem Header="XML irakurri" BackgroundColor="Black" TextColor="White">
                 <tabView:SfTabItem.Content>
                     <VerticalStackLayout Padding="0,50,0,0" BackgroundColor="#e7c8ab">
@@ -18,7 +18,7 @@
                 </tabView:SfTabItem.Content>
             </tabView:SfTabItem>
 
-            <!-- Pestaña 2: Eskaeren erantzuna -->
+            <!-- 2. lehioa: Eskaeren erantzuna -->
             <tabView:SfTabItem Header="Eskaeren erantzuna" BackgroundColor="Black" TextColor="White">
                 <tabView:SfTabItem.Content>
                     <Grid BackgroundColor="#e7c8ab">
@@ -80,7 +80,7 @@
                 </tabView:SfTabItem.Content>
             </tabView:SfTabItem>
 
-            <!-- Pestaña 3: Stock -->
+            <!-- 3. lehioa: Stock -->
             <tabView:SfTabItem Header="Stock" BackgroundColor="Black" TextColor="White">
                 <tabView:SfTabItem.Content>
                     <ScrollView BackgroundColor="#e7c8ab">
@@ -115,7 +115,7 @@
                 </tabView:SfTabItem.Content>
             </tabView:SfTabItem>
 
-            <!-- Pestaña 4: Informeak/Estadistikak -->
+            <!-- 4. lehioa: Informeak/Estadistikak -->
             <tabView:SfTabItem Header="Informeak/Estadistikak" BackgroundColor="Black" TextColor="White">
                 <tabView:SfTabItem.Content>
                     <VerticalStackLayout BackgroundColor="#e7c8ab">

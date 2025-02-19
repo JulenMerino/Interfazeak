@@ -21,6 +21,8 @@ public partial class Informazioa : ContentPage
         Katalogoa = new ObservableCollection<Katalogoa>();
         Partners = new ObservableCollection<Partner>();
 
+        OnAktualizatuProduktua += AktualizatuProduktua;
+
 
         ProduktuaKargatu();
         KargatuPartnerrak();
@@ -29,6 +31,11 @@ public partial class Informazioa : ContentPage
 
     // XML fitxategiak Irakurri
 
+    /// <summary>
+    /// Botoia sakatuenean, XML fitxategia aukeratzeko lehioa irekitzen da.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private async void btnAukeratuXMLa_Clicked(object sender, EventArgs e)
     {
         fitxategiHelbidea = await _database.AuketatuXmlFitxategia(); 
@@ -39,7 +46,11 @@ public partial class Informazioa : ContentPage
         }
     }
 
-
+    /// <summary>
+    /// Botoia sakatuenean, aukeratutako XML fitxategiko datuak kargatzen dira datu basean.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private async void btnKargatuDatuak_Clicked(object sender, EventArgs e)
     {
         if (string.IsNullOrEmpty(fitxategiHelbidea))
@@ -73,6 +84,11 @@ public partial class Informazioa : ContentPage
 
     //Eskaera zatia
 
+    /// <summary>
+    /// Picker-a partnerrak aukeratzeko eta honen helbidea lortzeko.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void pkPartner_SelectedIndexChanged(object sender, EventArgs e)
     {
         if (pkPartner.SelectedIndex != -1)
@@ -82,6 +98,9 @@ public partial class Informazioa : ContentPage
         }
     }
 
+    /// <summary>
+    /// Datu basean dauden partnerrak picker-ean kargatzen dira.
+    /// </summary>
     private async void KargatuPartnerrak()
     {
         var partners = await _database.GetAllPartnersAsync();
@@ -94,12 +113,20 @@ public partial class Informazioa : ContentPage
     }
 
 
-
+    /// <summary>
+    /// Katalogoan sartutako produktu kantitatearen prezio totala kalulatzen du.
+    /// </summary>
+    /// <returns>Produktuaren prezio guztien batuketa</returns>
     private decimal TotalaKalkulatu()
     {
         return Katalogoa.Sum(p => p.PrezioTotala); 
     }
 
+    /// <summary>
+    /// Botoia sakatzean, produktuari kantitatea gehitzen du.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void btnGehituKantitatea_Clicked(object sender, EventArgs e)
     {
         if (sender is Button button && button.BindingContext is Katalogoa produktuKantitatea)
@@ -112,7 +139,11 @@ public partial class Informazioa : ContentPage
         }
     }
 
-
+    /// <summary>
+    /// Botoia sakatzean, produktuari kantitatea kentzen dio.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void btnKenduaKantitatea_Clicked(object sender, EventArgs e)
     {
         if (sender is Button button && button.BindingContext is Katalogoa produktuKantitatea)
@@ -125,11 +156,20 @@ public partial class Informazioa : ContentPage
         }
     }
 
+    /// <summary>
+    /// Kalkulatutako totala entry batean sartzen du.
+    /// </summary>
     private async void TotalaEguneratu()
     {
         etyPrezioTotala.Text = TotalaKalkulatu().ToString("F2");
     }
 
+
+    /// <summary>
+    /// Botoia sakatzean, Informazio guztia hartu eta beste orri batera bidaltzen du faktura antezeko bat sortuz eta orri haun irekitzen du.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private async void btnFaktura_Clicked(object sender, EventArgs e)
     {
         var AukeratutatkoPartnerra = pkPartner.SelectedItem as Partner;
@@ -185,7 +225,11 @@ public partial class Informazioa : ContentPage
         await Navigation.PushAsync(new Views.FakturaIkusi(AukeratutatkoPartnerra, eskaeraGoiburua.Eskaera_kod.ToString()));
     }
 
-
+    /// <summary>
+    /// Kantitate entry-an sartutako zenbakia produktuaren kantitatea eguneratzeko.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void etyKantitatea_TextChanged(object sender, TextChangedEventArgs e)
     {
         if (sender is Entry entry && entry.BindingContext is Katalogoa produktuKantitatea)
@@ -217,8 +261,10 @@ public partial class Informazioa : ContentPage
 
     //Stock zatia
 
-
-    private async void ProduktuaKargatu()
+    /// <summary>
+    /// Katalogo tablan dauden produktuak collection view batean kargatzen dira.
+    /// </summary>
+    public async void ProduktuaKargatu()
     {
         var produktuak = await _database.GetAllKatalogoasAsync();
 
@@ -240,7 +286,12 @@ public partial class Informazioa : ContentPage
         cvEskaera.ItemsSource = Katalogoa;
     }
 
-    private string LortuIrudia(int produktuKodea)
+    /// <summary>
+    /// Produktu kodearen arabera irudia itzultzen du.
+    /// </summary>
+    /// <param name="produktuKodea"></param>
+    /// <returns> Irudia </returns>
+    public string LortuIrudia(int produktuKodea)
     {
 
         switch (produktuKodea)
@@ -256,6 +307,44 @@ public partial class Informazioa : ContentPage
         }
     }
 
+    /// <summary>
+    /// Stok-a eguneratzeko metodoa.
+    /// </summary>
+    public async void AktualizatuProduktua()
+    {
+        var produktuak = await _database.GetAllKatalogoasAsync();
+
+        Katalogoa.Clear();
+
+        foreach (var produktuenInformazioa in produktuak)
+        {
+            Katalogoa.Add(new Katalogoa
+            {
+                Produktu_kod = produktuenInformazioa.Produktu_kod,
+                Izena = produktuenInformazioa.Izena,
+                Prezioa = produktuenInformazioa.Prezioa,
+                Stock = produktuenInformazioa.Stock,
+                Irudia = LortuIrudia(produktuenInformazioa.Produktu_kod)
+            });
+        }
+
+        ProduktuakColection.ItemsSource = Katalogoa;
+        cvEskaera.ItemsSource = Katalogoa;
+    }
+
+
+    public static event Action OnAktualizatuProduktua;
+
+    public static void AktualizatuProduktuaGlobal()
+    {
+        OnAktualizatuProduktua?.Invoke();
+    }
+
+    /// <summary>
+    /// Botoia sakatzean, produktuaren stock-a gehitzeko lehioa irekitzen da.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private async void btnStocKBerritu_Clicked(object sender, EventArgs e)
     {
         
@@ -267,7 +356,11 @@ public partial class Informazioa : ContentPage
 
     //Informeak/Estadisticas zatia
 
-
+    /// <summary>
+    /// Botoia sakatzean, hilabeteko eskaerak lortzen dira eta taulan erakusten dira.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private async void btnHilabetekoEskaerak_Clicked(object sender, EventArgs e)
     {
         var hilabetekoEskaerak = await _database.LortuHilabetekoEskaerak();
@@ -275,6 +368,11 @@ public partial class Informazioa : ContentPage
         EguneratuTaula(datuak);
     }
 
+    /// <summary>
+    /// Botoia sakatzean, egoitza nagusira egindako eskaerak lortzen dira eta taulan erakusten dira.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private async void btnEskaerakEgoitzaNagusira_Clicked(object sender, EventArgs e)
     {
         var egoitzaNagusia = await _database.GetAllEgoitzaNagusiaAsync();
@@ -284,6 +382,11 @@ public partial class Informazioa : ContentPage
         EguneratuTaula(datuak);
     }
 
+    /// <summary>
+    /// Botoia sakatzean, gehien eskatutako produktua lortzen da eta taulan erakusten da.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private async void btnGehienEskatutakoProduktua_Clicked(object sender, EventArgs e)
     {
         var gehienSaldutakoProduktua = await _database.LortuGehienEskatutakoProduktua();
@@ -292,6 +395,11 @@ public partial class Informazioa : ContentPage
         EguneratuTaula(datuak);
     }
 
+    /// <summary>
+    /// Botoia sakatzean, gehien saltzen duen partnera lortzen da eta taulan erakusten da.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private async void btnGehienSaltzenDuenBazkidea_Clicked(object sender, EventArgs e)
     {
         var kantitateHandienPartner = await _database.LortuKantitateHandienSaltzenDuenPartnera();
@@ -300,7 +408,11 @@ public partial class Informazioa : ContentPage
         EguneratuTaula(datuak);
     }
 
-
+    /// <summary>
+    /// Botoia sakatzean, irabazi handiena duen partnera lortzen da eta taulan erakusten da.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private async void btnIrabaziHandienaDuenBazkidea_Clicked(object sender, EventArgs e)
     {
         var irabaziHandienPartner = await _database.LortuIrabaziHandienDuenPartnera();
@@ -308,6 +420,10 @@ public partial class Informazioa : ContentPage
         EguneratuTaula(datuak);
     }
 
+    /// <summary>
+    /// Taulako datuak eguneratzeko metodoa.
+    /// </summary>
+    /// <param name="taulakoDatuak"></param>
     private void EguneratuTaula(List<string> taulakoDatuak)
     {
         InfoSection.Clear(); 
@@ -317,12 +433,6 @@ public partial class Informazioa : ContentPage
             InfoSection.Add(new TextCell { Text = eguneratuakoDatuak });
         }
     }
-
-
-
-
-
-    
 
 }
 

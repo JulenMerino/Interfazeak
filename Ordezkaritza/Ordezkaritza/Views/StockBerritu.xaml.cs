@@ -20,6 +20,9 @@ public partial class StockBerritu : ContentPage
         ProduktuaKargatu();
     }
 
+    /// <summary>
+    /// Katalogoan dauden produktuak kargatzen ditu.
+    /// </summary>
     private async void ProduktuaKargatu()
     {
         var produktuak = await _database.GetAllKatalogoasAsync();
@@ -41,6 +44,11 @@ public partial class StockBerritu : ContentPage
         ProduktuakColection.ItemsSource = Katalogoa;
     }
 
+    /// <summary>
+    /// Produktu kodearen arabera irudia itzultzen du.
+    /// </summary>
+    /// <param name="produktuKodea"></param>
+    /// <returns></returns>
     private string LortuIrudia(int produktuKodea)
     {
 
@@ -57,7 +65,11 @@ public partial class StockBerritu : ContentPage
         }
     }
 
-
+    /// <summary>
+    /// botoia sakatzean, produktuaren kantitatea gehitzen du.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void btnGehitu_Clicked(object sender, EventArgs e)
     {
 
@@ -69,6 +81,11 @@ public partial class StockBerritu : ContentPage
 
     }
 
+    /// <summary>
+    /// botoia sakatzean, produktuaren kantitatea kentzen du.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void btnKendu_Clicked(object sender, EventArgs e)
     {
 
@@ -84,7 +101,11 @@ public partial class StockBerritu : ContentPage
     }
 
 
-
+    /// <summary>
+    /// botoia sakatzean, XML fitxategia sortzen du eta informazioa egoitza nagusia taulan sartzen du.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private async void btnSortuXML_Clicked(object sender, EventArgs e)
     {
         var kantitateaDutenProduktuak = Katalogoa.Where(p => p.Stock > 0).ToList();

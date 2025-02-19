@@ -4,6 +4,7 @@
              x:Class="Ordezkaritza.MainPage">
 
     <Grid>
+        <!-- Fondoko irudia -->
         <Image Source="irudikorporatiboa.png" 
                Aspect="AspectFill" 
                VerticalOptions="FillAndExpand" 

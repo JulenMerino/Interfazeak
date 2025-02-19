@@ -1,5 +1,6 @@
 using Ordezkaritza.Data;
 using Ordezkaritza.Models;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Xml.Linq;
@@ -13,8 +14,8 @@ public partial class FakturaIkusi : ContentPage
     private string _eskaeraKod;
 
     public FakturaIkusi(Partner partner, string eskaeraKod)
-	{
-		InitializeComponent();
+    {
+        InitializeComponent();
 
         _database = new Database("Komertzialak.db");
         _partnerSeleccionado = partner;
@@ -27,7 +28,9 @@ public partial class FakturaIkusi : ContentPage
     }
 
 
-
+    /// <summary>
+    /// Bidalketa datuak kargatzen ditu.
+    /// </summary>
     private async void KargatuBidalketa()
     {
         if (!string.IsNullOrEmpty(_eskaeraKod))
@@ -41,6 +44,10 @@ public partial class FakturaIkusi : ContentPage
             }
         }
     }
+
+    /// <summary>
+    /// Partnerren informazioa erakusten du.
+    /// </summary>
     private void ErakutsiPartnerInformazioa()
     {
         if (_partnerSeleccionado != null)
@@ -51,12 +58,14 @@ public partial class FakturaIkusi : ContentPage
         }
     }
 
-
+    /// <summary>
+    /// Produktuen informazioa taulan kargatzeko metodoa.
+    /// </summary>
     private async void KargatuFakturaProduktuak()
     {
         List<Eskaera_Xehetasuna> eskaerak = await _database.GetEskaeraByEskaeraKodAsync(int.Parse(_eskaeraKod));
 
-        tbProduktuak.Clear(); 
+        tbProduktuak.Clear();
 
         foreach (var produktuak in eskaerak)
         {
@@ -65,12 +74,12 @@ public partial class FakturaIkusi : ContentPage
                 View = new HorizontalStackLayout
                 {
                     Children =
-                {
-                    new Label { Text = produktuak.Deskribapena, Margin = new Thickness(200,0,100,0), WidthRequest = 200, VerticalTextAlignment = TextAlignment.Center },
-                    new Label { Text = produktuak.Kantitatea.ToString(), Margin = new Thickness(0,0,100,0), WidthRequest = 200, VerticalTextAlignment = TextAlignment.Center },
-                    new Label { Text = produktuak.Prezioa.ToString("C", CultureInfo.CurrentCulture), Margin = new Thickness(-50,0,100,0), WidthRequest = 150, VerticalTextAlignment = TextAlignment.Center },
-                    new Label { Text = produktuak.Guztira.ToString("C", CultureInfo.CurrentCulture), Margin = new Thickness(25,0,100,0), WidthRequest = 150, VerticalTextAlignment = TextAlignment.Center }
-                }
+                    {
+                        new Label { Text = produktuak.Deskribapena, Margin = new Thickness(200,0,100,0), WidthRequest = 200, VerticalTextAlignment = TextAlignment.Center },
+                        new Label { Text = produktuak.Kantitatea.ToString(), Margin = new Thickness(0,0,100,0), WidthRequest = 200, VerticalTextAlignment = TextAlignment.Center },
+                        new Label { Text = produktuak.Prezioa.ToString("C", CultureInfo.CurrentCulture), Margin = new Thickness(-50,0,100,0), WidthRequest = 150, VerticalTextAlignment = TextAlignment.Center },
+                        new Label { Text = produktuak.Guztira.ToString("C", CultureInfo.CurrentCulture), Margin = new Thickness(25,0,100,0), WidthRequest = 150, VerticalTextAlignment = TextAlignment.Center }
+                    }
                 }
             };
 
@@ -78,6 +87,11 @@ public partial class FakturaIkusi : ContentPage
         }
     }
 
+    /// <summary>
+    /// Botoia sakatzen informazioa XML fitxategian gorde eta kantitatea stock-etik kenduko da.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private async void btnSortuXML_Clicked(object sender, EventArgs e)
     {
         if (_bidalketa == null || _partnerSeleccionado == null)
@@ -120,13 +134,12 @@ public partial class FakturaIkusi : ContentPage
             var produktua = await _database.GetProduktuaByKodAsync(int.Parse(eskaera.Produktu_kod));
             if (produktua != null)
             {
-                produktua.Stock = Math.Max(0, produktua.Stock - eskaera.Kantitatea); // Evitar stock negativo
+                produktua.Stock = Math.Max(0, produktua.Stock - eskaera.Kantitatea);
                 await _database.UpdateKatalogoaAsync(produktua);
-
-                // Notificar cambios en la UI si se está usando binding
-                produktua.OnPropertyChanged(nameof(Katalogoa.Stock));
             }
         }
+
+        Informazioa.AktualizatuProduktuaGlobal();
 
         await DisplayAlert("XML Sortuta", "Faktura XML fitxategia sortu da eta stock eguneratu da.", "OK");
     }

@@ -25,7 +25,6 @@
                                 <VerticalStackLayout>
                                     <Button x:Name="btnGehitu" Text="+" BackgroundColor="#034886" Clicked="btnGehitu_Clicked" Margin="10" BindingContext="{Binding}" />
                                     <Button x:Name="btnKendu" Text="-" BackgroundColor="#034886" Clicked="btnKendu_Clicked" Margin="10" BindingContext="{Binding}" />
-
                                 </VerticalStackLayout>
                             </HorizontalStackLayout>
                         </Grid>

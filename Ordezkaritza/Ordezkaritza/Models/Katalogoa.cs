@@ -39,7 +39,7 @@ public class Katalogoa : INotifyPropertyChanged
         }
     }
     [Ignore]
-    public int Kantitatea // Cantidad seleccionada
+    public int Kantitatea 
     {
         get => _kantitatea;
         set
@@ -48,19 +48,19 @@ public class Katalogoa : INotifyPropertyChanged
             {
                 _kantitatea = Math.Max(0, Math.Min(value, Stock));
                 OnPropertyChanged(nameof(Kantitatea));
-                OnPropertyChanged(nameof(PrezioTotala)); //  Se recalcula el total
+                OnPropertyChanged(nameof(PrezioTotala)); 
 
             }
         }
     }
 
-    public decimal PrezioTotala => Kantitatea * Prezioa; // Precio total por producto
+    public decimal PrezioTotala => Kantitatea * Prezioa;
 
     [Ignore]
     public string Irudia { get; set; }
 
     public event PropertyChangedEventHandler PropertyChanged;
-    protected virtual void OnPropertyChanged(string propertyName)
+    public virtual void OnPropertyChanged(string propertyName)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
