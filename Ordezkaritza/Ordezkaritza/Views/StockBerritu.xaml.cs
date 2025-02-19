@@ -87,9 +87,9 @@ public partial class StockBerritu : ContentPage
 
     private async void btnSortuXML_Clicked(object sender, EventArgs e)
     {
-        var stockDutenProduktuak = Katalogoa.Where(p => p.Stock > 0).ToList();
+        var kantitateaDutenProduktuak = Katalogoa.Where(p => p.Stock > 0).ToList();
 
-        if (stockDutenProduktuak.Count == 0)
+        if (kantitateaDutenProduktuak.Count == 0)
         {
             DisplayAlert("Arazoa", "Ez duzu kantitaterik jarri.", "OK");
             return;
@@ -97,7 +97,7 @@ public partial class StockBerritu : ContentPage
 
         var xml = new XDocument(
             new XElement("productos",
-                stockDutenProduktuak.Select(p => new XElement("producto",
+                kantitateaDutenProduktuak.Select(p => new XElement("producto",
                     new XElement("codigo", p.Produktu_kod),
                     new XElement("nombre", p.Izena),
                     new XElement("precio", p.Prezioa),
@@ -116,19 +116,19 @@ public partial class StockBerritu : ContentPage
 
         DisplayAlert("Lortuta", $"XML zuzenki sortu da helbide honetan: {Path.GetFullPath(fitxategiHelbidea)}", "OK");
 
-        int nextEskaeraKod = _database.GetNextEskaeraKod();
+        int eskaeraKodea = _database.LortuHurregoEskaeraKod();
 
-        foreach (var producto in stockDutenProduktuak)
+        foreach (var produktuInfrmazioa in kantitateaDutenProduktuak)
         {
-            var nuevaEgoitzaNagusia = new EgoitzaNagusia
+            var EgoitzaNagusia = new EgoitzaNagusia
             {
-                Eskaera_kod = nextEskaeraKod,
-                Izena = producto.Izena,
-                Kantitatea = producto.Stock,  // Asumimos que la cantidad es el stock disponible.
-                Produktu_kod = producto.Produktu_kod
+                Eskaera_kod = eskaeraKodea,
+                Izena = produktuInfrmazioa.Izena,
+                Kantitatea = produktuInfrmazioa.Stock,  
+                Produktu_kod = produktuInfrmazioa.Produktu_kod
             };
 
-            await _database.InsertEgoitzaNagusiaAsync(nuevaEgoitzaNagusia);
+            await _database.InsertEgoitzaNagusiaAsync(EgoitzaNagusia);
         }
 
     }

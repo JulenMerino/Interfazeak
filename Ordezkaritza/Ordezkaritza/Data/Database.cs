@@ -19,7 +19,6 @@ namespace Ordezkaritza.Data
             // Debug.WriteLine($" Ruta de la base de datos: {Path.GetFullPath(_dbPath)}");
 
 
-            // Si la base de datos no existe, copiarla desde el archivo de recursos
             if (!File.Exists(_dbPath))
             {
                 using var stream = FileSystem.OpenAppPackageFileAsync("Komertzialak.db").Result;
@@ -27,10 +26,8 @@ namespace Ordezkaritza.Data
                 stream.CopyTo(fileStream);
             }
 
-            // Crear la conexión asíncrona
             _database = new SQLiteAsyncConnection(_dbPath);
 
-            // Crear las tablas si no existen
             _database.CreateTableAsync<Katalogoa>().Wait();
             _database.CreateTableAsync<Komertziala>().Wait();
             _database.CreateTableAsync<Partner>().Wait();
@@ -84,7 +81,7 @@ namespace Ordezkaritza.Data
 
 
         //XML zatia
-        public async Task<string> PickXmlFileAsync()
+        public async Task<string> AuketatuXmlFitxategia()
         {
 
             var xmlFileType = new FilePickerFileType(new Dictionary<DevicePlatform, IEnumerable<string>>
@@ -98,14 +95,14 @@ namespace Ordezkaritza.Data
 
             return result?.FullPath;
         }
-        public async Task<List<Katalogoa>> KatalogoaEguneratuXML(string filePath)
+        public async Task<List<Katalogoa>> KatalogoaEguneratuXML(string fitxategiHelbidea)
         {
-            if (string.IsNullOrWhiteSpace(filePath)) return null;
+            if (string.IsNullOrWhiteSpace(fitxategiHelbidea)) return null;
 
-            var xmlContent = await File.ReadAllTextAsync(filePath);
-            var xdoc = XDocument.Parse(xmlContent);
+            var edikiXml = await File.ReadAllTextAsync(fitxategiHelbidea);
+            var xdoc = XDocument.Parse(edikiXml);
 
-            var dataList = xdoc.Descendants("Producto")
+            var infromazioLista = xdoc.Descendants("Producto")
                 .Select(x => new Katalogoa
                 {
                     Produktu_kod = (int)x.Element("Codigo"),
@@ -114,17 +111,17 @@ namespace Ordezkaritza.Data
                     Stock = (int)x.Element("Stock")
                 }).ToList();
 
-            return dataList;
+            return infromazioLista;
         }
 
-        public async Task<List<Partner>> PartneraEguneratuXML(string filePath)
+        public async Task<List<Partner>> PartneraEguneratuXML(string fitxategiHelbidea)
         {
-            if (string.IsNullOrWhiteSpace(filePath)) return null;
+            if (string.IsNullOrWhiteSpace(fitxategiHelbidea)) return null;
 
-            var xmlContent = await File.ReadAllTextAsync(filePath);
-            var xdoc = XDocument.Parse(xmlContent);
+            var edikiXml = await File.ReadAllTextAsync(fitxategiHelbidea);
+            var xdoc = XDocument.Parse(edikiXml);
 
-            var dataList = xdoc.Descendants("partner")
+            var infromazioLista = xdoc.Descendants("partner")
                 .Select(x => new Partner
                 {
                     Izena = (string)x.Element("nombre"),
@@ -134,20 +131,20 @@ namespace Ordezkaritza.Data
                     ID_komertzial = (int)x.Element("idComercial")
                 }).ToList();
 
-            return dataList;
+            return infromazioLista;
         }
 
         
 
-        public async Task SaveDataFromXmlAsync(string filePath)
+        public async Task SaveDataFromXmlAsync(string fitxategiHelbidea)
         {
-            var fitxategiIzena = Path.GetFileName(filePath);
+            var fitxategiIzena = Path.GetFileName(fitxategiHelbidea);
 
             //Debug.WriteLine($"XML fitxategia: {Path.GetFileName(filePath)}");
 
             if (fitxategiIzena == "Froga.xml")
             {
-                var data = await KatalogoaEguneratuXML(filePath);
+                var data = await KatalogoaEguneratuXML(fitxategiHelbidea);
                 if (data == null || data.Count == 0)
                 {
                     // Debug.WriteLine("No hay datos para guardar en la base de datos.");
@@ -185,7 +182,7 @@ namespace Ordezkaritza.Data
 
             else if (fitxategiIzena == "partner_berriak.xml")
             {
-                var data = await PartneraEguneratuXML(filePath);
+                var data = await PartneraEguneratuXML(fitxategiHelbidea);
                 if (data == null || data.Count == 0)
                 {
                     //Debug.WriteLine("No hay datos para guardar en la base de datos.");
@@ -215,37 +212,6 @@ namespace Ordezkaritza.Data
 
 
         //Eskaera zatia
-        public Task<List<Partner>> GetPartnersAsync()
-        {
-            return _database.Table<Partner>().ToListAsync();
-        }
-
-        public Task<int> AddPartnerAsync(Partner partner)
-        {
-            return _database.InsertAsync(partner);
-        }
-
-        public Task<Partner> GetPartnerByIdAsync(int id)
-        {
-            return _database.Table<Partner>().Where(p => p.Partner_ID == id).FirstOrDefaultAsync();
-        }
-        public async Task<List<Eskaera_Goiburua>> GetEskaerakByPartnerIdAsync(int partnerId)
-        {
-            return await _database.Table<Eskaera_Goiburua>()
-                .Where(e => e.Partner_ID == partnerId)
-                .ToListAsync();
-        }
-        public async Task<Eskaera_Xehetasuna> GetEskaeraByProduktuKodAsync(int produktuaKod)
-        {
-            return await _database.Table<Eskaera_Xehetasuna>()
-                .Where(e => e.Produktu_kod == produktuaKod.ToString())
-                .FirstOrDefaultAsync();
-        }
-
-        public async Task<List<Eskaera_Xehetasuna>> GetAllEskaeraXehetasunakAsync()
-        {
-            return await _database.Table<Eskaera_Xehetasuna>().ToListAsync();
-        }
 
         public async Task<Bidalketa> GetBidalketaByEskaeraKodAsync(int eskaeraKod)
         {
@@ -259,38 +225,61 @@ namespace Ordezkaritza.Data
             return _database.Table<Eskaera_Xehetasuna>().Where(e => e.Eskaera_kod == eskaeraKod).ToListAsync();
         }
 
+        public async Task<Katalogoa> GetProduktuaByKodAsync(int produktuaKod)
+        {
+            return await _database.Table<Katalogoa>().Where(p => p.Produktu_kod == produktuaKod).FirstOrDefaultAsync();
+        }
 
 
 
 
         // Informeak eta estadiskica
-        public async Task<List<(string ProduktuKod, string Izena, decimal Prezioa, int TotalKantitatea)>> ObtenerProductosMasVendidosAsync()
+
+        public async Task<List<(Eskaera_Goiburua, List<Eskaera_Xehetasuna>)>> LortuHilabetekoEskaerak()
+        {
+            var hilabetekoLehenEguna = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            var hilabetekoAzkenEguna = hilabetekoLehenEguna.AddMonths(1).AddDays(-1);
+
+            var eskaerak = await _database.Table<Eskaera_Goiburua>().ToListAsync();
+            var eskaeraGuztiak = eskaerak
+                         .Where(o => DateTime.TryParse(o.Data, out var date) && date >= hilabetekoLehenEguna && date <= hilabetekoAzkenEguna)
+                         .ToList();
+
+            var eskaereaXehetasunak = await _database.Table<Eskaera_Xehetasuna>().ToListAsync();
+            var eskaeraGuztienXehetasuank = eskaereaXehetasunak.Where(d => eskaeraGuztiak.Any(o => o.Eskaera_kod == d.Eskaera_kod)).ToList();
+
+            return eskaeraGuztiak.Select(o => (o, eskaeraGuztienXehetasuank.Where(d => d.Eskaera_kod == o.Eskaera_kod).ToList())).ToList();
+        }
+
+        //GetAllEgoitzaNagusiaAsync-rekin lortua
+
+        public async Task<List<(string ProduktuKod, string Izena, decimal Prezioa, int TotalKantitatea)>> LortuGehienEskatutakoProduktua()
         {
             var eskaeraXehetasunak = await _database.Table<Eskaera_Xehetasuna>().ToListAsync();
             var katalogoa = await _database.Table<Katalogoa>().ToListAsync();
 
-            var productosMasVendidos = eskaeraXehetasunak
+            var gehienSaldutakoProduktuak = eskaeraXehetasunak
                 .GroupBy(e => e.Produktu_kod)
                 .Select(g => new { ProduktuKod = g.Key, TotalKantitatea = g.Sum(e => e.Kantitatea) })
                 .OrderByDescending(p => p.TotalKantitatea)
                 .ToList();
 
-            return productosMasVendidos
+            return gehienSaldutakoProduktuak
                 .Select(p => {
-                    var producto = katalogoa.FirstOrDefault(k => k.Produktu_kod.ToString() == p.ProduktuKod);
-                    return (p.ProduktuKod, producto?.Izena ?? "Desconocido", producto?.Prezioa ?? 0, p.TotalKantitatea);
+                    var produktua = katalogoa.FirstOrDefault(k => k.Produktu_kod.ToString() == p.ProduktuKod);
+                    return (p.ProduktuKod, produktua?.Izena ?? "Desconocido", produktua?.Prezioa ?? 0, p.TotalKantitatea);
                 })
                 .ToList();
         }
 
-        public async Task<List<SalesReport>> GetTopSellingPartnersByTotalUnitsAsync()
+        public async Task<List<EskaeraObjetua>> LortuKantitateHandienSaltzenDuenPartnera()
         {
-            var orders = await _database.Table<Eskaera_Goiburua>().ToListAsync();
-            var details = await _database.Table<Eskaera_Xehetasuna>().ToListAsync();
+            var eskaeraGoiburuak = await _database.Table<Eskaera_Goiburua>().ToListAsync();
+            var eskaeraXehetasuak = await _database.Table<Eskaera_Xehetasuna>().ToListAsync();
             var partners = await _database.Table<Partner>().ToListAsync();
 
-            var result = details
-                .Join(orders, d => d.Eskaera_kod, o => o.Eskaera_kod, (d, o) => new { d, o })
+            var informazioGuztia = eskaeraXehetasuak
+                .Join(eskaeraGoiburuak, d => d.Eskaera_kod, o => o.Eskaera_kod, (d, o) => new { d, o })
                 .Join(partners, combined => combined.o.Partner_ID, p => p.Partner_ID, (combined, p) => new
                 {
                     p.Partner_ID,
@@ -298,7 +287,7 @@ namespace Ordezkaritza.Data
                     combined.d.Kantitatea 
                 })
                 .GroupBy(x => new { x.Partner_ID, x.Izena })
-                .Select(g => new SalesReport
+                .Select(g => new EskaeraObjetua
                 {
                     Partner_ID = g.Key.Partner_ID,
                     Socio = g.Key.Izena,
@@ -308,19 +297,19 @@ namespace Ordezkaritza.Data
                 .OrderByDescending(x => x.Unidades_Vendidas) 
                 .ToList();
 
-            return result;
+            return informazioGuztia;
         }
 
 
 
-        public async Task<List<SalesReport>> GetTopSellingPartnersAsync()
+        public async Task<List<EskaeraObjetua>> LortuIrabaziHandienDuenPartnera()
         {
-            var orders = await _database.Table<Eskaera_Goiburua>().ToListAsync();
-            var details = await _database.Table<Eskaera_Xehetasuna>().ToListAsync();
+            var eskaeraGoiburuak = await _database.Table<Eskaera_Goiburua>().ToListAsync();
+            var eskaeraXehetasuak = await _database.Table<Eskaera_Xehetasuna>().ToListAsync();
             var partners = await _database.Table<Partner>().ToListAsync();
 
-            var result = details
-                .Join(orders, d => d.Eskaera_kod, o => o.Eskaera_kod, (d, o) => new { d, o })
+            var informazioGuztia = eskaeraXehetasuak
+                .Join(eskaeraGoiburuak, d => d.Eskaera_kod, o => o.Eskaera_kod, (d, o) => new { d, o })
                 .Join(partners, combined => combined.o.Partner_ID, p => p.Partner_ID, (combined, p) => new
                 {
                     p.Partner_ID,
@@ -328,8 +317,8 @@ namespace Ordezkaritza.Data
                     combined.d.Kantitatea,
                     combined.d.Guztira
                 })
-                .GroupBy(x => new { x.Partner_ID, x.Izena })  // Agrupar solo por Partner_ID y nombre
-                .Select(g => new SalesReport
+                .GroupBy(x => new { x.Partner_ID, x.Izena }) 
+                .Select(g => new EskaeraObjetua
                 {
                     Partner_ID = g.Key.Partner_ID,
                     Socio = g.Key.Izena,
@@ -339,28 +328,12 @@ namespace Ordezkaritza.Data
                 .OrderByDescending(x => x.Total_Vendido)
                 .ToList();
 
-            return result;
+            return informazioGuztia;
         }
 
-        public async Task<List<(Eskaera_Goiburua, List<Eskaera_Xehetasuna>)>> GetCurrentMonthOrdersWithDetailsAsync()
-        {
-            var firstDayOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-            var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+        
 
-            // Obtener todas las órdenes y filtrar en memoria
-            var allOrders = await _database.Table<Eskaera_Goiburua>().ToListAsync();
-            var orders = allOrders
-                         .Where(o => DateTime.TryParse(o.Data, out var date) && date >= firstDayOfMonth && date <= lastDayOfMonth)
-                         .ToList();
-
-            // Obtener detalles de los pedidos
-            var allOrderDetails = await _database.Table<Eskaera_Xehetasuna>().ToListAsync();
-            var orderDetails = allOrderDetails.Where(d => orders.Any(o => o.Eskaera_kod == d.Eskaera_kod)).ToList();
-
-            return orders.Select(o => (o, orderDetails.Where(d => d.Eskaera_kod == o.Eskaera_kod).ToList())).ToList();
-        }
-
-        public class SalesReport
+        public class EskaeraObjetua
         {
             public int Partner_ID { get; set; }
             public string Socio { get; set; }
@@ -369,12 +342,10 @@ namespace Ordezkaritza.Data
             public decimal Total_Vendido { get; set; }
         }
 
-        public int GetNextEskaeraKod()
+        public int LortuHurregoEskaeraKod()
         {
-            using var connection = new SQLiteConnection(_dbPath);
-
             // Obtener el último Eskaera_kod
-            var lastEskaera = connection.Table<EgoitzaNagusia>().OrderByDescending(e => e.Eskaera_kod).FirstOrDefault();
+            var lastEskaera = _database.Table<EgoitzaNagusia>().OrderByDescending(e => e.Eskaera_kod).FirstOrDefaultAsync().Result;
 
             // Si no hay registros, se comienza desde 1
             int nextEskaeraKod = lastEskaera != null ? lastEskaera.Eskaera_kod + 1 : 1;

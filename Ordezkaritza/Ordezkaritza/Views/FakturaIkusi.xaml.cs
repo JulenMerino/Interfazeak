@@ -115,6 +115,20 @@ public partial class FakturaIkusi : ContentPage
 
         Debug.Write(fitxateguiHelbidea);
 
-        await DisplayAlert("XML Sortuta", "Faktura XML fitxategia sortu da:", "OK");
+        foreach (var eskaera in eskaerak)
+        {
+            var produktua = await _database.GetProduktuaByKodAsync(int.Parse(eskaera.Produktu_kod));
+            if (produktua != null)
+            {
+                produktua.Stock = Math.Max(0, produktua.Stock - eskaera.Kantitatea); // Evitar stock negativo
+                await _database.UpdateKatalogoaAsync(produktua);
+
+                // Notificar cambios en la UI si se está usando binding
+                produktua.OnPropertyChanged(nameof(Katalogoa.Stock));
+            }
+        }
+
+        await DisplayAlert("XML Sortuta", "Faktura XML fitxategia sortu da eta stock eguneratu da.", "OK");
     }
+
 }

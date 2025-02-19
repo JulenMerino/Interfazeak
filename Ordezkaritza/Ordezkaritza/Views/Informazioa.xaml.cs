@@ -31,7 +31,7 @@ public partial class Informazioa : ContentPage
 
     private async void btnAukeratuXMLa_Clicked(object sender, EventArgs e)
     {
-        fitxategiHelbidea = await _database.PickXmlFileAsync(); 
+        fitxategiHelbidea = await _database.AuketatuXmlFitxategia(); 
 
         if (!string.IsNullOrEmpty(fitxategiHelbidea))
         {
@@ -270,43 +270,42 @@ public partial class Informazioa : ContentPage
 
     private async void btnHilabetekoEskaerak_Clicked(object sender, EventArgs e)
     {
-        var ordersWithDetails = await _database.GetCurrentMonthOrdersWithDetailsAsync();
-        var datos = ordersWithDetails.Select(o => $"Eskaera {o.Item1.Eskaera_kod} - Data: {o.Item1.Data}, Partner ID: {o.Item1.Partner_ID}, Produktuak: [{string.Join(", ", o.Item2.Select(d => d.Deskribapena + " - Kantitatea: " + d.Kantitatea))}]").ToList();
-        EguneratuTaula(datos);
+        var hilabetekoEskaerak = await _database.LortuHilabetekoEskaerak();
+        var datuak = hilabetekoEskaerak.Select(o => $"Eskaera {o.Item1.Eskaera_kod} - Data: {o.Item1.Data}, Partner ID: {o.Item1.Partner_ID}, Produktuak: [{string.Join(", ", o.Item2.Select(d => d.Deskribapena + " - Kantitatea: " + d.Kantitatea))}]").ToList();
+        EguneratuTaula(datuak);
     }
 
     private async void btnEskaerakEgoitzaNagusira_Clicked(object sender, EventArgs e)
     {
         var egoitzaNagusia = await _database.GetAllEgoitzaNagusiaAsync();
-        var datos = egoitzaNagusia.GroupBy(e => e.Eskaera_kod)
+        var datuak = egoitzaNagusia.GroupBy(e => e.Eskaera_kod)
                                    .Select(g => $"Eskaera kodea: {g.Key} [{string.Join(", ", g.Select(e => e.Izena + " - Kantitatea: " + e.Kantitatea))}]")
                                    .ToList();
-        EguneratuTaula(datos);
+        EguneratuTaula(datuak);
     }
 
     private async void btnGehienEskatutakoProduktua_Clicked(object sender, EventArgs e)
     {
-        var productosMasVendidos = await _database.ObtenerProductosMasVendidosAsync();
+        var gehienSaldutakoProduktua = await _database.LortuGehienEskatutakoProduktua();
 
-        var datos = productosMasVendidos.Select(p => $"{p.ProduktuKod} - {p.Izena}: {p.TotalKantitatea} unidades, {p.Prezioa}€").ToList();
-        EguneratuTaula(datos);
+        var datuak = gehienSaldutakoProduktua.Select(p => $"{p.ProduktuKod} - {p.Izena}: {p.TotalKantitatea} unidades, {p.Prezioa}€").ToList();
+        EguneratuTaula(datuak);
     }
 
     private async void btnGehienSaltzenDuenBazkidea_Clicked(object sender, EventArgs e)
     {
-        var datos = await _database.GetTopSellingPartnersByTotalUnitsAsync();
+        var kantitateHandienPartner = await _database.LortuKantitateHandienSaltzenDuenPartnera();
+        var datuak = kantitateHandienPartner.Select(d => $"{d.Socio} - {d.Unidades_Vendidas} unidades").ToList();
 
-        var formattedData = datos.Select(d => $"{d.Socio} - {d.Unidades_Vendidas} unidades").ToList();
-
-        EguneratuTaula(formattedData);
+        EguneratuTaula(datuak);
     }
 
 
     private async void btnIrabaziHandienaDuenBazkidea_Clicked(object sender, EventArgs e)
     {
-        var datos = await _database.GetTopSellingPartnersAsync();
-        var formattedData = datos.Select(d => $"{d.Socio} - {d.Unidades_Vendidas} unidades - {d.Total_Vendido}€").ToList();
-        EguneratuTaula(formattedData);
+        var irabaziHandienPartner = await _database.LortuIrabaziHandienDuenPartnera();
+        var datuak = irabaziHandienPartner.Select(d => $"{d.Socio} - {d.Unidades_Vendidas} unidades - {d.Total_Vendido}€").ToList();
+        EguneratuTaula(datuak);
     }
 
     private void EguneratuTaula(List<string> taulakoDatuak)
